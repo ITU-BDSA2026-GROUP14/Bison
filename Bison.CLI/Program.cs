@@ -14,3 +14,18 @@ foreach (var line in File.ReadLines("bison_observe_cli_db.csv").Skip(1))
     Console.WriteLine($"{author} @ {time.ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture)}: {message}");
 }
 }
+if (args.Length > 0 && args[0] == "observe" && args.Length > 1)
+{
+    // Handle the observe command for the specific location
+    using (StreamWriter stream = File.AppendText("bison_observe_cli_db.csv"))
+    {
+        string author = Environment.UserName;
+        string message = args[1];
+        long timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+       
+
+        stream.WriteLine($"{author},\"{message}\",{timestamp}" );
+        Console.WriteLine($"Observation recorded for '{message}'.");
+    }
+    
+}
