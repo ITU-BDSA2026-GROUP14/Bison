@@ -1,31 +1,45 @@
 ﻿using System.Globalization;
+using CsvHelper;
+using CsvHelper.Configuration;
 
+// Read from CSV
 if (args.Length > 0 && args[0] == "read")
 {
-foreach (var line in File.ReadLines("bison_observe_cli_db.csv").Skip(1))
-{
-    var first = line.IndexOf(',');
-    var last = line.LastIndexOf(',');
+    using (var reader = new StreamReader("bison_observe_cli_db.csv"))
+    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+    {
+        var records = csv.GetRecords<Cheep>();
 
-    var author = line[..first];
-    var message = line[(first + 1)..last].Trim('"');
-    var time = DateTimeOffset.FromUnixTimeSeconds(long.Parse(line[(last + 1)..])).LocalDateTime;
+        foreach (var line in records)
+        {
+            DateTimeOffset timestamp = DateTimeOffset.FromUnixTimeSeconds(line.Timestamp);
+            Console.WriteLine($"{line.Author} @ {timestamp.ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture)}: {line.Observation}");
+        }
+    }
+}
 
-    Console.WriteLine($"{author} @ {time.ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture)}: {message}");
-}
-}
+// Write to CSV
 if (args.Length > 0 && args[0] == "observe" && args.Length > 1)
 {
-    // Handle the observe command for the specific location
-    using (StreamWriter stream = File.AppendText("bison_observe_cli_db.csv"))
+    var message = args[1];
+    var list = new List<Cheep>
     {
-        string author = Environment.UserName;
-        string message = args[1];
-        long timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-       
+        new Cheep(
+            Author: Environment.UserName,
+            Observation: message,
+            Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+        )
+    };
 
-        stream.WriteLine($"{author},\"{message}\",{timestamp}" );
+    var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+    {
+        HasHeaderRecord = false
+    };
+    using (var stream = File.Open("bison_observe_cli_db.csv", FileMode.Append))
+    using (var writer = new StreamWriter(stream))
+    using (var csv = new CsvWriter(writer, config))
+    {
+        csv.WriteRecords(list);
         Console.WriteLine($"Observation recorded for '{message}'.");
     }
-    
 }
