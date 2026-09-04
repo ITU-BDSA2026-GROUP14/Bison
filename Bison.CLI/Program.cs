@@ -8,8 +8,6 @@ using System.Data.Common;
 
 public class Program
 {
-    // static CsvDatabase<Cheep> db = new CsvDatabase<Cheep>("bison_observe_cli_db.csv");
-
     public static void Main(string[] args)
     {
         Option<bool> readOption = new("--read", "--r") { Description = "Reads observations from CSV file" };
@@ -51,11 +49,7 @@ public class Program
 
             if (isStore is not null)
             {
-                db.Store(new Cheep(
-                    Author: Environment.UserName,
-                    Observation: args[1],
-                    Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-                ));
+                handleObserve(db, args[1]);
                 return;
             }
 
@@ -65,22 +59,15 @@ public class Program
 
 
         rootCommand.Parse(args).Invoke();
+    }
 
-
-        // // Read from CSV
-        // if (args.Length > 0 && args[0] == "read")
-        // {
-        //     UserInterface<Cheep>.PrintObservations(db.Read());
-        // }
-
-        // Write to CSV
-        // if (args.Length > 0 && args[0] == "observe" && args.Length > 1)
-        // {
-        //     db.Store(new Cheep(
-        //             Author: Environment.UserName,
-        //             Observation: args[1],
-        //             Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-        //         ));
-        // }
+    private static void handleObserve(CsvDatabase<Cheep> db, string message)
+    {
+        db.Read().Last();
+        db.Store(new Cheep(
+            Author: Environment.UserName,
+            Message: message,
+            Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+        ));
     }
 }
