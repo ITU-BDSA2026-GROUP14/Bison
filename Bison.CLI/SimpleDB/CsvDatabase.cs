@@ -21,7 +21,7 @@ sealed class CsvDatabase<T> : IDatabaseRepository<T>
         using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
         {
             var records = csv.GetRecords<T>();
-            return limit.HasValue ? records.Take(limit.Value) : records;
+            return limit.HasValue ? records.Take(limit.Value).ToList() : records.ToList();
         }
     }
 
