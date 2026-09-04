@@ -4,7 +4,7 @@ using CsvHelper.Configuration;
 
 namespace SimpleDB;
 
-public class CsvDatabase<T> : IDatabaseRepository<T>
+sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
     public IEnumerable<T> Read(int? limit = null)
     {
