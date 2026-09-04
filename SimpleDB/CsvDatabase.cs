@@ -6,7 +6,7 @@ using CsvHelper.Configuration;
 
 namespace SimpleDB;
 
-sealed class CsvDatabase<T> : IDatabaseRepository<T>
+public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
     private readonly string filename;
 
