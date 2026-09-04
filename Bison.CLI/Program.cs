@@ -12,7 +12,8 @@ if (args.Length > 0 && args[0] == "read")
 
         foreach (var line in records)
         {
-            Console.WriteLine($"{line.Author} @ {line.Timestamp.ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture)}: {line.Observation}");
+            DateTimeOffset timestamp = DateTimeOffset.FromUnixTimeSeconds(line.Timestamp);
+            Console.WriteLine($"{line.Author} @ {timestamp.ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture)}: {line.Observation}");
         }
     }
 }
