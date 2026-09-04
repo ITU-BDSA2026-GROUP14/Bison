@@ -8,11 +8,7 @@ var db = new CsvDatabase<Cheep>("bison_observe_cli_db.csv");
 // Read from CSV
 if (args.Length > 0 && args[0] == "read")
 {
-    foreach (var line in db.Read())
-    {
-        DateTimeOffset timestamp = DateTimeOffset.FromUnixTimeSeconds(line.Timestamp);
-        Console.WriteLine($"{line.Author} @ {timestamp.ToString("MM/dd/yy HH:mm:ss", CultureInfo.InvariantCulture)}: {line.Observation}");
-    }
+    UserInterface<Cheep>.PrintObservations(db.Read());
 }
 
 // Write to CSV
