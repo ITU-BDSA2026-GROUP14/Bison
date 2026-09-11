@@ -31,6 +31,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
         {
             HasHeaderRecord = false
         };
+
         using (var stream = File.Open(filename, FileMode.Append))
         using (var writer = new StreamWriter(stream))
         using (var csv = new CsvWriter(writer, config))
