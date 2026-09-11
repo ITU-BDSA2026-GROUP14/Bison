@@ -1,6 +1,4 @@
-
-
-name:release
+name: release
 on:
   push:
     tags: ['v*']
@@ -15,22 +13,32 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore dependencies
+      - name: Restore
         run: dotnet restore
 
       - name: Build
-        run: dotnet build --no-restore
+        run: dotnet build -c Release --no-restore
 
       - name: Test
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test -c Release --no-build --verbosity normal
 
-      - name: Publish
-        run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -o out
+      - name: Publish and zip Windows
+        run: |
+          dotnet publish src/Bison/Bison.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -p:DebugType=none -o out/win-x64
+          cd out/win-x64 && zip -r ../../Bison-win-x64.zip .
 
-      - name: Package
-        run: cd out && zip -r ../Bison-linux-x64.zip .
+      - name: Publish and zip macOS
+        run: |
+          dotnet publish src/Bison/Bison.csproj -c Release -r osx-x64 --self-contained false -p:PublishSingleFile=true -p:DebugType=none -o out/osx-x64
+          cd out/osx-x64 && zip -r ../../Bison-osx-x64.zip .
+
+      - name: Publish and zip Linux
+        run: |
+          dotnet publish src/Bison/Bison.csproj -c Release -r linux-x64 --self-contained false -p:PublishSingleFile=true -p:DebugType=none -o out/linux-x64
+          cd out/linux-x64 && zip -r ../../Bison-linux-x64.zip .
 
       - name: Create GitHub release
-        run: gh release create ${{ github.ref_name }} Bison-linux-x64.tar.gz --generate-notes
-        env:
-          GH_TOKEN: ${{ github.token }}
+        uses: softprops/action-gh-release@v3
+        with:
+          files: Bison-*.zip
+          generate_release_notes: true
