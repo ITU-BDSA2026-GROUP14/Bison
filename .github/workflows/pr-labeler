@@ -1,0 +1,16 @@
+name: PR Labeler
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopen]
+
+permissions:
+    contents: read
+    pull-request: write
+
+jobs:
+    label:
+        runs-on: ubuntu-latest
+        steps:
+          - name: Labeler
+            uses: actions/labeler@v7.0.0

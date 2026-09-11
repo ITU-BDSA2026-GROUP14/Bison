@@ -1,0 +1,22 @@
+feature:
+- branch: ['^feat','^feature','feature']
+
+tests:
+- changed-files:
+  - any-glob-to-any-file: 'tests/*'
+
+documentation:
+- changed-files:
+  - any-glob-to-any-file: 'documents/*'
+
+workflows:
+- changed-files:
+  - any-glob-to-any-file: '.github/workflows/*'
+
+'area:cli':
+- changed-files:
+  - any-glob-to-any-file: 'src/Bison.CLI/*'
+
+'area:SimpleDB':
+- changed-files:
+  - any-glob-to-any-file: 'src/SimpleDB/*'
