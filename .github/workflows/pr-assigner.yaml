@@ -14,6 +14,7 @@ jobs:
         steps:
           - uses: actions/github-script@v9
             with:
+                github-token: ${{secrets.TEAM_REVIEW_ASSIGNMENT_BOT}}
                 script: |
                     await github.rest.pulls.requestReviewers({
                         owner: context.repo.owner,
