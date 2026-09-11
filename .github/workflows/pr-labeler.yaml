@@ -2,7 +2,7 @@ name: PR Labeler
 
 on:
     pull_request:
-        types: [opened, synchronize, reopen]
+        types: [opened, synchronize, reopened]
 
 permissions:
     contents: read

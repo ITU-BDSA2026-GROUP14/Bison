@@ -16,9 +16,19 @@ jobs:
             with:
                 github-token: ${{secrets.TEAM_REVIEW_ASSIGNMENT_BOT}}
                 script: |
-                    await github.rest.pulls.requestReviewers({
-                        owner: context.repo.owner,
-                        repo: context.repo.repo,
-                        pull_number: context.payload.pull_request.number,
-                        team_reviewers: ['bison-devs'],
-                    });
+                    try {
+                        await github.rest.pulls.requestReviewers({
+                            owner: context.repo.owner,
+                            repo: context.repo.repo,
+                            pull_number: context.payload.pull_request.number,
+                            team_reviewers: ['bison-devs'],
+                        });
+                    } catch (error) {
+                        if (error.status === 404) {
+                            core.warning(
+                                "Could not request team review for 'bison-devs' (team not found or inaccessible). Skipping."
+                            );
+                            return;
+                        }
+                        throw error;
+                    }
