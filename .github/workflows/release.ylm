@@ -24,18 +24,18 @@ jobs:
 
       - name: Publish and zip Windows
         run: |
-          dotnet publish Bison.CLI/Bison.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -p:DebugType=none -o out/win-x64
-          cd out/win-x64 && zip -r ../Bison-win-x64.zip .
+          dotnet publish Bison.CLI/Bison.CLI.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -p:DebugType=none -o out/win-x64
+          cd out/win-x64 && zip -r ../../Bison-win-x64.zip .
 
       - name: Publish and zip macOS
         run: |
           dotnet publish Bison.CLI/Bison.CLI.csproj -c Release -r osx-x64 --self-contained false -p:PublishSingleFile=true -p:DebugType=none -o out/osx-x64
-          cd out/osx-x64 && zip -r ../Bison-osx-x64.zip .
+          cd out/osx-x64 && zip -r ../../Bison-osx-x64.zip .
 
       - name: Publish and zip Linux
         run: |
           dotnet publish Bison.CLI/Bison.CLI.csproj -c Release -r linux-x64 --self-contained false -p:PublishSingleFile=true -p:DebugType=none -o out/linux-x64
-          cd out/linux-x64 && zip -r ../Bison-linux-x64.zip .
+          cd out/linux-x64 && zip -r ../../Bison-linux-x64.zip .
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v3
