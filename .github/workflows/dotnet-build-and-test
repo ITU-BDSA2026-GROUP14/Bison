@@ -26,3 +26,5 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
+    - name: GH Release
+      uses: softprops/action-gh-release@v3.0.3
