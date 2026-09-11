@@ -97,7 +97,7 @@ public class Program
             {
                 if (cmtdb.Read().ToList().Count > 0)
                 {
-                    UserInterface<Comment>.PrintObservations(cmtdb.Read());
+                    UserInterface<Comment>.PrintComments(cmtdb.Read(), id);
                 }
                 else
                 {
