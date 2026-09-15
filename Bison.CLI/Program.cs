@@ -21,10 +21,10 @@ public class Program
         // rootCommand.Options.Add(fileOption);
 
         // Parsh dbs
-        var obsdb = new CsvDatabase<Observation>("bison_observe_cli_db.csv");
-        var cmtdb = new CsvDatabase<Comment>("bison_comment_cli_db.csv");
+        CsvDatabase<Observation> obs_db = CsvDatabase<Observation>.GetInstance("bison_observe_cli_db-csv");
+        CsvDatabase<Comment> cmt_db = CsvDatabase<Comment>.GetInstance("bison_comment_cli_db-csv");
 
-        int idCount = obsdb.Read().ToList().Count;
+        int idCount = obs_db.Read().ToList().Count;
 
         RootCommand rootCommand = new("Animal observation portal");
 
@@ -38,7 +38,7 @@ public class Program
 
             if (message != null)
             {
-                obsdb.Store(new Observation(
+                obs_db.Store(new Observation(
                     Id: idCount++,
                     Author: Environment.UserName,
                     Message: message,
@@ -66,7 +66,7 @@ public class Program
 
             if (id <= idCount && message != null)
             {
-                cmtdb.Store(new Comment(
+                cmt_db.Store(new Comment(
                     Id: id,
                     Author: Environment.UserName,
                     Message: message,
@@ -83,7 +83,7 @@ public class Program
 
         // read 
         Command readCommand = new Command("read", "Reads observations from CSV file");
-        readCommand.SetAction(parseResult => UserInterface<Observation>.PrintObservations(obsdb.Read()));
+        readCommand.SetAction(parseResult => UserInterface<Observation>.PrintObservations(obs_db.Read()));
         rootCommand.Subcommands.Add(readCommand);
 
         //discuss <id>
@@ -95,9 +95,9 @@ public class Program
             var id = parseResult.GetValue(discussId);
             if (id <= idCount)
             {
-                if (cmtdb.Read().ToList().Count > 0)
+                if (cmt_db.Read().ToList().Count > 0)
                 {
-                    UserInterface<Comment>.PrintComments(cmtdb.Read(), id);
+                    UserInterface<Comment>.PrintComments(cmt_db.Read(), id);
                 }
                 else
                 {
@@ -135,7 +135,7 @@ public class Program
 
         //     if (isRead)
         //     {
-        //         UserInterface<Cheep>.PrintObservations(obsdb.Read());
+        //         UserInterface<Cheep>.PrintObservations(.Read());
         //         return;
         //     }
 
