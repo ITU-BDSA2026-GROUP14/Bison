@@ -6,14 +6,30 @@ using CsvHelper.Configuration;
 
 namespace SimpleDB;
 
+// singleton paddon: https://csharpindepth.com/Articles/Singleton
+
 public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
+
+    // Lazy object makes sure that only one instance of the class is created
+    private static Lazy<CsvDatabase<T>>? _instance;
     private readonly string filename;
 
-    public CsvDatabase(string filename)
+    private CsvDatabase(string filename)
     {
         this.filename = filename;
     }
+
+    // Singleton pattern: checks if an instance already exists, if not, creates a new one.
+    // Note: Multiple instances of the same class with different generic types can exist.
+    // E.g., CsvDatabase<Observation> and CsvDatabase<Comment> will not return the same instance.
+    public static CsvDatabase<T> GetInstance(string filename)
+    {
+        _instance ??= new Lazy<CsvDatabase<T>>(() => new CsvDatabase<T>(filename));
+
+        return _instance.Value;
+    }
+
 
     public IEnumerable<T> Read(int? limit = null)
     {
@@ -27,6 +43,8 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 
     public void Store(T record)
     {
+
+
         var config = new CsvConfiguration(CultureInfo.InvariantCulture)
         {
             HasHeaderRecord = false
