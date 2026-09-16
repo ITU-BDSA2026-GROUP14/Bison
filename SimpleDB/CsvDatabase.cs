@@ -4,8 +4,9 @@ using System.Runtime.ConstrainedExecution;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-
 namespace SimpleDB;
+
+// singleton paddon: https://csharpindepth.com/Articles/Singleton
 
 public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 {
