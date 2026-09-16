@@ -21,8 +21,8 @@ public class Program
         // rootCommand.Options.Add(fileOption);
 
         // Parsh dbs
-        CsvDatabase<Observation> obs_db = CsvDatabase<Observation>.GetInstance("bison_observe_cli_db_csv");
-        CsvDatabase<Comment> cmt_db = CsvDatabase<Comment>.GetInstance("bison_comment_cli_db_csv");
+        CsvDatabase<Observation> obs_db = CsvDatabase<Observation>.GetInstance("bison_observe_cli_db.csv");
+        CsvDatabase<Comment> cmt_db = CsvDatabase<Comment>.GetInstance("bison_comment_cli_db.csv");
 
         int idCount = obs_db.Read().ToList().Count;
 
