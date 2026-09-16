@@ -23,9 +23,9 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
     // Singleton pattern: checks if an instance already exists, if not, creates a new one.
     // Note: Multiple instances of the same class with different generic types can exist.
     // E.g., CsvDatabase<Observation> and CsvDatabase<Comment> will not return the same instance.
-    public static CsvDatabase<T> GetInstance(string _filename)
+    public static CsvDatabase<T> GetInstance(string filename)
     {
-        _instance ??= new Lazy<CsvDatabase<T>>(() => new CsvDatabase<T>(_filename));
+        _instance ??= new Lazy<CsvDatabase<T>>(() => new CsvDatabase<T>(filename));
 
         return _instance.Value;
     }
