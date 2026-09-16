@@ -1,33 +1,26 @@
-namespace Bison.Tests;
+
 
 public class BisonUnitTest
 {
     [Fact]
-    public void DoesProgramOutputObservations()
+    public void CommentIdErrorTest()
     {
-        // Arrange
         var originalOut = Console.Out;
         using var writer = new StringWriter();
         Console.SetOut(writer);
 
-
         try
         {
             // Act
-            Program.Main(new[] { "read" });
+            Program.Main(new[] { "comment", "100000", "test" });
 
             // Assert
-            Assert.Contains("mivh", writer.ToString());
+            Assert.Contains("comment id must match a bison observation id", writer.ToString());
         }
         finally
         {
             Console.SetOut(originalOut);
         }
-    }
-
-    [Fact]
-    public void DoesProgramStoreObservations()
-    {
 
     }
 }
