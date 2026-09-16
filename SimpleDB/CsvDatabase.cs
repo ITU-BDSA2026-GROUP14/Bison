@@ -15,9 +15,9 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
     private static Lazy<CsvDatabase<T>>? _instance;
     private readonly string filename;
 
-    private CsvDatabase(string _filename)
+    private CsvDatabase(string filename)
     {
-        filename = _filename;
+        this.filename = filename;
     }
 
     // Singleton pattern: checks if an instance already exists, if not, creates a new one.
@@ -33,7 +33,7 @@ public sealed class CsvDatabase<T> : IDatabaseRepository<T>
 
     public IEnumerable<T> Read(int? limit = null)
     {
-        using (var reader = new StreamReader("bison_observe_cli_db-csv"))
+        using (var reader = new StreamReader(filename))
         using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
         {
             var records = csv.GetRecords<T>();
