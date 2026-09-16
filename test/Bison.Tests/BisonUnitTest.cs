@@ -21,6 +21,5 @@ public class BisonUnitTest
         {
             Console.SetOut(originalOut);
         }
-
     }
 }
