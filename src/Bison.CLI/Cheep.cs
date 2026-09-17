@@ -1,6 +1,6 @@
 using System.Globalization;
 
-public abstract record Cheep(string Author, string Message, long Timestamp)
+public abstract record Cheep(int Id, string Author, string Message, long Timestamp)
 {
     public override string ToString()
     {

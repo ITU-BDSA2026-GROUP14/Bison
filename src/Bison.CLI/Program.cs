@@ -21,28 +21,33 @@ public class Program
         // rootCommand.Options.Add(fileOption);
 
         // Parsh dbs
-        CsvDatabase<Observation> obs_db = CsvDatabase<Observation>.GetInstance("src/Bison.CLI/bison_observe_cli_db.csv");
-        CsvDatabase<Comment> cmt_db = CsvDatabase<Comment>.GetInstance("src/Bison.CLI/bison_comment_cli_db.csv");
+        // path right now does not work if its used in the wrong dir
+        CsvDatabase<Observation> obs_db = CsvDatabase<Observation>.GetInstance("bison_observe_cli_db.csv");
+        CsvDatabase<Comment> cmt_db = CsvDatabase<Comment>.GetInstance("bison_comment_cli_db.csv");
 
         int idCount = obs_db.Read().ToList().Count;
 
         RootCommand rootCommand = new("Animal observation portal");
 
-        // observe <message> 
+        // observe <message> <location> 
         Command observeCommand = new Command("observe", "Store a new bison observation to CSV file");
         var observerMessage = new Argument<string>("message");
+        var observerLocation = new Argument<string>("location");
         observeCommand.Arguments.Add(observerMessage);
+        observeCommand.Arguments.Add(observerLocation);
         observeCommand.SetAction(parseResult =>
         {
             var message = parseResult.GetValue(observerMessage);
+            var location = parseResult.GetValue(observerLocation);
 
-            if (message != null)
+            if (message != null && location != null)
             {
                 obs_db.Store(new Observation(
                     Id: idCount++,
                     Author: Environment.UserName,
                     Message: message,
-                    Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                    Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    Location: location
                     ));
             }
             else
