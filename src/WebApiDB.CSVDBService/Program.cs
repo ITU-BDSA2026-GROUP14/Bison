@@ -1,7 +1,7 @@
 // Prepare DB
 using SimpleDB;
 
-CsvDatabase<Observation> obsDb = CsvDatabase<Observation>.GetInstance("../Bison.CLI/bison_observe_cli_db.csv");
+CsvDatabase<UniqueObservation> obsDb = CsvDatabase<UniqueObservation>.GetInstance("../Bison.CLI/bison_observe_cli_db.csv");
 CsvDatabase<Comment> comDb = CsvDatabase<Comment>.GetInstance("../Bison.CLI/bison_comment_cli_db.csv");
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,42 +9,46 @@ var app = builder.Build();
 
 // HTTP Get Requests
 app.MapGet("/observations", () => obsDb.Read());
-app.MapGet("/Comments", (int id) => getComments(id));
+app.MapGet("/comments", (int id) => getComments(id));
 
 // HTTP Post Requests
-app.MapPost("/observation", (Observation obs) => getObservation(obs));
-app.MapPost("/comment", (Comment obs) => getComment(obs));
+app.MapPost("/observation", (UniqueObservation obs) => postObservation(obs));
+app.MapPost("/comment", (Comment obs) => postComment(obs));
 
+bool observationExists(int id)
+{
+    return obsDb.Read().Any(o => o.Id == id);
+}
 
+IResult getComments(int id)
+{
+    if (!observationExists(id))
+    {
+        return Results.NotFound($"Observation with ID {id} not found.");
+    }
+    var comments = comDb.Read().Where(c => c.Id == id);
+    return Results.Ok(comments);
+}
 
 // Helper methods
-IEnumerable<Comment> getComments(int id)
+UniqueObservation postObservation(UniqueObservation obs)
 {
-    IEnumerable<Comment> comments = comDb.Read();
-    var tmp = new List<Comment>(); ;
+    var observations = obsDb.Read().ToList();
+    int nextId = observations.Count == 0 ? 0 : observations.Max(o => o.Id) + 1; //biggest id + 1
 
-    var idProperty = typeof(Comment).GetProperty("Id");
+    var newObs = obs with { Id = nextId }; // copy of obs with the server-generated ID
+    obsDb.Store(newObs);
+    return newObs;
+}
 
-    foreach (var o in comments)
+IResult postComment(Comment comment)
+{
+    if (!observationExists(comment.Id))
     {
-        if ((int?)idProperty?.GetValue(o) == id)
-        {
-            tmp.Add(o);
-        }
+        return Results.NotFound($"Observation with ID {comment.Id} not found.");
     }
-    return tmp;
-}
-
-Observation getObservation(Observation obs)
-{
-    obsDb.Store(obs);
-    return obs;
-}
-
-Comment getComment(Comment obs)
-{
-    comDb.Store(obs);
-    return obs;
+    comDb.Store(comment);
+    return Results.Ok(comment);
 }
 
 app.Run();

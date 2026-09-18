@@ -10,7 +10,7 @@ public class IntegrationTest
     [Fact]
     public void DatabaseReturnsRecords()
     {
-        var db = CsvDatabase<Observation>.GetInstance("testData/o.csv");
+        var db = CsvDatabase<UniqueObservation>.GetInstance("testData/o.csv");
 
         var records = db.Read().ToList();
 
@@ -23,9 +23,9 @@ public class IntegrationTest
     [Fact]
     public void DatabaseReturnStoredRecord()
     {
-        CsvDatabase<Observation> db = CsvDatabase<Observation>.GetInstance("testData/o.csv");
+        CsvDatabase<UniqueObservation> db = CsvDatabase<UniqueObservation>.GetInstance("testData/o.csv");
 
-        var ob = new Observation(
+        var ob = new UniqueObservation(
                 Id: 67,
                 Author: "test",
                 Message: "message",
@@ -35,7 +35,7 @@ public class IntegrationTest
 
         db.Store(ob);
 
-        List<Observation> records = db.Read().ToList();
+        List<UniqueObservation> records = db.Read().ToList();
 
         var ob2 = records.Last();
 
