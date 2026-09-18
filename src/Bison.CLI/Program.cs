@@ -49,9 +49,7 @@ public class Program
                     Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                     Location: location
                     ));
-            }
-            else
-            {
+            } else {
                 Console.WriteLine("need a message");
             }
         });
