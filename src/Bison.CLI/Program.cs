@@ -5,6 +5,8 @@ using SimpleDB;
 using System.CommandLine;
 using System.Data.Common;
 using CsvHelper.Configuration.Attributes;
+using System.Net.Http.Json;
+using System.Net;
 
 
 public class Program
@@ -13,20 +15,12 @@ public class Program
 
     public static void Main(string[] args)
     {
-        // Option<bool> readOption = new("--read", "--r") { Description = "Reads observations from CSV file" };
-        // Option<string> observeOption = new("--observe", "--obs") { Description = "Store a new observation to CSV file" };
+        // Initialize DB connections
+        var baseURL = "http://localhost:5189";
+        using HttpClient client = new();
+        client.BaseAddress = new Uri(baseURL);
 
-        // rootCommand.Options.Add(readOption);
-        // rootCommand.Options.Add(storeOption);
-        // rootCommand.Options.Add(fileOption);
-
-        // Parsh dbs
-        // path right now does not work if its used in the wrong dir
-        CsvDatabase<Observation> obs_db = CsvDatabase<Observation>.GetInstance("bison_observe_cli_db.csv");
-        CsvDatabase<Comment> cmt_db = CsvDatabase<Comment>.GetInstance("bison_comment_cli_db.csv");
-
-        int idCount = obs_db.Read().ToList().Count;
-
+        // Initiailize CLI command tool
         RootCommand rootCommand = new("Animal observation portal");
 
         // observe <message> <location> 
@@ -35,22 +29,26 @@ public class Program
         var observerLocation = new Argument<string>("location");
         observeCommand.Arguments.Add(observerMessage);
         observeCommand.Arguments.Add(observerLocation);
-        observeCommand.SetAction(parseResult =>
+        observeCommand.SetAction(async parseResult =>
         {
             var message = parseResult.GetValue(observerMessage);
             var location = parseResult.GetValue(observerLocation);
 
             if (message != null && location != null)
             {
-                obs_db.Store(new Observation(
-                    Id: idCount++,
+                Observation observation = new Observation(
+                    // TODO: Should not provide id. Web API should determine id automatically.
                     Author: Environment.UserName,
                     Message: message,
                     Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                     Location: location
-                    ));
-            } else {
-                Console.WriteLine("need a message");
+                    );
+
+                var response = await client.PostAsJsonAsync<Observation>("/observation", observation);
+            }
+            else
+            {
+                Console.WriteLine("need a message and location");
             }
         });
         rootCommand.Subcommands.Add(observeCommand);
@@ -62,23 +60,31 @@ public class Program
         var commentId = new Argument<int>("id");
         commentCommand.Arguments.Add(commentMessage);
         commentCommand.Arguments.Add(commentId);
-        commentCommand.SetAction(parseResult =>
+        commentCommand.SetAction(async parseResult =>
         {
             var id = parseResult.GetValue(commentId);
             var message = parseResult.GetValue(commentMessage);
 
-            if (id <= idCount && message != null)
+            if (message != null || message.Trim().Length == 0)
             {
-                cmt_db.Store(new Comment(
+                Comment comment = new Comment(
                     Id: id,
                     Author: Environment.UserName,
                     Message: message,
                     Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-                ));
+                );
+
+                var response = await client.PostAsJsonAsync<Comment>("/comment", comment);
+
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    // TODO: Web API must throw error if the id doesn't match any in the CsvDatabase. This must be implemented in database. Google which errorcode is best.
+                    Console.WriteLine("Observation does not exist with that id.");
+                }
             }
             else
             {
-                Console.WriteLine("comment id must match a bison observation id");
+                Console.WriteLine("You must provide a message.");
             }
         }
         );
@@ -86,7 +92,13 @@ public class Program
 
         // read 
         Command readCommand = new Command("read", "Reads observations from CSV file");
-        readCommand.SetAction(parseResult => UserInterface<Observation>.PrintObservations(obs_db.Read()));
+        readCommand.SetAction(async parseResult =>
+        {
+            var response = await client.GetFromJsonAsync<Observation[]>("/observations");
+            // UserInterface<Observation>.PrintObservations(obs_db.Read())
+            // TODO: Add check to see if response is healthy. Then print with headers and pretty formatting.
+            Console.Write(response);
+        });
         rootCommand.Subcommands.Add(readCommand);
 
         //discuss <id>
