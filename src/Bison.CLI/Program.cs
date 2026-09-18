@@ -11,9 +11,7 @@ using System.Net;
 
 public class Program
 {
-    // static CsvDatabase<Cheep> db = new CsvDatabase<Cheep>("bison_observe_cli_db.csv");
-
-    public static void Main(string[] args)
+    public static int Main(string[] args)
     {
         // Initialize DB connections
         var baseURL = "http://localhost:5189";
@@ -36,15 +34,17 @@ public class Program
 
             if (message != null && location != null)
             {
-                Observation observation = new Observation(
-                    // TODO: Should not provide id. Web API should determine id automatically.
+                GenericObservation observation = new
+                (
                     Author: Environment.UserName,
                     Message: message,
                     Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                     Location: location
-                    );
+                );
 
-                var response = await client.PostAsJsonAsync<Observation>("/observation", observation);
+                var response = await client.PostAsJsonAsync<GenericObservation>("/observation", observation);
+                var created = await response.Content.ReadFromJsonAsync<UniqueObservation>();
+                Console.WriteLine($"Observation created with id: {created?.Id}");
             }
             else
             {
@@ -65,39 +65,43 @@ public class Program
             var id = parseResult.GetValue(commentId);
             var message = parseResult.GetValue(commentMessage);
 
-            if (message != null || message.Trim().Length == 0)
+            if (string.IsNullOrEmpty(message))
             {
-                Comment comment = new Comment(
-                    Id: id,
-                    Author: Environment.UserName,
-                    Message: message,
-                    Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-                );
-
-                var response = await client.PostAsJsonAsync<Comment>("/comment", comment);
-
-                if (response.StatusCode == HttpStatusCode.NotFound)
-                {
-                    // TODO: Web API must throw error if the id doesn't match any in the CsvDatabase. This must be implemented in database. Google which errorcode is best.
-                    Console.WriteLine("Observation does not exist with that id.");
-                }
+                Console.Error.WriteLine("Error: You must provide a message.");
+                return 1;
             }
-            else
+            Comment comment = new Comment(
+                Id: id,
+                Author: Environment.UserName,
+                Message: message,
+                Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+            );
+
+            var response = await client.PostAsJsonAsync<Comment>("/comment", comment);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                Console.WriteLine("You must provide a message.");
+                // TODO: Web API must throw error if the id doesn't match any in the CsvDatabase. This must be implemented in database. Google which errorcode is best.
+                Console.Error.WriteLine($"Error: Observation with id {id} does not exist.");
+                return 1;
             }
-        }
-        );
+
+            Console.WriteLine($"Comment created for observation with id: {id}");
+            return 0;
+        });
+
+
         rootCommand.Subcommands.Add(commentCommand);
 
         // read 
         Command readCommand = new Command("read", "Reads observations from CSV file");
         readCommand.SetAction(async parseResult =>
         {
-            var response = await client.GetFromJsonAsync<Observation[]>("/observations");
+            var response = await client.GetFromJsonAsync<UniqueObservation[]>("/observations");
             // UserInterface<Observation>.PrintObservations(obs_db.Read())
             // TODO: Add check to see if response is healthy. Then print with headers and pretty formatting.
-            Console.Write(response);
+            UserInterface<UniqueObservation>.PrintObservations(response);
+            // Console.Write(response);
         });
         rootCommand.Subcommands.Add(readCommand);
 
@@ -105,89 +109,28 @@ public class Program
         Command discussCommand = new Command("discuss", "Reads comments on bison observation");
         Argument<int> discussId = new Argument<int>("id");
         discussCommand.Arguments.Add(discussId);
-        discussCommand.SetAction(parseResult =>
+        discussCommand.SetAction(async parseResult =>
         {
             var id = parseResult.GetValue(discussId);
-            if (id <= idCount)
+            var response = await client.GetAsync($"/comments?id={id}");
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                if (cmt_db.Read().ToList().Count > 0)
-                {
-                    UserInterface<Comment>.PrintComments(cmt_db.Read(), id);
-                }
-                else
-                {
-                    Console.WriteLine("No comments");
-                }
+                Console.Error.WriteLine($"Error: Observation with id {id} does not exist.");
+                return 1;
             }
-            else
+            var comments = await response.Content.ReadFromJsonAsync<Comment[]>();
+            if (comments == null || comments.Length == 0)
             {
-                Console.WriteLine("Observation does not exist");
+                Console.WriteLine("No comments");
+                return 0;
             }
+            UserInterface<Comment>.PrintObservations(comments);
+            return 0;
         });
         rootCommand.Subcommands.Add(discussCommand);
 
-        rootCommand.Parse(args).Invoke();
-
-        // obsreve command
-        // rootCommand.SetAction(parseResult =>
-        // {
-
-        //     // Initialize database
-        //     string? filename = parseResult.GetValue(fileOption);
-        //     if (filename is null)
-        //     {
-        //         Console.Error.WriteLine("A filename is required.");
-        //         return;
-        //     }
-        //     bool isRead = parseResult.GetValue(readOption);
-        //     string? isStore = parseResult.GetValue(storeOption);
-
-        //     if (isRead && isStore is not null)
-        //     {
-        //         Console.Error.WriteLine("You can't read and store at the same time.");
-        //         return;
-        //     }
-
-        //     if (isRead)
-        //     {
-        //         UserInterface<Cheep>.PrintObservations(.Read());
-        //         return;
-        //     }
-
-        //     if (isStore is not null)
-        //     {
-        //         obsdb.Store(new Observation(
-        //             Id: idCount++,
-        //             Author: Environment.UserName,
-        //             Message: args[1],
-        //             Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-        //         ));
-        //         return;
-        //     }
-
-        //     Console.WriteLine("No commands we're given. Use --help for assistance.");
-        //     return;
-        // });
-
-
-
-
-
-        // // Read from CSV
-        // if (args.Length > 0 && args[0] == "read")
-        // {
-        //     UserInterface<Cheep>.PrintObservations(db.Read());
-        // }
-
-        // Write to CSV
-        // if (args.Length > 0 && args[0] == "observe" && args.Length > 1)
-        // {
-        //     db.Store(new Cheep(
-        //             Author: Environment.UserName,
-        //             Observation: args[1],
-        //             Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-        //         ));
-        // }
+        return rootCommand.Parse(args).Invoke();
     }
 }
 
