@@ -114,7 +114,25 @@ public class Program
         });
         rootCommand.Subcommands.Add(discussCommand);
 
+        //location <Location>
+        Command locationCommand = new Command("location", "Reads all observations made at a given location");
+        Argument<string> locationArg = new Argument<string>("location");
+        locationCommand.Arguments.Add(locationArg);
+        locationCommand.SetAction(parseResult =>
+        {
+            var location = parseResult.GetValue(locationArg);
+            var matches = obs_db.Read().Where(o => string.Equals(o.Location, location, StringComparison.OrdinalIgnoreCase));
+            
+            if(matches.Any()){
+                UserInterface<Observation>.PrintObservations(matches);
+            }else{
+                Console.WriteLine("No observations on this location");
+            }
+        });
+        rootCommand.Subcommands.Add(locationCommand);
+
         rootCommand.Parse(args).Invoke();
+
 
         // obsreve command
         // rootCommand.SetAction(parseResult =>

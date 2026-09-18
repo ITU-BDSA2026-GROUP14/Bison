@@ -26,11 +26,11 @@
 
   <ItemGroup>
   <None Include="../../src/Bison.CLI/bison_observe_cli_db.csv"
-        Link="src/Bison.CLI/bison_observe_cli_db.csv"
+        Link="bison_observe_cli_db.csv"
         CopyToOutputDirectory="PreserveNewest" />
 
   <None Include="../../src/Bison.CLI/bison_comment_cli_db.csv"
-        Link="src/Bison.CLI/bison_comment_cli_db.csv"
+        Link="bison_comment_cli_db.csv"
         CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>  
 
