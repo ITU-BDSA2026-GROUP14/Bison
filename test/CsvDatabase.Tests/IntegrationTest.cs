@@ -23,7 +23,8 @@ public class IntegrationTest
                 Id: 67,
                 Author: "test",
                 Message: "message",
-                Timestamp: 6767
+                Timestamp: 6767,
+                Location: "location"
              );
 
         db.Store(ob);
