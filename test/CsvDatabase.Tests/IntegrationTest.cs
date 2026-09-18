@@ -4,6 +4,9 @@ namespace CsvDatabase.Tests;
 
 public class IntegrationTest
 {
+    /**
+        * Test that the CsvDatabase correctly returns records from the CSV file.
+    */
     [Fact]
     public void DatabaseReturnsRecords()
     {
@@ -14,6 +17,9 @@ public class IntegrationTest
         Assert.NotEmpty(records);
     }
 
+    /**
+        * Test that the CsvDatabase correctly stores and retrieves an Observation record.
+    */
     [Fact]
     public void DatabaseReturnStoredRecord()
     {
@@ -23,7 +29,8 @@ public class IntegrationTest
                 Id: 67,
                 Author: "test",
                 Message: "message",
-                Timestamp: 6767
+                Timestamp: 6767,
+                Location: "location"
              );
 
         db.Store(ob);
