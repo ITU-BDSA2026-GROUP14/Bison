@@ -23,7 +23,7 @@ jobs:
       run: dotnet restore Bison.CLI
       
     - name: Build
-      run: dotnet build Bison.CLI --no-restore
+      run: dotnet build src/Bison.CLI --no-restore
       
     - name: Test
-      run: dotnet test Bison.CLI --no-build --verbosity normal
+      run: dotnet test src/Bison.CLI --no-build --verbosity normal
