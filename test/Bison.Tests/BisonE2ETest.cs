@@ -3,7 +3,9 @@ using SimpleDB;
 
 public class BisonE2ETests()
 {
-
+    /**
+        * Test that the "read" command correctly outputs the expected author name "mivh" to the console.
+    */
     [Fact]
     public void CommandReadTest()
     {
@@ -26,6 +28,9 @@ public class BisonE2ETests()
         }
     }
 
+    /**
+        * Test that the "comment" command correctly outputs the expected author name "mivh" to the console.
+    */
     [Fact]
     public void CommandObservationTest()
     {

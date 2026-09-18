@@ -2,6 +2,9 @@
 
 public class BisonUnitTest
 {
+    /**
+        * This test checks that the comment command returns an error message when provided with a comment ID that does not match any existing bison observation ID.
+    */
     [Fact]
     public void CommentIdErrorTest()
     {
@@ -23,6 +26,9 @@ public class BisonUnitTest
         }
     }
 
+    /**
+        * This test creates a Comment instance with a Unix timestamp of 0 and checks that the output string matches the expected format.
+    */
     [Fact]
     public void UnixTimestampTest()
     {
@@ -41,6 +47,10 @@ public class BisonUnitTest
         Assert.Equal("unix test @ 01/01/70 00:00:00: unix timestamp test", result);
     }
 
+    /**
+        * Test that the PrintComments method correctly filters comments by the specified observation ID.
+        * This test creates a list of comments with different IDs and checks that only the comment with the matching ID is printed.
+    */
     [Fact]
     public void CommentsMatchingIdTest()
     {
