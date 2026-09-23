@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using SimpleDB;
 using System.Text;
+using Bison.Taxonomy;
 
 
 public class BisonE2ETests()
@@ -107,6 +108,20 @@ public class BisonE2ETests()
 
     // helper methods 
     static readonly char[] FuzzString = { ',', '"', '\'', '\n', '\r', '\t', '\\', '=', ';', '\0'};
+    static readonly string[] FuzzProposal = {
+        "Årefodede",
+        "Hejrer",
+        "Fregatfugle",
+        "Pelikaner",
+        "Skarver",
+        "Suler",
+        "Ibiser & skestorke",
+        "Sølvhejre",
+        "Fiskehejre",
+        "Kohejre",
+        "Purpurhejre",
+        "Tophejre"
+    };
 
     static string RandomString(Random rng, int maxLen = 50)
     {
@@ -121,6 +136,7 @@ public class BisonE2ETests()
         }
         return sb.ToString();
     }
+
 
     /// <summary>
     /// E2E Fuzz testing on observation command using random string input
@@ -209,6 +225,58 @@ public class BisonE2ETests()
                 var match = all!.Any(a => a.Message == exp.Message && a.Author == exp.Author);
                 Assert.True(match,
                     $"comment on observation {exp.Id} missing after round-trip (seed {seed})");
+            }
+        }
+    }
+
+    /// <summary>
+    /// E2E Fuzz testing on proposal endpoint using random taxa from the taxonomy.
+    /// </summary>
+    [Fact]
+    [Trait("Category", "Fuzz")]
+    public async Task FuzzE2EProposal()
+    {
+        // Setup
+        var baseURL = "http://localhost:5189";
+        using HttpClient client = new();
+        client.BaseAddress = new Uri(baseURL);
+
+        TaxonTree taxonomy = TaxonTree.LoadFromEmbeddedResource();
+
+        var seed = 6767;
+        var rng = new Random(seed);
+        var expected = new List<Proposal>();
+
+        for (int i = 0; i < 5; i++)
+        {
+            var name = FuzzProposal[rng.Next(FuzzProposal.Length)];
+            var tax = taxonomy.GetByVernacularName(name);
+            Assert.True(tax is not null, $"taxon '{name}' not found in taxonomy");
+
+            var proposal = new Proposal(
+                ObservationId: rng.Next(1, 10),
+                Author: RandomString(rng),
+                TaxonId: tax!.TaxonId,
+                Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+            );
+
+            var response = await client.PostAsJsonAsync("/proposal", proposal);
+            Assert.True(response.IsSuccessStatusCode,
+                $"POST failed at i={i} (seed {seed}) for observation {proposal.ObservationId}: {response.StatusCode}");
+
+            expected.Add(proposal);
+        }
+
+        // Verify: group by observation id so we only GET once per observation
+        foreach (var group in expected.GroupBy(p => p.ObservationId))
+        {
+            var all = await client.GetFromJsonAsync<Proposal[]>($"/proposals?id={group.Key}");
+
+            foreach (var exp in group)
+            {
+                var match = all!.Any(a => a.TaxonId == exp.TaxonId && a.Author == exp.Author);
+                Assert.True(match,
+                    $"proposal on observation {exp.ObservationId} missing after round-trip (seed {seed})");
             }
         }
     }
