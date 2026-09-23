@@ -4,6 +4,8 @@ using Bison.Taxonomy;
 
 TaxonTree taxonomy = TaxonTree.LoadFromEmbeddedResource();
 Console.WriteLine($"Loaded {taxonomy.Count} taxa");
+
+CsvDatabase<Proposal> propDb = CsvDatabase<Proposal>.GetInstance("../Bison.CLI/bison_proposal_cli_db.csv");
 CsvDatabase<UniqueObservation> obsDb = CsvDatabase<UniqueObservation>.GetInstance("../Bison.CLI/bison_observe_cli_db.csv");
 CsvDatabase<Comment> comDb = CsvDatabase<Comment>.GetInstance("../Bison.CLI/bison_comment_cli_db.csv");
 
@@ -13,10 +15,12 @@ var app = builder.Build();
 // HTTP Get Requests
 app.MapGet("/observations", () => obsDb.Read());
 app.MapGet("/comments", (int id) => getComments(id));
+app.MapGet("/proposals", (int id) => getProposals(id));
 
 // HTTP Post Requests
 app.MapPost("/observation", (UniqueObservation obs) => postObservation(obs));
 app.MapPost("/comment", (Comment obs) => postComment(obs));
+app.MapPost("/proposal", (Proposal proposal) => postProposal(proposal));
 
 bool observationExists(int id)
 {
@@ -52,6 +56,32 @@ IResult postComment(Comment comment)
     }
     comDb.Store(comment);
     return Results.Ok(comment);
+}
+
+bool taxonExists(string taxonId)
+{
+    return taxonomy.GetById(taxonId) != null;
+}
+
+IResult getProposals(int id)
+{
+    if (!observationExists(id))
+    {
+        return Results.NotFound($"Observation with ID {id} not found.");
+    }
+    var proposals = propDb.Read().Where(p => p.ObservationId == id);
+    return Results.Ok(proposals);
+}
+
+IResult postProposal(Proposal proposal)
+{
+    //An unknown taxonId is not allowed, because the server must be able to validate it.
+    if (!observationExists(proposal.ObservationId) || !taxonExists(proposal.TaxonId))
+    {
+        return Results.NotFound($"Observation {proposal.ObservationId} or taxon {proposal.TaxonId} not found.");
+    }
+    propDb.Store(proposal);
+    return Results.Ok(proposal);
 }
 
 app.Run();

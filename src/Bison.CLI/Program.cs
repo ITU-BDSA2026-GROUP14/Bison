@@ -133,6 +133,65 @@ public class Program
         });
         rootCommand.Subcommands.Add(discussCommand);
 
+        Command proposeCommand = new Command("propose", "Propose a taxon for a bison observation");
+        var proposeTaxonId = new Argument<string>("taxonId");
+        var proposeId = new Argument<int>("id");
+        proposeCommand.Arguments.Add(proposeTaxonId);
+        proposeCommand.Arguments.Add(proposeId);
+        proposeCommand.SetAction(async parseResult =>
+        {
+            var id = parseResult.GetValue(proposeId);
+            var taxonId = parseResult.GetValue(proposeTaxonId);
+
+            if (string.IsNullOrWhiteSpace(taxonId))
+            {
+                Console.Error.WriteLine("Error: You must provide a taxonId.");
+                return 1;
+            }
+
+            Proposal proposal = new Proposal(
+                ObservationId: id,
+                Author: Environment.UserName,
+                TaxonId: taxonId,
+                Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+            );
+            var response = await client.PostAsJsonAsync<Proposal>("/proposal", proposal);
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                Console.Error.WriteLine($"Error: Observation with id {id} or taxon with id {taxonId} does not exist.");
+                return 1;
+            }
+
+            Console.WriteLine($"Proposal created for observation with id: {id}");
+            return 0;
+        });
+        rootCommand.Subcommands.Add(proposeCommand); 
+
+        Command proposalsCommand = new Command("proposals", "Reads taxon proposals on bison observation");
+        Argument<int> proposalsId = new Argument<int>("id");
+        proposalsCommand.Arguments.Add(proposalsId);
+        proposalsCommand.SetAction(async parseResult =>
+        {
+            var id = parseResult.GetValue(proposalsId);
+            var response = await client.GetAsync($"/proposals?id={id}");
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                Console.Error.WriteLine($"Error: Observation with id {id} does not exist.");
+                return 1;
+            }
+            var proposals = await response.Content.ReadFromJsonAsync<Proposal[]>();
+            if (proposals == null || proposals.Length == 0)
+            {
+                Console.WriteLine("No proposals");
+                return 0;
+            }
+            UserInterface<Proposal>.PrintObservations(proposals);
+            return 0;
+        });
+        rootCommand.Subcommands.Add(proposalsCommand);
+
         //location <Location>
         Command locationCommand = new Command("location", "Reads all observations made at a given location");
         Argument<string> locationArg = new Argument<string>("location");
