@@ -50,6 +50,8 @@ public class Program
             {
                 Console.WriteLine("need a message and location");
             }
+
+            return 0;
         });
         rootCommand.Subcommands.Add(observeCommand);
 
@@ -102,6 +104,7 @@ public class Program
             // TODO: Add check to see if response is healthy. Then print with headers and pretty formatting.
             UserInterface<UniqueObservation>.PrintObservations(response);
             // Console.Write(response);
+            return 0;
         });
         rootCommand.Subcommands.Add(readCommand);
 
@@ -134,20 +137,23 @@ public class Program
         Command locationCommand = new Command("location", "Reads all observations made at a given location");
         Argument<string> locationArg = new Argument<string>("location");
         locationCommand.Arguments.Add(locationArg);
-        locationCommand.SetAction(parseResult =>
+        locationCommand.SetAction(async parseResult =>
         {
             var location = parseResult.GetValue(locationArg);
-            var matches = obs_db.Read().Where(o => string.Equals(o.Location, location, StringComparison.OrdinalIgnoreCase));
+            var response = await client.GetFromJsonAsync<UniqueObservation[]>("/observations");
             
-            if(matches.Any()){
-                UserInterface<Observation>.PrintObservations(matches);
+            var matches = response?.Where(o => string.Equals(o.Location, location, StringComparison.OrdinalIgnoreCase));
+
+            if(matches != null && matches.Any()){
+                UserInterface<UniqueObservation>.PrintObservations(matches);
             }else{
                 Console.WriteLine("No observations on this location");
             }
+
+            return 0;
         });
         rootCommand.Subcommands.Add(locationCommand);
 
-        rootCommand.Parse(args).Invoke();
+        return rootCommand.Parse(args).Invoke();
     }
 }
-
