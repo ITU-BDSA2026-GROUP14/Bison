@@ -1,6 +1,9 @@
 // Prepare DB
 using SimpleDB;
+using Bison.Taxonomy;
 
+TaxonTree taxonomy = TaxonTree.LoadFromEmbeddedResource();
+Console.WriteLine($"Loaded {taxonomy.Count} taxa");
 CsvDatabase<Observation> obsDb = CsvDatabase<Observation>.GetInstance("../Bison.CLI/bison_observe_cli_db.csv");
 CsvDatabase<Comment> comDb = CsvDatabase<Comment>.GetInstance("../Bison.CLI/bison_comment_cli_db.csv");
 
