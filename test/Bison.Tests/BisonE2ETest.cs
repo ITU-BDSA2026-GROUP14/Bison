@@ -1,6 +1,7 @@
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using SimpleDB;
+using System.Text;
 
 
 public class BisonE2ETests()
@@ -101,6 +102,114 @@ public class BisonE2ETests()
         finally
         {
             Console.SetOut(originalOut);
+        }
+    }
+
+    // helper methods 
+    static readonly char[] FuzzString = { ',', '"', '\'', '\n', '\r', '\t', '\\', '=', ';', '\0'};
+
+    static string RandomString(Random rng, int maxLen = 50)
+    {
+        var len = rng.Next(0, maxLen);
+        var sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++)
+        {
+            // 30% chance of a character that's likely to break something
+            sb.Append(rng.Next(100) < 30
+                ? FuzzString[rng.Next(FuzzString.Length)]
+                : (char)rng.Next(32, 127));
+        }
+        return sb.ToString();
+    }
+
+    /// <summary>
+    /// E2E Fuzz testing on observation command using random string input
+    /// </summary>
+    [Fact]
+    [Trait("Category", "Fuzz")]
+    public async Task FuzzE2EObservations() {
+
+        // Setup
+        var baseURL = "http://localhost:5189";
+        using HttpClient client = new();
+        client.BaseAddress = new Uri(baseURL);
+
+        var seed = 6767;
+        var rng = new Random(seed);
+        var expected = new List<UniqueObservation>();
+
+        for (int i = 0; i < 5; i++)
+        {
+            var obs = new GenericObservation(
+                Author: RandomString(rng), 
+                Message: RandomString(rng),
+                Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                Location: RandomString(rng)
+            );
+
+            var response = await client.PostAsJsonAsync("/observation", obs);
+
+            var created = await response.Content.ReadFromJsonAsync<UniqueObservation>();
+            expected.Add(created!);
+        }   
+
+        var all = await client.GetFromJsonAsync<UniqueObservation[]>("/observations");
+
+        foreach (var exp in expected)
+        {
+            // find matching id between actual and expected
+            var act = all!.SingleOrDefault(o => o.Id == exp.Id);
+            //see if aut, msg and loc match
+            Assert.True(act is not null, $"observation {exp.Id} missing after round-trip");
+            Assert.Equal(exp.Message, act!.Message);
+            Assert.Equal(exp.Author, act.Author);
+            Assert.Equal(exp.Location, act.Location);
+        }
+    }
+
+    /// <summary>
+    /// E2E Fuzz testing on comment endpoint using random string input.
+    /// </summary>
+    [Fact]
+    [Trait("Category", "Fuzz")]
+    public async Task FuzzE2EComment()
+    {
+        // Setup
+        var baseURL = "http://localhost:5189";
+        using HttpClient client = new();
+        client.BaseAddress = new Uri(baseURL);
+
+        var seed = 6767;
+        var rng = new Random(seed);
+        var expected = new List<Comment>();
+
+        for (int i = 0; i < 5; i++)
+        {
+            var cmt = new Comment(
+                Id: rng.Next(1, 10),
+                Author: RandomString(rng),
+                Message: RandomString(rng),
+                Timestamp: DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+            );
+
+            var response = await client.PostAsJsonAsync("/comment", cmt);
+            Assert.True(response.IsSuccessStatusCode,
+                $"POST failed at i={i} (seed {seed}) for observation {cmt.Id}: {response.StatusCode}");
+
+            expected.Add(cmt);
+        }
+
+        // Verify: group by observation id so we only GET once per observation
+        foreach (var group in expected.GroupBy(c => c.Id))
+        {
+            var all = await client.GetFromJsonAsync<Comment[]>($"/comments?id={group.Key}");
+
+            foreach (var exp in group)
+            {
+                var match = all!.Any(a => a.Message == exp.Message && a.Author == exp.Author);
+                Assert.True(match,
+                    $"comment on observation {exp.Id} missing after round-trip (seed {seed})");
+            }
         }
     }
 }
