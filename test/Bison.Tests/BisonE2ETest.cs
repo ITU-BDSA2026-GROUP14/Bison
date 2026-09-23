@@ -1,9 +1,13 @@
-
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using SimpleDB;
 
 
 public class BisonE2ETests()
 {
-
+    /**
+        * Test that the "read" command correctly outputs the expected author name "mivh" to the console.
+    */
     [Fact]
     public void CommandReadTest()
     {
@@ -26,16 +30,36 @@ public class BisonE2ETests()
         }
     }
 
+    /**
+        * Test that the "comment" command correctly outputs the expected author name "mivh" to the console.
+    */
     [Fact]
-    public void DoesProgramStoreObservations()
+    public async Task CommandObservationTest()
     {
+        // Setup
+        var baseURL = "http://localhost:5189";
+        using HttpClient client = new();
+        client.BaseAddress = new Uri(baseURL);
 
-    }
+        // Arrange
+        // var obsDb = CsvDatabase<UniqueObservation>.GetInstance("bison_observe_cli_db.csv");
+        // var countBefore = obsDb.Read().ToList().Count;
+        var responseBefore = await client.GetFromJsonAsync<IEnumerable<UniqueObservation>>("/observations");
 
-    [Fact]
-    public void CommandObserveteste2e()
-    {
+        int countBefore = responseBefore.ToList().Count();
 
+
+        // Act
+        Program.Main(new[] { "observe", "test message", "test location" });
+
+        // Assert
+        var responseAfter = await client.GetFromJsonAsync<IEnumerable<UniqueObservation>>("/observations");
+        var countAfter = responseAfter.ToList().Count();
+        Assert.Equal(countBefore + 1, countAfter);
+
+        var stored = responseAfter.Last();
+        Assert.Equal("test message", stored.Message);
+        Assert.Equal("test location", stored.Location);
     }
 
     /// <summary>

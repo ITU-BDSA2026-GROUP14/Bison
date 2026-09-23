@@ -3,7 +3,7 @@ feature:
 
 tests:
 - changed-files:
-  - any-glob-to-any-file: 'tests/*'
+  - any-glob-to-any-file: 'test/*'
 
 documentation:
 - changed-files:
