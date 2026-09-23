@@ -92,7 +92,6 @@ public class Program
             return 0;
         });
 
-
         rootCommand.Subcommands.Add(commentCommand);
 
         // read 
