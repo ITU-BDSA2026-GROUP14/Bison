@@ -23,6 +23,7 @@
     <ProjectReference Include="../../src/WebApiDB.CSVDBService/WebApiDB.CSVDBService.csproj" />
     <ProjectReference Include="../../src/Bison.CLI/Bison.CLI.csproj" />
     <ProjectReference Include="../../src/SimpleDB/SimpleDB.csproj" />
+    <ProjectReference Include="../../src/Bison.Taxonomy/Bison.Taxonomy.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +34,10 @@
   <None Include="../../src/Bison.CLI/bison_comment_cli_db.csv"
         Link="bison_comment_cli_db.csv"
         CopyToOutputDirectory="PreserveNewest" />
+  
+  <None Include="../../src/Bison.Taxonomy/taxon.csv"
+      Link="bison_comment_cli_db.csv"
+      CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>  
 
 
