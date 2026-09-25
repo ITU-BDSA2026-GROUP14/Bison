@@ -7,21 +7,21 @@ namespace Bison.Taxonomy;
 public class TaxonTree
 {
     //Look up a Taxon by its Id
-    private readonly Dictionary<string, Taxon> byId = new(); 
+    private readonly Dictionary<string, Taxon> byId = new();
 
 
     //Look up a Taxon by its Name (ignores upper/lower case)
-    private readonly Dictionary<string, Taxon> byVernacularName = new(StringComparer.OrdinalIgnoreCase); 
-   
-   //Look up a list of Taxons by their ParentId
-    private readonly Dictionary<string, List<Taxon>> childrenByParentId = new(); 
+    private readonly Dictionary<string, Taxon> byVernacularName = new(StringComparer.OrdinalIgnoreCase);
+
+    //Look up a list of Taxons by their ParentId
+    private readonly Dictionary<string, List<Taxon>> childrenByParentId = new();
 
     public TaxonTree(IEnumerable<Taxon> taxa)
     {
         foreach (var taxon in taxa)
         {
             byId[taxon.TaxonId] = taxon;
-            
+
             // Not every taxon has a Danish name
             if (taxon.VernacularName != "")
             {
