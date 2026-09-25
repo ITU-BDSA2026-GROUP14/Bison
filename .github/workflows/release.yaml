@@ -15,13 +15,13 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore
-        run: dotnet restore Bison.CLI/Bison.CLI.csproj
+        run: dotnet restore Bison.sln
 
       - name: Build
-        run: dotnet build Bison.CLI/Bison.CLI.csproj -c Release --no-restore
+        run: dotnet build Bison.sln -c Release --no-restore
 
       - name: Test
-        run: dotnet test Bison.CLI/Bison.CLI.csproj -c Release --no-build --verbosity normal
+        run: dotnet test Bison.sln -c Release --no-build --verbosity normal
 
       - name: Publish and zip Windows
         run: |
