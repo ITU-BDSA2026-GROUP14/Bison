@@ -5,9 +5,9 @@ using Bison.Taxonomy;
 TaxonTree taxonomy = TaxonTree.LoadFromEmbeddedResource();
 Console.WriteLine($"Loaded {taxonomy.Count} taxa");
 
-CsvDatabase<Proposal> propDb = CsvDatabase<Proposal>.GetInstance("../Bison.CLI/bison_proposal_cli_db.csv");
-CsvDatabase<UniqueObservation> obsDb = CsvDatabase<UniqueObservation>.GetInstance("../Bison.CLI/bison_observe_cli_db.csv");
-CsvDatabase<Comment> comDb = CsvDatabase<Comment>.GetInstance("../Bison.CLI/bison_comment_cli_db.csv");
+IDatabaseRepository<Proposal> propDb = CsvDatabase<Proposal>.GetInstance("../Bison.CLI/bison_proposal_cli_db.csv");
+IDatabaseRepository<UniqueObservation> obsDb = CsvDatabase<UniqueObservation>.GetInstance("../Bison.CLI/bison_observe_cli_db.csv");
+IDatabaseRepository<Comment> comDb = CsvDatabase<Comment>.GetInstance("../Bison.CLI/bison_comment_cli_db.csv");
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
