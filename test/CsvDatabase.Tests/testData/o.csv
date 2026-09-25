@@ -1,11 +1,11 @@
-Id,Author,Message,Timestamp
-0,mivh,Yooooooooooooooooooooo,1789042792
-1,mivh,Whatssss upppp,1789043346
-2,ropf,"A bird at DR Byen",1690891760
-3,adho,"I think that is a Heron at DR Byen",1690978778
-4,edka,"Ardea cinerea at DR Byen",1690979858
-5,dmkyh,"Heron at DR Byen",1787916063
-6,dmkyh,"Pidgeon at ITU",1787917192
-7,dmkyh,"Pidgeon at ITU",1787917366
-8,dmkyh,"Pidgeon at ITU",1787917901
-9,honningbolden,Oxe at ITU,1788523350
+Id,Author,Message,Timestamp,Location
+0,mivh,Yooooooooooooooooooooo,1789042792,ITU
+1,mivh,Whatssss upppp,1789043346,ITU
+2,ropf,"A bird at DR Byen",1690891760,ITU
+3,adho,"I think that is a Heron at DR Byen",1690978778,ITU
+4,edka,"Ardea cinerea at DR Byen",1690979858,ITU
+5,dmkyh,"Heron at DR Byen",1787916063,ITU
+6,dmkyh,"Pidgeon at ITU",1787917192,ITU
+7,dmkyh,"Pidgeon at ITU",1787917366,ITU
+8,dmkyh,"Pidgeon at ITU",1787917901,ITU
+9,honningbolden,Oxe at ITU,1788523350,ITU
