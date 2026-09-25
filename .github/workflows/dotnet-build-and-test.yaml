@@ -30,7 +30,7 @@ jobs:
         # Starts the WebAPI database. Project has already been built, so we're executing the build-file directly.
         # '> api.log' means we'll save the normal terminal output into a temporary file api.log, and '... 2>&1' means we'll also send stream 2 (errors) into stream 1 (normal output), ie. we're merging errors and normal output into the same file. This is necessary for debugging.
 
-        dotnet src/WebApiDB.CSVDBService/bin/Debug/net8.0/WebApiDB.CSVDBService.dll --urls http://localhost:5189 > api.log 2>&1 &
+        (cd src/WebApiDB.CSVDBService && dotnet bin/Debug/net8.0/WebApiDB.CSVDBService.dll --urls http://localhost:5189 > ../../api.log 2>&1 &)
 
         for i in $(seq 1 30); do
           # After the API has started, we're running a loop 30 times. In this loop we'll try to call the /observations endpoint once every second.
