@@ -1,6 +1,7 @@
 using Microsoft.Data.Sqlite;
 public class DBFacade
 {
+    private readonly int pageSize = 32;
     private readonly string _connectionString;
 
     public DBFacade(string dbFilePath)
@@ -11,27 +12,29 @@ public class DBFacade
         }.ToString();
     }
 
-    public List<ObservationViewModel> GetObservations()
+    public List<ObservationViewModel> GetObservations(int page)
     {
         const string sql = @"
         SELECT u.username, o.text, o.pub_date
         FROM observation o
         JOIN user u ON o.author_id = u.user_id
-        ORDER BY o.pub_date DESC";
+        ORDER BY o.pub_date DESC
+        LIMIT $limit OFFSET $offset"; 
 
-        return RunQuery(sql);
+        RunQuery(sql, page);
     }
 
-    public List<ObservationViewModel> GetObservationsFromAuthor(string author)
+    public List<ObservationViewModel> GetObservationsFromAuthor(string author, int page)
     {
         const string sql = @"
         SELECT u.username, o.text, o.pub_date
         FROM observation o
         JOIN user u ON o.author_id = u.user_id
         WHERE u.username = @author
-        ORDER BY o.pub_date DESC";
+        ORDER BY o.pub_date DESC
+        LIMIT $limit OFFSET $offset";
 
-        return RunQuery(sql, ("@author", author));
+        return RunQuery(sql, page, ("@author", author));
     }
 
     private static string UnixTimeStampToDateTimeString(double unixTimeStamp)
@@ -42,7 +45,7 @@ public class DBFacade
         return dateTime.ToString("MM/dd/yy H:mm:ss");
     }
 
-    private List<ObservationViewModel> RunQuery(string sql, params (string Name, object Value)[] parameters)
+    private List<ObservationViewModel> RunQuery(string sql, int page, params (string Name, object Value)[] parameters)
     {
         var result = new List<ObservationViewModel>();
 
@@ -51,6 +54,8 @@ public class DBFacade
 
         using var command = connection.CreateCommand();
         command.CommandText = sql;
+        command.AddWithValue.Parameters("$limit", pageSize);
+        command.AddWithValue.Parameters("$offset", (page - 1) * pageSize)
         foreach (var (name, value) in parameters)
         {
             command.Parameters.AddWithValue(name, value);
@@ -68,6 +73,4 @@ public class DBFacade
 
         return result;
     }
-
-
 }
