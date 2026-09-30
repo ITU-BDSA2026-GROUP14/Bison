@@ -55,8 +55,8 @@ public class DBFacade
         using var command = connection.CreateCommand();
         command.CommandText = sql;
         command.AddWithValue.Parameters("$limit", pageSize);
-        command.AddWithValue.Parameters("$offset", (page - 1) * pageSize)
-        foreach (var (name, value) in parameters)
+        command.AddWithValue.Parameters("$offset", (page - 1) * pageSize);
+        foreach (var (name, value) in parameters);
         {
             command.Parameters.AddWithValue(name, value);
         }
