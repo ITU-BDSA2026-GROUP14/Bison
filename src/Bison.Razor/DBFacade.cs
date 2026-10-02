@@ -1,7 +1,8 @@
+using System.ComponentModel;
 using Microsoft.Data.Sqlite;
 public class DBFacade
 {
-    private readonly int pageSize = 32;
+    public const int pageSize = 32;
     private readonly string _connectionString;
 
     public DBFacade(string dbFilePath)
@@ -15,7 +16,7 @@ public class DBFacade
     public List<ObservationViewModel> GetObservations(int page)
     {
         const string sql = @"
-        SELECT u.username, o.text, o.pub_date
+        SELECT u.user_id, u.username, o.text, o.pub_date
         FROM observation o
         JOIN user u ON o.author_id = u.user_id
         ORDER BY o.pub_date DESC
@@ -29,32 +30,31 @@ public class DBFacade
     /**
     *   Retrieves all observations created by the the user with a username matching the value of author (String)
     */
-    public List<ObservationViewModel> GetObservationsFromAuthor(string author, int page)
+    public List<ObservationViewModel> GetObservationsFromAuthorId(int author_id, int page)
     {
         const string sql = @"
-        SELECT u.username, o.text, o.pub_date
+        SELECT u.user_id, u.username, o.text, o.pub_date
         FROM observation o
         JOIN user u ON o.author_id = u.user_id
-        WHERE u.username = @author
+        WHERE u.author_id = @user_id
         ORDER BY o.pub_date DESC
         LIMIT $limit OFFSET $offset";
 
         return RunQuery(sql,
-                    ("@author", author),
+                    ("@user_id", author_id),
                     ("$limit", pageSize),
                     ("$offset", (page - 1) * pageSize));
     }
 
-    public List<ObservationViewModel> GetObservationFromId(int id)
+    public List<ObservationViewModel> GetObservationsFromObservationId(int observation_id)
     {
         const string sql = @"
-        SELECT u.username, o.text, o.pub_date
+        SELECT u.user_id, u.username, o.text, o.pub_date
         FROM observation o
         JOIN user u ON o.author_id = u.user_id
-        WHERE o.observation_id = @id
-        ORDER BY o.pub_date DESC";
+        WHERE o.observation_id = @observation_id";
 
-        return RunQuery(sql, ("@id", id));
+        return RunQuery(sql, ("@observation_id", observation_id));
     }
 
 
@@ -62,28 +62,28 @@ public class DBFacade
     // NOTE: observationViewModel is used for comments as well,
     // ether change the name of ObservationViewModel or make a new model
     // new model is harder since we have to map every runQuery call so it knows wha tit is
-    public List<ObservationViewModel> GetCommentsFromId(int id)
+    public List<ObservationViewModel> GetCommentsFromObservationId(int observation_id)
     {
         const string sql = @"
-        SELECT u.username, c.text, c.pub_date
+        SELECT u.user_id, u.username, c.text, c.pub_date
         FROM comment c
         JOIN user u ON c.author_id = u.user_id
         WHERE c.observation_id = @id
         ORDER BY c.pub_date DESC";
 
-        return RunQuery(sql, ("@id", id));
+        return RunQuery(sql, ("@id", observation_id));
     }
 
-    public List<ObservationViewModel> GetCommentsFromAuthor(string author)
+    public List<ObservationViewModel> GetCommentsFromAuthorId(int author_id)
     {
         const string sql = @"
-        SELECT u.username, c.text, c.pub_date
+        SELECT u.user_id, u.username, c.text, c.pub_date
         FROM comment c
         JOIN user u ON c.author_id = u.user_id
-        WHERE u.username = @author
+        WHERE c.observation_id = @id
         ORDER BY c.pub_date DESC";
 
-        return RunQuery(sql, ("@author", author));
+        return RunQuery(sql, ("@user_id", author_id));
     }
 
     //Proposals 
@@ -91,7 +91,7 @@ public class DBFacade
     public List<ObservationViewModel> GetProposals()
     {
         const string sql = @"
-        SELECT u.username, p.text, p.pub_date
+        SELECT u.user_id, u.username, p.text, p.pub_date
         FROM proposal p
         JOIN user u ON p.author_id = u.user_id
         ORDER BY p.pub_date DESC";
@@ -102,7 +102,7 @@ public class DBFacade
     public List<ObservationViewModel> GetProposalsFromId(int id)
     {
         const string sql = @"
-        SELECT u.username, p.text, p.pub_date
+        SELECT u.user_id, u.username, p.text, p.pub_date
         FROM proposal p
         JOIN user u ON p.author_id = u.user_id
         WHERE p.observation_id = @id
@@ -137,11 +137,12 @@ public class DBFacade
         using var reader = command.ExecuteReader();
         while (reader.Read())
         {
-            var author = reader.GetString(0);
-            var message = reader.GetString(1);
-            var timestamp = reader.GetInt64(2);
+            var author_id = reader.GetInt32(0);
+            var author = reader.GetString(1);
+            var message = reader.GetString(2);
+            var timestamp = reader.GetInt64(3);
 
-            result.Add(new ObservationViewModel(author, message, UnixTimeStampToDateTimeString(timestamp)));
+            result.Add(new ObservationViewModel(author_id, author, message, UnixTimeStampToDateTimeString(timestamp)));
         }
 
         return result;

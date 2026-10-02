@@ -5,7 +5,8 @@ namespace Bison.Razor.Initial.Pages;
 
 public class UserTimelineModel : PageModel
 {
-    public int CurrentPage {get; set;}
+    public int CurrentPage { get; set; }
+    public int Author_id {get; set;}
     private readonly IObservationService _service;
     public List<ObservationViewModel> Observations { get; set; }
 
@@ -14,10 +15,11 @@ public class UserTimelineModel : PageModel
         _service = service;
     }
 
-    public ActionResult OnGet(string author, [FromQuery] int? page)
+    public ActionResult OnGet(int author, [FromQuery] int? page)
     {
         CurrentPage = page ?? 1;
-        Observations = _service.GetObservationsFromAuthor(author, CurrentPage);
+        Author_id = author;
+        Observations = _service.GetObservationsFromAuthorId(Author_id, CurrentPage);
         return Page();
     }
 }

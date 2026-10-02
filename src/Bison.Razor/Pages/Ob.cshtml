@@ -11,7 +11,7 @@
     <ul class="observations">
         <li>
             <p>
-                <strong><a href="/@Model.Observation!.Author">@Model.Observation.Author</a></strong>
+                <strong><a href="/@Model.Observation!.Author_id">@Model.Observation.Author</a></strong>
                 @Model.Observation.Message
                 <small>&mdash; @Model.Observation.Timestamp</small>
             </p>
@@ -26,7 +26,7 @@
             {
                 <li>
                     <p>
-                        <strong><a href="/@proposal.Author">@proposal.Author</a></strong>
+                        <strong><a href="/@proposal.Author_id">@proposal.Author</a></strong>
                         @proposal.Message
                         <small>&mdash; @proposal.Timestamp</small>
                     </p>
@@ -47,7 +47,7 @@
             {
                 <li>
                     <p>
-                        <strong><a href="/@comment.Author">@comment.Author</a></strong>
+                        <strong><a href="/@comment.Author_id">@comment.Author</a></strong>
                         @comment.Message
                         <small>&mdash; @comment.Timestamp</small>
                     </p>
