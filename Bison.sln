@@ -17,17 +17,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiDB.CSVDBService", "sr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{08DBFDD7-60D5-437E-96D2-898B75966478}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Tests", "test\Bison.Tests\Bison.Tests.csproj", "{07FA8B88-322D-436E-B7BE-70BE877FDAEB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Tests", "test\Bison.CLI.Tests\Bison.Tests.csproj", "{07FA8B88-322D-436E-B7BE-70BE877FDAEB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsvDatabase.Tests", "test\CsvDatabase.Tests\CsvDatabase.Tests.csproj", "{BF664718-CA02-4990-8870-6FCBF67A6C9E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Razor.Tests", "test\Bison.Razor.Tests\Bison.Razor.Tests.csproj", "{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{4DBDAA6A-3BE1-4311-BABB-2E599AD72D19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,6 +57,13 @@ Global
 		{BF664718-CA02-4990-8870-6FCBF67A6C9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF664718-CA02-4990-8870-6FCBF67A6C9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF664718-CA02-4990-8870-6FCBF67A6C9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4DBDAA6A-3BE1-4311-BABB-2E599AD72D19} = {86085A72-0006-439C-B4ED-86F0F501E53A}
@@ -67,5 +73,6 @@ Global
 		{E395EA7A-3BD7-44DA-81D6-8A0FDFFE7F67} = {86085A72-0006-439C-B4ED-86F0F501E53A}
 		{07FA8B88-322D-436E-B7BE-70BE877FDAEB} = {08DBFDD7-60D5-437E-96D2-898B75966478}
 		{BF664718-CA02-4990-8870-6FCBF67A6C9E} = {08DBFDD7-60D5-437E-96D2-898B75966478}
+		{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2} = {08DBFDD7-60D5-437E-96D2-898B75966478}
 	EndGlobalSection
 EndGlobal

@@ -22,6 +22,9 @@ public class DBFacade
         return RunQuery(sql);
     }
 
+    /**
+    *   Retrieves all observations created by the the user with a username matching the value of author (String)
+    */
     public List<ObservationViewModel> GetObservationsFromAuthor(string author)
     {
         const string sql = @"
