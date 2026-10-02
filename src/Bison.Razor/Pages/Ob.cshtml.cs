@@ -16,13 +16,13 @@ public class ObModel : PageModel
         _service = service;
     }
 
-    public ActionResult OnGet([FromQuery] int? Id)
+    public ActionResult OnGet(int? id)
     {
-        if (Id is null) { return Redirect("/obs"); }
-        ObId = Id.Value;
+        if (id is null) { return Redirect("/"); }
+        ObId = id.Value;
 
-        Observation = _service.GetObservationFromId(ObId)[0];
-        Comments = _service.GetCommentsFromId(ObId);
+        Observation = _service.GetObservationFromObservationId(ObId)[0];
+        Comments = _service.GetCommentsFromObservationId(ObId);
         Proposals = _service.GetProposalsFromId(ObId);
 
         return Page();
