@@ -21,7 +21,9 @@ public class DBFacade
         ORDER BY o.pub_date DESC
         LIMIT $limit OFFSET $offset"; 
 
-        RunQuery(sql, page);
+        return RunQuery(sql,
+                ("$limit", pageSize),
+                ("$offset", (page - 1) * pageSize));
     }
 
     public List<ObservationViewModel> GetObservationsFromAuthor(string author, int page)
@@ -34,8 +36,74 @@ public class DBFacade
         ORDER BY o.pub_date DESC
         LIMIT $limit OFFSET $offset";
 
-        return RunQuery(sql, page, ("@author", author));
+        return RunQuery(sql, 
+                    ("@author", author),
+                    ("$limit", pageSize),
+                    ("$offset", (page - 1) * pageSize));
     }
+
+    public List<ObservationViewModel> GetObservationFromId(int id)
+    {
+        const string sql = @"
+        SELECT u.username, o.text, o.pub_date
+        FROM observation o
+        JOIN user u ON o.author_id = u.user_id
+        WHERE o.observation_id = @id
+        ORDER BY o.pub_date DESC";
+
+        return RunQuery(sql, ("@id", id));
+    }
+
+
+    // Comment quries
+    // NOTE: observationViewModel is used for comments as well,
+    // ether change the name of ObservationViewModel or make a new model
+    // new model is harder since we have to map every runQuery call so it knows wha tit is
+    public List<ObservationViewModel> GetCommentsFromId(int id) {
+        const string sql = @"
+        SELECT u.username, c.text, c.pub_date
+        FROM comment c
+        JOIN user u ON c.author_id = u.user_id
+        WHERE c.observation_id = @id
+        ORDER BY c.pub_date DESC";
+
+        return RunQuery(sql,("@id", id));
+    }
+
+    public List<ObservationViewModel> GetCommentsFromAuthor(string author) {
+        const string sql = @"
+        SELECT u.username, c.text, c.pub_date
+        FROM comment c
+        JOIN user u ON c.author_id = u.user_id
+        WHERE u.username = @author
+        ORDER BY c.pub_date DESC";   
+
+        return RunQuery(sql,("@author", author));
+    }
+
+    //Proposals 
+    //NOTE: uses observationViewModel also
+    public List<ObservationViewModel> GetProposals() {
+        const string sql = @"
+        SELECT u.username, p.text, p.pub_date
+        FROM proposal p
+        JOIN user u ON p.author_id = u.user_id
+        ORDER BY p.pub_date DESC";   
+
+        return RunQuery(sql);
+    }
+
+    public List<ObservationViewModel> GetProposalsFromId(int id) {
+        const string sql = @"
+        SELECT u.username, p.text, p.pub_date
+        FROM proposal p
+        JOIN user u ON p.author_id = u.user_id
+        WHERE p.observation_id = @id
+        ORDER BY p.pub_date DESC";   
+
+        return RunQuery(sql,("@id", id));
+    }
+
 
     private static string UnixTimeStampToDateTimeString(double unixTimeStamp)
     {
@@ -45,7 +113,7 @@ public class DBFacade
         return dateTime.ToString("MM/dd/yy H:mm:ss");
     }
 
-    private List<ObservationViewModel> RunQuery(string sql, int page, params (string Name, object Value)[] parameters)
+    private List<ObservationViewModel> RunQuery(string sql, params (string Name, object Value)[] parameters)
     {
         var result = new List<ObservationViewModel>();
 
@@ -54,9 +122,7 @@ public class DBFacade
 
         using var command = connection.CreateCommand();
         command.CommandText = sql;
-        command.AddWithValue.Parameters("$limit", pageSize);
-        command.AddWithValue.Parameters("$offset", (page - 1) * pageSize);
-        foreach (var (name, value) in parameters);
+        foreach (var (name, value) in parameters)
         {
             command.Parameters.AddWithValue(name, value);
         }
