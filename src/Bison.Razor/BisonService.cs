@@ -1,55 +1,57 @@
+using Bison.Razor;
+
 public record ObservationViewModel(int Author_id, string Author, string Message, string Timestamp);
 
 public interface IObservationService
 {
-    public List<ObservationViewModel> GetObservations(int page);
-    public List<ObservationViewModel> GetObservationsFromAuthorId(int author_id, int page);
-    public List<ObservationViewModel> GetObservationFromObservationId(int observation_id);
-    public List<ObservationViewModel> GetCommentsFromObservationId(int observation_id);
-    public List<ObservationViewModel> GetCommentsFromAuthorId(int author_id);
-    public List<ObservationViewModel> GetProposalsFromId(int id);
-    public List<ObservationViewModel> GetProposals();
+    public Task<List<ObservationViewModel>> GetObservations(int page);
+    public Task<List<ObservationViewModel>> GetObservationsFromAuthorId(int author_id, int page);
+    public Task<List<ObservationViewModel>> GetObservationFromId(int observation_id, int page);
+    public Task<List<ObservationViewModel>> GetCommentsFromObservationId(int observation_id, int page);
+    public Task<List<ObservationViewModel>> GetCommentsFromAuthorId(int author_id, int page);
+    public Task<List<ObservationViewModel>> GetProposalsFromId(int id, int page);
+    public Task<List<ObservationViewModel>> GetProposals(int page);
 }
 
 public class ObservationService : IObservationService
 {
-    private readonly DBFacade _dbFacade;
+    private readonly BisonContext _bisonContext;
 
-    public ObservationService(DBFacade dbFacade)
+    public ObservationService(BisonContext bisonContext)
     {
-        _dbFacade = dbFacade;
-    }
-
-    public List<ObservationViewModel> GetObservations(int page)
-    {
-        return _dbFacade.GetObservations(page);
+        _bisonContext = bisonContext;
     }
 
-    public List<ObservationViewModel> GetObservationsFromAuthorId(int author_id, int page)
+    public Task<List<ObservationViewModel>> GetObservations(int page)
     {
-        return _dbFacade.GetObservationsFromAuthorId(author_id, page);
+        return _bisonContext.GetObservations(page);
     }
 
-    public List<ObservationViewModel> GetObservationFromObservationId(int observation_id)
+    public Task<List<ObservationViewModel>> GetObservationsFromAuthorId(int author_id, int page)
     {
-        return _dbFacade.GetObservationsFromObservationId(observation_id);
-    }
-    public List<ObservationViewModel> GetCommentsFromObservationId(int observation_id)
-    {
-        return _dbFacade.GetCommentsFromObservationId(observation_id);
-    }
-    public List<ObservationViewModel> GetCommentsFromAuthorId(int author_id)
-    {
-        return _dbFacade.GetCommentsFromAuthorId(author_id);
+        return _bisonContext.GetObservationsFromAuthorId(author_id, page);
     }
 
-    public List<ObservationViewModel> GetProposalsFromId(int id)
+    public Task<List<ObservationViewModel>> GetObservationFromId(int observation_id, int page)
     {
-        return _dbFacade.GetProposalsFromId(id);
+        return _bisonContext.GetObservationFromId(observation_id, page);
+    }
+    public Task<List<ObservationViewModel>> GetCommentsFromObservationId(int observation_id, int page)
+    {
+        return _bisonContext.GetCommentsFromObservationId(observation_id, page);
+    }
+    public Task<List<ObservationViewModel>> GetCommentsFromAuthorId(int author_id, int page)
+    {
+        return _bisonContext.GetCommentsFromAuthorId(author_id, page);
     }
 
-    public List<ObservationViewModel> GetProposals()
+    public Task<List<ObservationViewModel>> GetProposalsFromId(int id, int page)
     {
-        return _dbFacade.GetProposals();
+        return _bisonContext.GetProposalsFromObservationId(id, page);
+    }
+
+    public Task<List<ObservationViewModel>> GetProposals(int page)
+    {
+        return _bisonContext.GetProposals(page);
     }
 }
