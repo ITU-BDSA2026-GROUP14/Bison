@@ -7,15 +7,16 @@ var dbPath = Environment.GetEnvironmentVariable("BISONDBPATH") ?? Path.Combine(P
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddDbContext<BisonContext>(o => o.UseSqlite($"Data Source={dbPath}"));
-builder.Services.AddScoped<IObservationService, ObservationService>();
+builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite($"Data Source={dbPath}"));
+builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 var app = builder.Build();
 
-// Create database and tables if they don't exist yet
 using (var scope = app.Services.CreateScope())
 {
-    scope.ServiceProvider.GetRequiredService<BisonContext>().Database.EnsureCreated();
+    var context = scope.ServiceProvider.GetRequiredService<BisonContext>();
+    context.Database.EnsureCreated();
+    DbInitializer.SeedDatabase(context);
 }
 
 // Configure the HTTP request pipeline.
