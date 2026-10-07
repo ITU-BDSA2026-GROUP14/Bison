@@ -1,3 +1,5 @@
+using System.Net.WebSockets;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -16,14 +18,19 @@ public class ObModel : PageModel
         _service = service;
     }
 
-    public ActionResult OnGet(int? id)
+    public async Task<ActionResult> OnGet(int? id, int page = 1)
     {
         if (id is null) { return Redirect("/"); }
-        ObId = id.Value;
 
-        Observation = _service.GetObservationFromObservationId(ObId)[0];
-        Comments = _service.GetCommentsFromObservationId(ObId);
-        Proposals = _service.GetProposalsFromId(ObId);
+        var observation = (await _service.GetObservationFromId(id.Value, page)).FirstOrDefault();
+        if (observation is null)
+        {
+            return NotFound();
+        }
+
+        Observation = observation;
+        Comments = await _service.GetCommentsFromObservationId(id.Value, page);
+        Proposals = await _service.GetProposalsFromId(id.Value, page);
 
         return Page();
     }

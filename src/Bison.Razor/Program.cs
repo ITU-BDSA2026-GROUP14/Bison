@@ -1,3 +1,4 @@
+using Bison.Razor;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +14,7 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<BisonDBContext>();
+    var context = scope.ServiceProvider.GetRequiredService<BisonContext>();
     context.Database.EnsureCreated();
     DbInitializer.SeedDatabase(context);
 }
