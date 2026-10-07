@@ -1,6 +1,6 @@
 using Bison.Razor;
 
-public record ObservationViewModel(int Author_id, string Author, string Message, string Timestamp);
+public record ObservationViewModel(int Author_id, string AuthorEmail, string Author, string Message, string Timestamp);
 
 public interface IObservationService
 {
@@ -15,43 +15,43 @@ public interface IObservationService
 
 public class ObservationService : IObservationService
 {
-    private readonly BisonContext _bisonContext;
+    private readonly BisonDBContext _bisonDBContext;
 
-    public ObservationService(BisonContext bisonContext)
+    public ObservationService(BisonDBContext bisonDBContext)
     {
-        _bisonContext = bisonContext;
+        _bisonDBContext = bisonDBContext;
     }
 
     public Task<List<ObservationViewModel>> GetObservations(int page)
     {
-        return _bisonContext.GetObservations(page);
+        return _bisonDBContext.GetObservations(page);
     }
 
     public Task<List<ObservationViewModel>> GetObservationsFromAuthorId(int author_id, int page)
     {
-        return _bisonContext.GetObservationsFromAuthorId(author_id, page);
+        return _bisonDBContext.GetObservationsFromAuthorId(author_id, page);
     }
 
     public Task<List<ObservationViewModel>> GetObservationFromId(int observation_id, int page)
     {
-        return _bisonContext.GetObservationFromId(observation_id, page);
+        return _bisonDBContext.GetObservationFromId(observation_id, page);
     }
     public Task<List<ObservationViewModel>> GetCommentsFromObservationId(int observation_id, int page)
     {
-        return _bisonContext.GetCommentsFromObservationId(observation_id, page);
+        return _bisonDBContext.GetCommentsFromObservationId(observation_id, page);
     }
     public Task<List<ObservationViewModel>> GetCommentsFromAuthorId(int author_id, int page)
     {
-        return _bisonContext.GetCommentsFromAuthorId(author_id, page);
+        return _bisonDBContext.GetCommentsFromAuthorId(author_id, page);
     }
 
     public Task<List<ObservationViewModel>> GetProposalsFromId(int id, int page)
     {
-        return _bisonContext.GetProposalsFromObservationId(id, page);
+        return _bisonDBContext.GetProposalsFromObservationId(id, page);
     }
 
     public Task<List<ObservationViewModel>> GetProposals(int page)
     {
-        return _bisonContext.GetProposals(page);
+        return _bisonDBContext.GetProposals(page);
     }
 }
