@@ -8,6 +8,7 @@ public class BisonDBContext : DbContext
     public const int pageSize = 32;
     private const string timestampFormat = "MM/dd/yy H:mm:ss";
 
+    public DbSet<Post> Posts { get; set; }
     public DbSet<Observation> Observations { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Proposal> Proposals { get; set; }
