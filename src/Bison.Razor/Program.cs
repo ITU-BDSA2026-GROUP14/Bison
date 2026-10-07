@@ -14,7 +14,7 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<BisonContext>();
+    var context = scope.ServiceProvider.GetRequiredService<BisonDBContext>();
     context.Database.EnsureCreated();
     DbInitializer.SeedDatabase(context);
 }

@@ -1,8 +1,9 @@
+using Bison.Razor.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bison.Razor;
 
-public class BisonContext : DbContext
+public class BisonDBContext : DbContext
 {
     public const int pageSize = 32;
     private const string timestampFormat = "MM/dd/yy H:mm:ss";
@@ -13,7 +14,7 @@ public class BisonContext : DbContext
     public DbSet<Author> Authors { get; set; }
     public DbSet<Taxon> Taxons { get; set; }
 
-    public BisonContext(DbContextOptions<BisonContext> options) : base(options) { }
+    public BisonDBContext(DbContextOptions<BisonDBContext> options) : base(options) { }
 
     // Retrieves all Observations from the database
     public async Task<List<ObservationViewModel>> GetObservations(int page)
@@ -23,8 +24,9 @@ public class BisonContext : DbContext
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .Select(o => new ObservationViewModel(
-            o.Author.AuthorId,
-            o.Author.Username,
+            o.Author.Id,
+            o.Author.Email,
+            o.Author.Name,
             o.Text,
             o.PubDate.ToString(timestampFormat)
         ))
@@ -36,12 +38,13 @@ public class BisonContext : DbContext
     {
         return await Observations
         .OrderByDescending(o => o.PubDate)
-        .Where(o => o.Author.AuthorId == authorId)
+        .Where(o => o.Author.Id == authorId)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .Select(o => new ObservationViewModel(
-            o.Author.AuthorId,
-            o.Author.Username,
+            o.Author.Id,
+            o.Author.Email,
+            o.Author.Name,
             o.Text,
             o.PubDate.ToString(timestampFormat)
         ))
@@ -53,12 +56,13 @@ public class BisonContext : DbContext
     {
         return await Observations
         .OrderByDescending(o => o.PubDate)
-        .Where(o => o.id == observationId)
+        .Where(o => o.Id == observationId)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .Select(o => new ObservationViewModel(
-            o.Author.AuthorId,
-            o.Author.Username,
+            o.Author.Id,
+            o.Author.Email,
+            o.Author.Name,
             o.Text,
             o.PubDate.ToString(timestampFormat)
         ))
@@ -70,12 +74,13 @@ public class BisonContext : DbContext
     {
         return await Comments
         .OrderByDescending(c => c.PubDate)
-        .Where(c => c.Observation.id == observationId)
+        .Where(c => c.Observation.Id == observationId)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .Select(c => new ObservationViewModel(
-            c.Author.AuthorId,
-            c.Author.Username,
+            c.Author.Id,
+            c.Author.Email,
+            c.Author.Name,
             c.Text,
             c.PubDate.ToString(timestampFormat)
         ))
@@ -87,12 +92,13 @@ public class BisonContext : DbContext
     {
         return await Comments
         .OrderByDescending(c => c.PubDate)
-        .Where(c => c.Author.id == authorId)
+        .Where(c => c.Author.Id == authorId)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .Select(c => new ObservationViewModel(
-            c.Author.AuthorId,
-            c.Author.Username,
+            c.Author.Id,
+            c.Author.Email,
+            c.Author.Name,
             c.Text,
             c.PubDate.ToString(timestampFormat)
         ))
@@ -107,8 +113,9 @@ public class BisonContext : DbContext
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .Select(p => new ObservationViewModel(
-            p.Author.AuthorId,
-            p.Author.Username,
+            p.Author.Id,
+            p.Author.Email,
+            p.Author.Name,
             p.Text,
             p.PubDate.ToString(timestampFormat)
         ))
@@ -120,12 +127,13 @@ public class BisonContext : DbContext
     {
         return await Proposals
         .OrderByDescending(p => p.PubDate)
-        .Where(p => p.Observation.id == observationId)
+        .Where(p => p.Observation.Id == observationId)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .Select(p => new ObservationViewModel(
-            p.Author.AuthorId,
-            p.Author.Username,
+            p.Author.Id,
+            p.Author.Email,
+            p.Author.Name,
             p.Text,
             p.PubDate.ToString(timestampFormat)
         ))
