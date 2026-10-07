@@ -1,3 +1,4 @@
+using Bison.Razor;
 using Microsoft.EntityFrameworkCore;
 
 public class PostRepository : IPostRepository
@@ -11,16 +12,17 @@ public class PostRepository : IPostRepository
 
     public async Task<List<ObservationDTO>> GetObservations(int page)
     {
-        var rows = await _context.Posts.OfType<Observation>()
-            .OrderByDescending(o => o.TimeStamp).ThenByDescending(o => o.PostId)
-            .Skip((Math.Max(page, 1) - 1) * IPostRepository.PageSize)
-            .Take(IPostRepository.PageSize)
-            .Select(o => new { o.PostId, o.Author.AuthorId, o.Author.Name, o.Text, o.TimeStamp, Taxon = o.Taxon.VernacularName })
-            .ToListAsync();
+        return _context.GetObservations(page);
+        // var rows = await _context.Posts.OfType<Observation>()
+        //     .OrderByDescending(o => o.TimeStamp).ThenByDescending(o => o.PostId)
+        //     .Skip((Math.Max(page, 1) - 1) * IPostRepository.PageSize)
+        //     .Take(IPostRepository.PageSize)
+        //     .Select(o => new { o.PostId, o.Author.AuthorId, o.Author.Name, o.Text, o.TimeStamp, Taxon = o.Taxon.VernacularName })
+        //     .ToListAsync();
 
-        return rows
-            .Select(r => new ObservationDTO(r.PostId, r.AuthorId, r.Name, r.Text, Format(r.TimeStamp), r.Taxon))
-            .ToList();
+        // return rows
+        //     .Select(r => new ObservationDTO(r.PostId, r.AuthorId, r.Name, r.Text, Format(r.TimeStamp), r.Taxon))
+        //     .ToList();
     }
 
     public async Task<List<ObservationDTO>> GetObservationsByAuthor(int authorId, int page)

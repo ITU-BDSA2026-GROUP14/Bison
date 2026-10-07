@@ -12,3 +12,6 @@ In today's work session we started dividing ourselves to work on different bulle
 
 30/09/2026 - Hannibal, Filip, Simon:
 We have started refactoring out test suite for the Bison.CLI to test the Bizon.Razor instead. We have setup one unit test so far. Most of the day was spent learning how to unit test Razor Pages.
+
+07/10/2026 – Hannibal, Filip:
+We refactored the application to use EFCore, thereby creating BisonDBContext.cs as a refactor of DBFacade.cs. We–Filip and Hannibal–worked on two different branches and merged them together. We're now modifying the PostRepository.cs to work with the BisonDBContext.cs methods.
