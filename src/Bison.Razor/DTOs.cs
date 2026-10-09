@@ -4,32 +4,39 @@ public record PostDTO(
     int Id,
     string Text,
     string PubDate,
-    int AuthorId,
-    string AuthorName
+    int AuthorId
 );
 public record ObservationDTO(
     int Id,
     string Text,
     string PubDate,
-    int AuthorId,
-    string AuthorName,
-    string? TaxonName
-) : PostDTO(Id, Text, PubDate, AuthorId, AuthorName);
+    int AuthorId
+) : PostDTO(Id, Text, PubDate, AuthorId);
 
 
 public record CommentDTO(
     int Id,
     string PubDate,
     string Text,
-    int AuthorId,
-    string AuthorName
-) : PostDTO(Id, Text, PubDate, AuthorId, AuthorName);
+    int AuthorId
+) : PostDTO(Id, Text, PubDate, AuthorId);
 
-public record ProposalsDTO(
+public record ProposalDTO(
     int Id,
     string Text,
     string PubDate,
     int AuthorId,
-    string AuthorName,
-    string? TaxonName
-) : PostDTO(Id, Text, PubDate, AuthorId, AuthorName);
+    string? TaxonId
+) : PostDTO(Id, Text, PubDate, AuthorId);
+
+public record AuthorDTO(
+    int Id,
+    string Name,
+    string Email
+);
+
+public record TaxonDTO(
+    string TaxonId,
+    string? TaxonName,
+    string? ParentTaxonId
+);
