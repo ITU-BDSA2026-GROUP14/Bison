@@ -7,5 +7,6 @@ namespace Bison.Razor.Models
 
         public List<Comment> Comments { get; set; } = new();
         public List<Proposal> Proposals { get; set; } = new();
+        public Taxon getTaxon() => Taxon!;
     }
 }

@@ -7,4 +7,5 @@ public interface IPostRepository
     Task<ObservationDTO?> GetObservation(int observationId);
     Task<List<CommentDTO>> GetCommentsForObservation(int observationId);
     Task<List<ProposalDTO>> GetProposalsForObservation(int observationId);
+    Task<List<ObservationDTO>> GetObservationsByTaxon(int taxonId, int page);
 }

@@ -7,7 +7,13 @@ namespace Bison.Razor.Models
       public string? VernacularName { get; set; }
       public Taxon? Parent { get; set; }
       public List<Taxon> Children { get; set; } = new();
- 
-      
+      public bool isSubTaxon(Taxon ancestor)
+      {
+          for (Taxon? t = this; t != null; t = t.Parent)
+          {
+              if (t.TaxonId == ancestor.TaxonId) return true;
+          }
+          return false;
+      }
     }
 }
