@@ -9,6 +9,26 @@ public class PostRepository : IPostRepository
         _context = context;
     }
 
+    public async Task<List<ObservationDTO>> GetObservationsByTaxon(int taxonId, int page)
+    {
+        var taxons = await _context.Taxons.ToListAsync();   // links Parent (needed by isSubTaxon)
+        var root = taxons.FirstOrDefault(t => t.TaxonId == taxonId);
+        if (root is null) return new List<ObservationDTO>();
+
+        var observations = await _context.Posts.OfType<Observation>()
+            .Include(o => o.Author)                         // needed to build the DTOs
+            .ToListAsync();
+
+        var matching = Bison.Razor.Filtering.__default.FilterObservations(root, observations.ToArray());
+
+        return matching
+            .OrderByDescending(o => o.TimeStamp).ThenByDescending(o => o.PostId)
+            .Skip((Math.Max(page, 1) - 1) * IPostRepository.PageSize)
+            .Take(IPostRepository.PageSize)
+            .Select(o => new ObservationDTO(o.PostId, o.Author.AuthorId, o.Author.Name, o.Text, Format(o.TimeStamp), o.Taxon.VernacularName))
+            .ToList();
+    }
+
     public async Task<List<ObservationDTO>> GetObservations(int page)
     {
         var rows = await _context.Posts.OfType<Observation>()
@@ -77,5 +97,5 @@ public class PostRepository : IPostRepository
     }
 
     // DateTime is not a predefined type, so DTOs carry the timestamp as a string.
-    private static string Format(DateTime timeStamp) => timeStamp.ToString("MM/dd/yy H:mm:ss");
+    private static string Format(DateTime timeStamp) => timeStamp.ToString("MM/dd/yy H:mm:ss");   
 }
