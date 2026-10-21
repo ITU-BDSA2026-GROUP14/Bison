@@ -19,5 +19,5 @@ Claude was used to guide assignment 1.a for Week 7. It explained how to specify 
 - Reason: To understand why the method returned a sequence instead of a single DTO and how to fix it, and to choose how to handle a not-found observation (null vs. exception).
 
 21-10-2026 Hannibal Marcellus Munk (Claude Code):
-- Purpose: Reviewed the DTO/PostRepository refactor across the repo (build errors, pages, DbInitializer, tests) and listed what was still missing; advised on showing author names in Public.cshtml.
+- Purpose: Reviewed the DTO/PostRepository refactor across the repo (build errors, pages, DbInitializer, tests) and listed what was still missing; advised on showing author names in Public.cshtml and diagnosed post-merge build errors caused by renamed model properties and explained the remaining compiler warnings.
 - Reason: To catch leftover references to the old data model before merging and to choose how to load authors for a list of observations.

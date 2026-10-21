@@ -8,7 +8,7 @@ public class UserTimelineModel : PageModel
 {
     public int CurrentPage { get; set; }
     private readonly PostRepository _service;
-    public List<ObservationDTO> Observations { get; set; }
+    public List<ObservationDTO> Observations { get; set; } = new();
 
     public UserTimelineModel(PostRepository service)
     {

@@ -3,8 +3,8 @@ namespace Bison.Razor.Models
     public abstract class Post
     {
         public int PostId { get; set; }
-        public string Text { get; set; }
+        public string Text { get; set; } = "";
         public DateTime TimeStamp { get; set; }
-        public Author Author { get; set; }
+        public Author Author { get; set; } = null!;
     }
 }

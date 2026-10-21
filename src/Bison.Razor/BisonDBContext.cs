@@ -21,7 +21,7 @@ public class BisonDBContext : DbContext
     {
         return await Observations
         .Include(o => o.Author)
-        .FirstOrDefaultAsync(o => o.Id == observationId);
+        .FirstOrDefaultAsync(o => o.PostId == observationId);
     }
 
     // Retrieves all Observations from the database
@@ -29,7 +29,7 @@ public class BisonDBContext : DbContext
     {
         return await Observations
         .Include(o => o.Author)
-        .OrderByDescending(o => o.PubDate)
+        .OrderByDescending(o => o.TimeStamp)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -40,8 +40,8 @@ public class BisonDBContext : DbContext
     {
         return await Observations
         .Include(o => o.Author)
-        .OrderByDescending(o => o.PubDate)
-        .Where(o => o.Author.Id == authorId)
+        .OrderByDescending(o => o.TimeStamp)
+        .Where(o => o.Author.AuthorId == authorId)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -52,8 +52,8 @@ public class BisonDBContext : DbContext
     {
         return await Comments
         .Include(o => o.Author)
-        .OrderByDescending(c => c.PubDate)
-        .Where(c => c.Observation.Id == observationId)
+        .OrderByDescending(c => c.TimeStamp)
+        .Where(c => c.Observation.PostId == observationId)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -64,8 +64,8 @@ public class BisonDBContext : DbContext
     {
         return await Comments
         .Include(o => o.Author)
-        .OrderByDescending(c => c.PubDate)
-        .Where(c => c.Author.Id == authorId)
+        .OrderByDescending(c => c.TimeStamp)
+        .Where(c => c.Author.AuthorId == authorId)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -76,7 +76,7 @@ public class BisonDBContext : DbContext
     {
         return await Proposals
         .Include(o => o.Author)
-        .OrderByDescending(p => p.PubDate)
+        .OrderByDescending(p => p.TimeStamp)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -87,8 +87,8 @@ public class BisonDBContext : DbContext
     {
         return await Proposals
         .Include(o => o.Author)
-        .OrderByDescending(p => p.PubDate)
-        .Where(p => p.Observation.Id == observationId)
+        .OrderByDescending(p => p.TimeStamp)
+        .Where(p => p.Observation.PostId == observationId)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -98,7 +98,7 @@ public class BisonDBContext : DbContext
     public async Task<Author?> GetAuthor(int authorId)
     {
         return await Authors
-        .FirstOrDefaultAsync(a => a.Id == authorId);
+        .FirstOrDefaultAsync(a => a.AuthorId == authorId);
     }
 
     // Retrieves Taxon from its id

@@ -9,7 +9,7 @@ public class ObModel : PageModel
 {
     public int ObId { get; set; }
     private readonly PostRepository _service;
-    public ObservationDTO Observation { get; set; }
+    public ObservationDTO Observation { get; set; } = null!;
     public List<CommentDTO> Comments { get; set; } = new();
     public List<ProposalDTO> Proposals { get; set; } = new();
 

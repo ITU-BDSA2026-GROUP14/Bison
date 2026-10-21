@@ -2,7 +2,7 @@ namespace Bison.Razor.Models
 {
     public class Proposal : Post
     {
-        public Observation Observation { get; set; }
-        public Taxon Taxon { get; set; }
+        public Observation Observation { get; set; } = null!;
+        public Taxon Taxon { get; set; } = null!;
     }
 }

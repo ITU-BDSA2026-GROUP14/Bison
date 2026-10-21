@@ -15,10 +15,10 @@ public class PostRepository : IPostRepository
         var obs = await _context.GetObservation(observationId);
         if (obs is null) return null;
         return new ObservationDTO(
-            obs.Id,
+            obs.PostId,
             obs.Text,
-            obs.PubDate.ToString(timestampFormat),
-            obs.Author.Id,
+            obs.TimeStamp.ToString(timestampFormat),
+            obs.Author.AuthorId,
             obs.Author.Name
             );
     }
@@ -27,10 +27,10 @@ public class PostRepository : IPostRepository
     {
         var obs = await _context.GetObservations(page);
         return obs.Select(o => new ObservationDTO(
-            o.Id,
+            o.PostId,
             o.Text,
-            o.PubDate.ToString(timestampFormat),
-            o.Author.Id,
+            o.TimeStamp.ToString(timestampFormat),
+            o.Author.AuthorId,
             o.Author.Name
         ))
         .ToList();
@@ -40,10 +40,10 @@ public class PostRepository : IPostRepository
     {
         var comments = await _context.GetObservationsByAuthor(authorId, page);
         return comments.Select(o => new ObservationDTO(
-            o.Id,
+            o.PostId,
             o.Text,
-            o.PubDate.ToString(timestampFormat),
-            o.Author.Id,
+            o.TimeStamp.ToString(timestampFormat),
+            o.Author.AuthorId,
             o.Author.Name
         ))
         .ToList();
@@ -53,10 +53,10 @@ public class PostRepository : IPostRepository
     {
         var comments = await _context.GetCommentsForObservation(observationId, page);
         return comments.Select(c => new CommentDTO(
-            c.Id,
-            c.PubDate.ToString(timestampFormat),
+            c.PostId,
+            c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.Id,
+            c.Author.AuthorId,
             c.Author.Name
         ))
         .ToList();
@@ -66,10 +66,10 @@ public class PostRepository : IPostRepository
     {
         var comments = await _context.GetCommentsByAuthor(authorId, page);
         return comments.Select(c => new CommentDTO(
-            c.Id,
-            c.PubDate.ToString(timestampFormat),
+            c.PostId,
+            c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.Id,
+            c.Author.AuthorId,
             c.Author.Name
         ))
         .ToList();
@@ -79,10 +79,10 @@ public class PostRepository : IPostRepository
     {
         var proposals = await _context.GetProposals(page);
         return proposals.Select(p => new ProposalDTO(
-            p.Id,
+            p.PostId,
             p.Text,
-            p.PubDate.ToString(timestampFormat),
-            p.Author.Id,
+            p.TimeStamp.ToString(timestampFormat),
+            p.Author.AuthorId,
             p.Author.Name,
             p.Taxon.dwc_TaxonID
         ))
@@ -93,10 +93,10 @@ public class PostRepository : IPostRepository
     {
         var proposals = await _context.GetProposalsForObservation(observationId, page);
         return proposals.Select(p => new ProposalDTO(
-            p.Id,
+            p.PostId,
             p.Text,
-            p.PubDate.ToString(timestampFormat),
-            p.Author.Id,
+            p.TimeStamp.ToString(timestampFormat),
+            p.Author.AuthorId,
             p.Author.Name,
             p.Taxon.dwc_TaxonID
         ))
@@ -108,7 +108,7 @@ public class PostRepository : IPostRepository
         var author = await _context.GetAuthor(authorId);
         if (author is null) return null;
         return new AuthorDTO(
-            author.Id,
+            author.AuthorId,
             author.Name,
             author.Email
         );
@@ -120,7 +120,7 @@ public class PostRepository : IPostRepository
         if (taxon is null) return null;
         return new TaxonDTO(
             taxon.dwc_TaxonID,
-            taxon.vernacularName,
+            taxon.VernacularName,
             taxon.Parent?.dwc_TaxonID
         );
     }
