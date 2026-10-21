@@ -1,7 +1,8 @@
-using Microsoft.EntityFrameworkCore;
+using Bison.Razor;
 
 public class PostRepository : IPostRepository
 {
+    private const string timestampFormat = "MM/dd/yy H:mm:ss";
     private readonly BisonDBContext _context;
 
     public PostRepository(BisonDBContext context)
@@ -9,93 +10,118 @@ public class PostRepository : IPostRepository
         _context = context;
     }
 
-    public async Task<List<ObservationDTO>> GetObservationsByTaxon(int taxonId, int page)
+    public async Task<ObservationDTO?> GetObservation(int observationId)
     {
-        var taxons = await _context.Taxons.ToListAsync();   // links Parent (needed by isSubTaxon)
-        var root = taxons.FirstOrDefault(t => t.TaxonId == taxonId);
-        if (root is null) return new List<ObservationDTO>();
-
-        var observations = await _context.Posts.OfType<Observation>()
-            .Include(o => o.Author)                         // needed to build the DTOs
-            .ToListAsync();
-
-        var matching = Bison.Razor.Filtering.__default.FilterObservations(root, observations.ToArray());
-
-        return matching
-            .OrderByDescending(o => o.TimeStamp).ThenByDescending(o => o.PostId)
-            .Skip((Math.Max(page, 1) - 1) * IPostRepository.PageSize)
-            .Take(IPostRepository.PageSize)
-            .Select(o => new ObservationDTO(o.PostId, o.Author.AuthorId, o.Author.Name, o.Text, Format(o.TimeStamp), o.Taxon.VernacularName))
-            .ToList();
+        var obs = await _context.GetObservation(observationId);
+        if (obs is null) return null;
+        return new ObservationDTO(
+            obs.Id,
+            obs.Text,
+            obs.PubDate.ToString(timestampFormat),
+            obs.Author.Id,
+            obs.Author.Name
+            );
     }
 
     public async Task<List<ObservationDTO>> GetObservations(int page)
     {
-        var rows = await _context.Posts.OfType<Observation>()
-            .OrderByDescending(o => o.TimeStamp).ThenByDescending(o => o.PostId)
-            .Skip((Math.Max(page, 1) - 1) * IPostRepository.PageSize)
-            .Take(IPostRepository.PageSize)
-            .Select(o => new { o.PostId, o.Author.AuthorId, o.Author.Name, o.Text, o.TimeStamp, Taxon = o.Taxon.VernacularName })
-            .ToListAsync();
-
-        return rows
-            .Select(r => new ObservationDTO(r.PostId, r.AuthorId, r.Name, r.Text, Format(r.TimeStamp), r.Taxon))
-            .ToList();
+        var obs = await _context.GetObservations(page);
+        return obs.Select(o => new ObservationDTO(
+            o.Id,
+            o.Text,
+            o.PubDate.ToString(timestampFormat),
+            o.Author.Id,
+            o.Author.Name
+        ))
+        .ToList();
     }
 
     public async Task<List<ObservationDTO>> GetObservationsByAuthor(int authorId, int page)
     {
-        var rows = await _context.Posts.OfType<Observation>()
-            .Where(o => o.Author.AuthorId == authorId)
-            .OrderByDescending(o => o.TimeStamp).ThenByDescending(o => o.PostId)
-            .Skip((Math.Max(page, 1) - 1) * IPostRepository.PageSize)
-            .Take(IPostRepository.PageSize)
-            .Select(o => new { o.PostId, o.Author.AuthorId, o.Author.Name, o.Text, o.TimeStamp, Taxon = o.Taxon.VernacularName })
-            .ToListAsync();
-
-        return rows
-            .Select(r => new ObservationDTO(r.PostId, r.AuthorId, r.Name, r.Text, Format(r.TimeStamp), r.Taxon))
-            .ToList();
+        var comments = await _context.GetObservationsByAuthor(authorId, page);
+        return comments.Select(o => new ObservationDTO(
+            o.Id,
+            o.Text,
+            o.PubDate.ToString(timestampFormat),
+            o.Author.Id,
+            o.Author.Name
+        ))
+        .ToList();
     }
 
-    public async Task<ObservationDTO?> GetObservation(int observationId)
+    public async Task<List<CommentDTO>> GetCommentsForObservation(int observationId, int page)
     {
-        var r = await _context.Posts.OfType<Observation>()
-            .Where(o => o.PostId == observationId)
-            .Select(o => new { o.PostId, o.Author.AuthorId, o.Author.Name, o.Text, o.TimeStamp, Taxon = o.Taxon.VernacularName })
-            .FirstOrDefaultAsync();
-
-        return r is null
-            ? null
-            : new ObservationDTO(r.PostId, r.AuthorId, r.Name, r.Text, Format(r.TimeStamp), r.Taxon);
+        var comments = await _context.GetCommentsForObservation(observationId, page);
+        return comments.Select(c => new CommentDTO(
+            c.Id,
+            c.PubDate.ToString(timestampFormat),
+            c.Text,
+            c.Author.Id,
+            c.Author.Name
+        ))
+        .ToList();
     }
 
-    public async Task<List<CommentDTO>> GetCommentsForObservation(int observationId)
+    public async Task<List<CommentDTO>> GetCommentsByAuthor(int authorId, int page)
     {
-        var rows = await _context.Posts.OfType<Comment>()
-            .Where(c => c.Observation.PostId == observationId)
-            .OrderByDescending(c => c.TimeStamp).ThenByDescending(c => c.PostId)
-            .Select(c => new { c.PostId, c.Author.AuthorId, c.Author.Name, c.Text, c.TimeStamp })
-            .ToListAsync();
-
-        return rows
-            .Select(r => new CommentDTO(r.PostId, r.AuthorId, r.Name, r.Text, Format(r.TimeStamp)))
-            .ToList();
+        var comments = await _context.GetCommentsByAuthor(authorId, page);
+        return comments.Select(c => new CommentDTO(
+            c.Id,
+            c.PubDate.ToString(timestampFormat),
+            c.Text,
+            c.Author.Id,
+            c.Author.Name
+        ))
+        .ToList();
     }
 
-    public async Task<List<ProposalDTO>> GetProposalsForObservation(int observationId)
+    public async Task<List<ProposalDTO>> GetProposals(int page)
     {
-        var rows = await _context.Posts.OfType<Proposal>()
-            .Where(p => p.Observation.PostId == observationId)
-            .OrderByDescending(p => p.TimeStamp).ThenByDescending(p => p.PostId)
-            .Select(p => new { p.PostId, p.Author.AuthorId, p.Author.Name, p.Text, p.TimeStamp, Taxon = p.Taxon.VernacularName })
-            .ToListAsync();
-
-        return rows
-            .Select(r => new ProposalDTO(r.PostId, r.AuthorId, r.Name, r.Text, Format(r.TimeStamp), r.Taxon))
-            .ToList();
+        var proposals = await _context.GetProposals(page);
+        return proposals.Select(p => new ProposalDTO(
+            p.Id,
+            p.Text,
+            p.PubDate.ToString(timestampFormat),
+            p.Author.Id,
+            p.Author.Name,
+            p.Taxon.dwc_TaxonID
+        ))
+        .ToList();
     }
 
-    // DateTime is not a predefined type, so DTOs carry the timestamp as a string.
-    private static string Format(DateTime timeStamp) => timeStamp.ToString("MM/dd/yy H:mm:ss");   
+    public async Task<List<ProposalDTO>> GetProposalsForObservation(int observationId, int page)
+    {
+        var proposals = await _context.GetProposalsForObservation(observationId, page);
+        return proposals.Select(p => new ProposalDTO(
+            p.Id,
+            p.Text,
+            p.PubDate.ToString(timestampFormat),
+            p.Author.Id,
+            p.Author.Name,
+            p.Taxon.dwc_TaxonID
+        ))
+        .ToList();
+    }
+
+    public async Task<AuthorDTO?> GetAuthor(int authorId)
+    {
+        var author = await _context.GetAuthor(authorId);
+        if (author is null) return null;
+        return new AuthorDTO(
+            author.Id,
+            author.Name,
+            author.Email
+        );
+    }
+
+    public async Task<TaxonDTO?> GetTaxon(string taxonId)
+    {
+        var taxon = await _context.GetTaxon(taxonId);
+        if (taxon is null) return null;
+        return new TaxonDTO(
+            taxon.dwc_TaxonID,
+            taxon.vernacularName,
+            taxon.Parent?.dwc_TaxonID
+        );
+    }
 }

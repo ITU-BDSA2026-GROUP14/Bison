@@ -1,4 +1,5 @@
 ﻿@page "/{author:int}"
+@using Bison.Razor
 @model Bison.Razor.Initial.Pages.UserTimelineModel
 @{
     ViewData["Title"] = "Bison";
@@ -17,10 +18,10 @@
                 <li>
                     <p>
                         <strong>
-                            <a href="/@ob.Author_id">@ob.Author</a>
+                            <a href="/@ob.AuthorId">@ob.AuthorName</a>
                         </strong>
-                        @ob.Message
-                        <small>&mdash; @ob.Timestamp</small>
+                        @ob.Text
+                        <small>&mdash; @ob.PubDate</small>
                     </p>
                 </li>
             }
@@ -31,15 +32,15 @@
         <em>There are no Observations so far.</em>
     }
 
-ass="pagination">
-        @if (Model.CurrentPage > 1)
-        {
-            <a href="?page=@(Model.CurrentPage - 1)">&laquo; Previous</a>
-        }
+    ass="pagination">
+    @if (Model.CurrentPage > 1)
+    {
+        <a href="?page=@(Model.CurrentPage - 1)">&laquo; Previous</a>
+    }
         
-        @if (Model.Observations.Count == DBFacade.pageSize)
-        {
-            <a href="?page=@(Model.CurrentPage + 1)">Next &raquo;</a>
-        }
-    </div>
+    @if (Model.Observations.Count == BisonDBContext.pageSize)
+    {
+        <a href="?page=@(Model.CurrentPage + 1)">Next &raquo;</a>
+    }
+</div>
 </div>
