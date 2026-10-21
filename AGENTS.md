@@ -14,25 +14,23 @@ This applies to all kinds of help: writing code, answering questions, debugging,
 ### How
 1. Append the entry at the bottom of `documents/llm-usage-log.md`, with a blank line before it.
    Never edit or delete other entries.
-2. Use this format:
+2. Use this format: the date and the developer name(s) on the first line, followed by one short paragraph on the next line that starts with "<LLM name> was used to ..." and says what it was used for and why.
 
    ```
-   DD-MM-YYYY Developer Name(s) (LLM tool):
-   - Purpose: What the LLM was used for (the task, feature or files involved).
-   - Reason: Why an LLM was used (e.g. to learn a concept, debug an error, generate boilerplate).
+   DD-MM-YYYY Developer Name(s):
+   <LLM name> was used to <what it helped with>. <Optionally: what it helped us understand or why it was needed>.
    ```
 
    Example:
 
    ```
-   07-10-2026 Simon Skouboe (Claude Code):
-   - Purpose: Wrote CLAUDE.md and AGENTS.md instructing LLM agents to log their usage in this file.
-   - Reason: To make LLM usage logging automatic, as required by issue #24.
+   07-10-2026 Filip Sejer:
+   Claude was used to plan and guide assignment 1.b for Week 6. It helped us understand what DbInitializer.cs requires from the data model, and helped structure the new files DTOs, IPostRepository, and PostRepository.
    ```
 
 3. Use today's date as `DD-MM-YYYY`. For the name, use the developer you are working with.
    Take it from `git config user.name` only if that is a real person's name; otherwise ask.
    Never write your own name or an email address.
-4. Keep each field to 1–3 sentences. Never include secrets, credentials or personal data.
+4. Keep the paragraph to 1–3 sentences. Never include secrets, credentials or personal data.
 5. If you commit, put the log change in the same commit/PR as the work.
    Otherwise, leave it uncommitted and tell the developer you updated the log.
