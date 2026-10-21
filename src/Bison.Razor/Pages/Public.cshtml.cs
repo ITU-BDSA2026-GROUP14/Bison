@@ -21,6 +21,4 @@ public class PublicModel : PageModel
         Observations = await _service.GetObservations(page);
         return Page();
     }
-
-    public async Task<ActionResult>
 }
