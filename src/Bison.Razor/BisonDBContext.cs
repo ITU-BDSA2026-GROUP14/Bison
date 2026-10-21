@@ -19,6 +19,7 @@ public class BisonDBContext : DbContext
     public async Task<Observation?> GetObservation(int observationId)
     {
         return await Observations
+        .Include(o => o.Author)
         .FirstOrDefaultAsync(o => o.Id == observationId);
     }
 
@@ -26,6 +27,7 @@ public class BisonDBContext : DbContext
     public async Task<List<Observation>> GetObservations(int page = 1)
     {
         return await Observations
+        .Include(o => o.Author)
         .OrderByDescending(o => o.PubDate)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
@@ -36,6 +38,7 @@ public class BisonDBContext : DbContext
     public async Task<List<Observation>> GetObservationsByAuthor(int authorId, int page = 1)
     {
         return await Observations
+        .Include(o => o.Author)
         .OrderByDescending(o => o.PubDate)
         .Where(o => o.Author.Id == authorId)
         .Skip((page - 1) * pageSize)
@@ -47,6 +50,7 @@ public class BisonDBContext : DbContext
     public async Task<List<Comment>> GetCommentsForObservation(int observationId, int page = 1)
     {
         return await Comments
+        .Include(o => o.Author)
         .OrderByDescending(c => c.PubDate)
         .Where(c => c.Observation.Id == observationId)
         .Skip((page - 1) * pageSize)
@@ -58,6 +62,7 @@ public class BisonDBContext : DbContext
     public async Task<List<Comment>> GetCommentsByAuthor(int authorId, int page = 1)
     {
         return await Comments
+        .Include(o => o.Author)
         .OrderByDescending(c => c.PubDate)
         .Where(c => c.Author.Id == authorId)
         .Skip((page - 1) * pageSize)
@@ -69,6 +74,7 @@ public class BisonDBContext : DbContext
     public async Task<List<Proposal>> GetProposals(int page = 1)
     {
         return await Proposals
+        .Include(o => o.Author)
         .OrderByDescending(p => p.PubDate)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
@@ -79,6 +85,7 @@ public class BisonDBContext : DbContext
     public async Task<List<Proposal>> GetProposalsForObservation(int observationId, int page = 1)
     {
         return await Proposals
+        .Include(o => o.Author)
         .OrderByDescending(p => p.PubDate)
         .Where(p => p.Observation.Id == observationId)
         .Skip((page - 1) * pageSize)

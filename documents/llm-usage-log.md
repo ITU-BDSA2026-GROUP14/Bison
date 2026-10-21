@@ -14,3 +14,7 @@ After refactor, I used Claude AI to learn how Program.cs would need to be modifi
 09-10-2026 Hannibal Marcellus Munk (Claude Code):
 - Purpose: Debugged a "cannot convert IEnumerable<ObservationDTO> to ObservationDTO" compile error in PostRepository.GetObservation.
 - Reason: To understand why the method returned a sequence instead of a single DTO and how to fix it, and to choose how to handle a not-found observation (null vs. exception).
+
+21-10-2026 Hannibal Marcellus Munk (Claude Code):
+- Purpose: Reviewed the DTO/PostRepository refactor across the repo (build errors, pages, DbInitializer, tests) and listed what was still missing; advised on showing author names in Public.cshtml.
+- Reason: To catch leftover references to the old data model before merging and to choose how to load authors for a list of observations.

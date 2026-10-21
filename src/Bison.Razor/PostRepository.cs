@@ -18,7 +18,9 @@ public class PostRepository : IPostRepository
             obs.Id,
             obs.Text,
             obs.PubDate.ToString(timestampFormat),
-            obs.Author.Id);
+            obs.Author.Id,
+            obs.Author.Name
+            );
     }
 
     public async Task<List<ObservationDTO>> GetObservations(int page)
@@ -28,7 +30,8 @@ public class PostRepository : IPostRepository
             o.Id,
             o.Text,
             o.PubDate.ToString(timestampFormat),
-            o.Author.Id
+            o.Author.Id,
+            o.Author.Name
         ))
         .ToList();
     }
@@ -40,7 +43,8 @@ public class PostRepository : IPostRepository
             o.Id,
             o.Text,
             o.PubDate.ToString(timestampFormat),
-            o.Author.Id
+            o.Author.Id,
+            o.Author.Name
         ))
         .ToList();
     }
@@ -52,7 +56,8 @@ public class PostRepository : IPostRepository
             c.Id,
             c.PubDate.ToString(timestampFormat),
             c.Text,
-            c.Author.Id
+            c.Author.Id,
+            c.Author.Name
         ))
         .ToList();
     }
@@ -64,7 +69,8 @@ public class PostRepository : IPostRepository
             c.Id,
             c.PubDate.ToString(timestampFormat),
             c.Text,
-            c.Author.Id
+            c.Author.Id,
+            c.Author.Name
         ))
         .ToList();
     }
@@ -77,6 +83,7 @@ public class PostRepository : IPostRepository
             p.Text,
             p.PubDate.ToString(timestampFormat),
             p.Author.Id,
+            p.Author.Name,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();
@@ -90,6 +97,7 @@ public class PostRepository : IPostRepository
             p.Text,
             p.PubDate.ToString(timestampFormat),
             p.Author.Id,
+            p.Author.Name,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();

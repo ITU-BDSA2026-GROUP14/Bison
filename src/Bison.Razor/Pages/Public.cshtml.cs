@@ -8,10 +8,10 @@ public class PublicModel : PageModel
 {
 
     public int CurrentPage { get; set; }
-    private readonly IObservationService _service;
-    public List<ObservationViewModel> Observations { get; set; }
+    private readonly PostRepository _service;
+    public List<ObservationDTO> Observations { get; set; }
 
-    public PublicModel(IObservationService service)
+    public PublicModel(PostRepository service)
     {
         _service = service;
     }
@@ -21,4 +21,6 @@ public class PublicModel : PageModel
         Observations = await _service.GetObservations(page);
         return Page();
     }
+
+    public async Task<ActionResult>
 }

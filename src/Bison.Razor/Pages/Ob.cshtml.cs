@@ -8,12 +8,12 @@ namespace Bison.Razor.Initial.Pages;
 public class ObModel : PageModel
 {
     public int ObId { get; set; }
-    private readonly IObservationService _service;
-    public ObservationViewModel Observation { get; set; }
-    public List<ObservationViewModel> Comments { get; set; } = new();
-    public List<ObservationViewModel> Proposals { get; set; } = new();
+    private readonly PostRepository _service;
+    public ObservationDTO Observation { get; set; }
+    public List<CommentDTO> Comments { get; set; } = new();
+    public List<ProposalDTO> Proposals { get; set; } = new();
 
-    public ObModel(IObservationService service)
+    public ObModel(PostRepository service)
     {
         _service = service;
     }
@@ -22,15 +22,15 @@ public class ObModel : PageModel
     {
         if (id is null) { return Redirect("/"); }
 
-        var observation = (await _service.GetObservationFromId(id.Value, page)).FirstOrDefault();
+        var observation = await _service.GetObservation(id.Value);
         if (observation is null)
         {
             return NotFound();
         }
 
         Observation = observation;
-        Comments = await _service.GetCommentsFromObservationId(id.Value, page);
-        Proposals = await _service.GetProposalsFromId(id.Value, page);
+        Comments = await _service.GetCommentsForObservation(id.Value, page);
+        Proposals = await _service.GetProposalsForObservation(id.Value, page);
 
         return Page();
     }
