@@ -76,6 +76,7 @@ public class BisonDBContext : DbContext
     {
         return await Proposals
         .Include(o => o.Author)
+        .Include(p => p.Taxon)
         .OrderByDescending(p => p.TimeStamp)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
@@ -87,6 +88,7 @@ public class BisonDBContext : DbContext
     {
         return await Proposals
         .Include(o => o.Author)
+        .Include(p => p.Taxon)
         .OrderByDescending(p => p.TimeStamp)
         .Where(p => p.Observation.PostId == observationId)
         .Skip((page - 1) * pageSize)

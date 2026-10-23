@@ -8,12 +8,12 @@ namespace Bison.Razor.Initial.Pages;
 public class ObModel : PageModel
 {
     public int ObId { get; set; }
-    private readonly PostRepository _service;
+    private readonly IPostRepository _service;
     public ObservationDTO Observation { get; set; } = null!;
     public List<CommentDTO> Comments { get; set; } = new();
     public List<ProposalDTO> Proposals { get; set; } = new();
 
-    public ObModel(PostRepository service)
+    public ObModel(IPostRepository service)
     {
         _service = service;
     }

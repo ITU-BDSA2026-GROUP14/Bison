@@ -8,10 +8,10 @@ public class PublicModel : PageModel
 {
 
     public int CurrentPage { get; set; }
-    private readonly PostRepository _service;
+    private readonly IPostRepository _service;
     public List<ObservationDTO> Observations { get; set; } = null!;
 
-    public PublicModel(PostRepository service)
+    public PublicModel(IPostRepository service)
     {
         _service = service;
     }

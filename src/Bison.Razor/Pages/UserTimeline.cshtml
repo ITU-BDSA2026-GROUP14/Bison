@@ -1,10 +1,10 @@
-﻿@page "/{author:int}"
+﻿@page "/{authorId:int}"
 @using Bison.Razor
 @model Bison.Razor.Initial.Pages.UserTimelineModel
 @{
     ViewData["Title"] = "Bison";
     Layout = "Shared/_Layout";
-    var routeName = HttpContext.GetRouteValue("author");
+    var routeName = HttpContext.GetRouteValue("authorId");
 }
 
 <div>
