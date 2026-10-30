@@ -6,16 +6,22 @@ var builder = WebApplication.CreateBuilder(args);
 var dbPath = Environment.GetEnvironmentVariable("BISONDBPATH") ?? Path.Combine(Path.GetTempPath(), "bison.db");
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>  
-    {
-        options.SignIn.RequireConfirmedAccount = true;
-        options.Password.RequiredLength = 6;
-        options.Lockout.AllowedForNewUsers = true;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireLowercase = false;
-        options.Password.RequireDigit = false;
-    })      
-        .AddEntityFrameworkStores<BisonDBContext>();
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Password.RequiredLength = 6;
+    options.Lockout.AllowedForNewUsers = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireDigit = false;
+})
+.AddEntityFrameworkStores<BisonDBContext>();
+
+builder.Services.AddAuthentication().AddGitHub(options => {
+    options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"]!;
+    options.ClientSecret =
+    builder.Configuration["Authentication:GitHub:ClientSecret"]!;
+});
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -47,7 +53,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
-
 app.Run();
 
 public partial class Program { };
