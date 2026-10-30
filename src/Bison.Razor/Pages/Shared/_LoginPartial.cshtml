@@ -1,0 +1,25 @@
+@using Microsoft.AspNetCore.Identity
+@using Bison.Razor
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<div class=navigation>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div>
+            <a href="/@(User.Identity.Name)">My Observations</a> |
+            <a href="/">Public Observations</a> |
+            <a class="form-inline" asp-page="/Account/Logout" 
+                asp-route-returnUrl="@Url.Page("/", new { area = "" })"
+                asp-area="Identity" method="post">Logout [@(User.Identity.Name)]</a>
+        </div>
+    }
+    else
+    {
+        <div>
+            <a href="/">Public Observations</a> |
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">register</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </div>
+    }
+</div>
