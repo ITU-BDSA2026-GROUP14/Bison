@@ -21,3 +21,6 @@ Claude was used to guide assignment 1.a for Week 7. It explained how to specify 
 21-10-2026 Hannibal Marcellus Munk (Claude Code):
 - Purpose: Reviewed the DTO/PostRepository refactor across the repo (build errors, pages, DbInitializer, tests) and listed what was still missing; advised on showing author names in Public.cshtml and diagnosed post-merge build errors caused by renamed model properties and explained the remaining compiler warnings.
 - Reason: To catch leftover references to the old data model before merging and to choose how to load authors for a list of observations.
+
+30-10-2026 Daniel Kyhl:
+Claude was used to diagnose the build errors after starting ASP.NET Core Identity on the feat-identity branch. It helped us see that BisonDBContext was missing the Identity using directive, that ApplicationUser and AppDbContext didn't exist, and that the Identity package versions didn't match .NET 8.

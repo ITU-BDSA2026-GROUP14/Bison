@@ -4,24 +4,6 @@
     ViewData["Title"] = "Bison";
     Layout = "Shared/_Layout";
 }
-<div class=navigation>
-    @if (User.Identity.IsAuthenticated)
-    {
-        <div>
-            <a href="/@(User.Identity.Name)">My Observations</a> |
-            <a href="/">Public Observations</a> |
-            <a ... >Logout [@(User.Identity.Name)]</a>
-        </div>
-    }
-    else
-    {
-        <div>
-            <a href="/">Public Observations</a> |
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">register</a>
-            <a ... >Login</a>
-        </div>
-    }
-</div>
 
 <div>
     <h2> Public Timeline </h2>

@@ -1,9 +1,10 @@
 using Bison.Razor.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Bison.Razor;
 
-public class BisonDBContext : DbContext
+public class BisonDBContext :  IdentityDbContext<ApplicationUser>
 {
     public const int pageSize = 32;
 

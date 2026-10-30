@@ -5,6 +5,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 var dbPath = Environment.GetEnvironmentVariable("BISONDBPATH") ?? Path.Combine(Path.GetTempPath(), "bison.db");
 
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>  
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Password.RequiredLength = 6;
+        options.Lockout.AllowedForNewUsers = true;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireDigit = false;
+    })      
+        .AddEntityFrameworkStores<BisonDBContext>();
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite($"Data Source={dbPath}"));
@@ -30,6 +42,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorPages();
 
