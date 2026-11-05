@@ -7,10 +7,10 @@ namespace Bison.Razor.Initial.Pages;
 public class UserTimelineModel : PageModel
 {
     public int CurrentPage { get; set; }
-    private readonly IPostRepository _service;
+    private readonly IPostService _service;
     public List<ObservationDTO> Observations { get; set; } = new();
 
-    public UserTimelineModel(IPostRepository service)
+    public UserTimelineModel(IPostService service)
     {
         _service = service;
     }
