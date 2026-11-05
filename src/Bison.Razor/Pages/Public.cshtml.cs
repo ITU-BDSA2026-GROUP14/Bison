@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Bison.Core.DTOs;
+using Bison.Infrastructure.Services;
 
 namespace Bison.Razor.Initial.Pages;
 
@@ -18,6 +20,7 @@ public class PublicModel : PageModel
 
     public async Task<ActionResult> OnGet([FromQuery] int page = 1)
     {
+        CurrentPage = page;
         Observations = await _service.GetObservations(page);
         return Page();
     }

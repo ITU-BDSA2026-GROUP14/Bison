@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Bison.Razor;
+namespace Bison.Infrastructure.Data;
 
 public class ApplicationUser : IdentityUser { }

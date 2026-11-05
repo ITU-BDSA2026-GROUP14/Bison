@@ -1,4 +1,4 @@
-module {:extern "Bison.Razor.Models"} Filter {
+module {:extern "Bison.Core.Models"} Filter {
     class {:extern} Taxon {
         function {:extern} isSubTaxon(ancestor: Taxon): bool
     }
@@ -18,7 +18,7 @@ module {:extern "Bison.Razor.Models"} Filter {
     }
 }
 
-module {:extern "Bison.Razor.Filtering"} FilterWrapper {
+module {:extern "Bison.Core.Filtering"} FilterWrapper {
   import opened Filter
   method FilterObservations(root: Taxon, obs: array<Observation>) returns (result: array<Observation>)
     ensures result[..] == FilterBy(root, obs[..])

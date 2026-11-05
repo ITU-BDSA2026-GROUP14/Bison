@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using Bison.Core.DTOs;
+
+namespace Bison.Infrastructure.Repositories;
+
 public interface IPostRepository
 {
     public const int PageSize = 32;

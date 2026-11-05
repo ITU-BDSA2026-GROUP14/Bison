@@ -1,3 +1,8 @@
+using Bison.Core.DTOs;
+using Bison.Infrastructure.Repositories;
+
+namespace Bison.Infrastructure.Services;
+
 public class PostService : IPostService 
 {
     private readonly IPostRepository _repository;

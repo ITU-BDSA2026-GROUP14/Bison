@@ -1,5 +1,8 @@
-using Bison.Razor;
+using Bison.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Bison.Core.DTOs;
+
+namespace Bison.Infrastructure.Repositories;
 
 public class PostRepository : IPostRepository
 {

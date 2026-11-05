@@ -1,3 +1,8 @@
+using Bison.Core.DTOs;
+using Bison.Infrastructure.Repositories;
+
+namespace Bison.Infrastructure.Services;
+
 public interface IPostService
 {
     Task<ObservationDTO?> GetObservation(int observationId);
