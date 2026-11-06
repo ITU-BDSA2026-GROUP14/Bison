@@ -2,18 +2,20 @@ using System.Net.WebSockets;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Bison.Core.DTOs;
+using Bison.Infrastructure.Services;
 
 namespace Bison.Razor.Initial.Pages;
 
 public class ObModel : PageModel
 {
     public int ObId { get; set; }
-    private readonly IPostRepository _service;
+    private readonly IPostService _service;
     public ObservationDTO Observation { get; set; } = null!;
     public List<CommentDTO> Comments { get; set; } = new();
     public List<ProposalDTO> Proposals { get; set; } = new();
 
-    public ObModel(IPostRepository service)
+    public ObModel(IPostService service)
     {
         _service = service;
     }

@@ -1,31 +1,48 @@
-using Bison.Razor;
+using Bison.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Bison.Core.DTOs;
+
+namespace Bison.Infrastructure.Repositories;
 
 public class PostRepository : IPostRepository
 {
     private const string timestampFormat = "MM/dd/yy H:mm:ss";
     private readonly BisonDBContext _context;
+    private const int pageSize = 32;
 
     public PostRepository(BisonDBContext context)
     {
         _context = context;
     }
 
+    // Retrieve an Observation from its id
     public async Task<ObservationDTO?> GetObservation(int observationId)
     {
-        var obs = await _context.GetObservation(observationId);
+        var obs = await _context.Observations
+        .Include(o => o.Author)
+        .FirstOrDefaultAsync(o => o.PostId == observationId);
+
         if (obs is null) return null;
+
         return new ObservationDTO(
             obs.PostId,
             obs.Text,
             obs.TimeStamp.ToString(timestampFormat),
             obs.Author.AuthorId,
             obs.Author.Name
-            );
+        );
     }
 
+    // Retrieves all Observations from the database
     public async Task<List<ObservationDTO>> GetObservations(int page)
     {
-        var obs = await _context.GetObservations(page);
+        var obs = await _context.Observations
+        .Include(o => o.Author)
+        .OrderByDescending(o => o.TimeStamp)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
         return obs.Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
@@ -36,10 +53,18 @@ public class PostRepository : IPostRepository
         .ToList();
     }
 
+    // Retrieves all Observations from a specific Author by AuthorId
     public async Task<List<ObservationDTO>> GetObservationsByAuthor(int authorId, int page)
     {
-        var comments = await _context.GetObservationsByAuthor(authorId, page);
-        return comments.Select(o => new ObservationDTO(
+        var obs = await _context.Observations
+        .Include(o => o.Author)
+        .OrderByDescending(o => o.TimeStamp)
+        .Where(o => o.Author.AuthorId == authorId)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+        
+        return obs.Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
@@ -49,9 +74,17 @@ public class PostRepository : IPostRepository
         .ToList();
     }
 
+    // Retrieves all Comments for a specific Observation
     public async Task<List<CommentDTO>> GetCommentsForObservation(int observationId, int page)
     {
-        var comments = await _context.GetCommentsForObservation(observationId, page);
+        var comments = await _context.Comments
+        .Include(o => o.Author)
+        .OrderByDescending(c => c.TimeStamp)
+        .Where(c => c.Observation.PostId == observationId)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+        
         return comments.Select(c => new CommentDTO(
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
@@ -62,9 +95,17 @@ public class PostRepository : IPostRepository
         .ToList();
     }
 
+    // Retrieves all Comments by a specific Author
     public async Task<List<CommentDTO>> GetCommentsByAuthor(int authorId, int page)
     {
-        var comments = await _context.GetCommentsByAuthor(authorId, page);
+        var comments = await _context.Comments
+        .Include(o => o.Author)
+        .OrderByDescending(c => c.TimeStamp)
+        .Where(c => c.Author.AuthorId == authorId)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
         return comments.Select(c => new CommentDTO(
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
@@ -75,9 +116,17 @@ public class PostRepository : IPostRepository
         .ToList();
     }
 
+    // Retrieves all Proposals from the database
     public async Task<List<ProposalDTO>> GetProposals(int page)
     {
-        var proposals = await _context.GetProposals(page);
+        var proposals = await _context.Proposals
+        .Include(o => o.Author)
+        .Include(p => p.Taxon)
+        .OrderByDescending(p => p.TimeStamp)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
         return proposals.Select(p => new ProposalDTO(
             p.PostId,
             p.Text,
@@ -89,9 +138,18 @@ public class PostRepository : IPostRepository
         .ToList();
     }
 
+    // Retrieves all Proposals for a specific Observation
     public async Task<List<ProposalDTO>> GetProposalsForObservation(int observationId, int page)
     {
-        var proposals = await _context.GetProposalsForObservation(observationId, page);
+        var proposals = await _context.Proposals
+        .Include(o => o.Author)
+        .Include(p => p.Taxon)
+        .OrderByDescending(p => p.TimeStamp)
+        .Where(p => p.Observation.PostId == observationId)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
         return proposals.Select(p => new ProposalDTO(
             p.PostId,
             p.Text,
@@ -103,10 +161,14 @@ public class PostRepository : IPostRepository
         .ToList();
     }
 
+    // Retrieves an Author from its id
     public async Task<AuthorDTO?> GetAuthor(int authorId)
     {
-        var author = await _context.GetAuthor(authorId);
+        var author = await _context.Authors
+        .FirstOrDefaultAsync(a => a.AuthorId == authorId);
+
         if (author is null) return null;
+
         return new AuthorDTO(
             author.AuthorId,
             author.Name,
@@ -114,9 +176,12 @@ public class PostRepository : IPostRepository
         );
     }
 
+    // Retrieves Taxon from its id
     public async Task<TaxonDTO?> GetTaxon(string taxonId)
     {
-        var taxon = await _context.GetTaxon(taxonId);
+        var taxon = await _context.Taxons
+        .Include(t => t.Parent)
+        .FirstOrDefaultAsync(t => t.dwc_TaxonID == taxonId);
         if (taxon is null) return null;
         return new TaxonDTO(
             taxon.dwc_TaxonID,

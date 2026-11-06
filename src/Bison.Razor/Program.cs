@@ -1,5 +1,9 @@
 using Bison.Razor;
 using Microsoft.EntityFrameworkCore;
+using Bison.Core.Models;
+using Bison.Infrastructure.Data;
+using Bison.Infrastructure.Repositories;
+using Bison.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +31,7 @@ builder.Services.AddAuthentication().AddGitHub(options => {
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite($"Data Source={dbPath}"));
 builder.Services.AddScoped<IPostRepository, PostRepository>();
+builder.Services.AddScoped<IPostService, PostService>();
 
 var app = builder.Build();
 
