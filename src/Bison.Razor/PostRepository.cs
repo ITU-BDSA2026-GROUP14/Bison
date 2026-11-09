@@ -124,4 +124,9 @@ public class PostRepository : IPostRepository
             taxon.Parent?.dwc_TaxonID
         );
     }
+
+    public async Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType)
+    {
+        await _context.CreateObservation(authorEmail, text, picture, pictureContentType);
+    }
 }

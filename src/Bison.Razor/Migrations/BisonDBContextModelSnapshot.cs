@@ -303,6 +303,12 @@ namespace Bison.Razor.Initial.Migrations
                 {
                     b.HasBaseType("Bison.Razor.Models.Post");
 
+                    b.Property<byte[]>("Picture")
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("PictureContentType")
+                        .HasColumnType("TEXT");
+
                     b.Property<int?>("TaxonId")
                         .HasColumnType("INTEGER");
 

@@ -12,7 +12,8 @@ public record ObservationDTO(
     string Text,
     string PubDate,
     int AuthorId,
-    string AuthorName
+    string AuthorName,
+    bool HasPicture
 ) : PostDTO(Id, Text, PubDate, AuthorId, AuthorName);
 
 
@@ -44,3 +45,4 @@ public record TaxonDTO(
     string? TaxonName,
     string? ParentTaxonId
 );
+

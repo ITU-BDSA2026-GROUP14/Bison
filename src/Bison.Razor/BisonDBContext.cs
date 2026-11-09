@@ -110,4 +110,26 @@ public class BisonDBContext :  IdentityDbContext<ApplicationUser>
         return await Taxons
         .FirstOrDefaultAsync(t => t.dwc_TaxonID == taxonId);
     }
+
+    public async Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType)
+    {
+        var author = await Authors.FirstOrDefaultAsync(a => a.Email == authorEmail);
+        if (author is null)
+        {
+            author = new Author { Name = authorEmail, Email = authorEmail };
+            Authors.Add(author);
+        }
+
+        var observation = new Observation
+        {
+            Text = text,
+            TimeStamp = DateTime.UtcNow,
+            Author = author,
+            Picture = picture,
+            PictureContentType = pictureContentType
+        };
+
+        Observations.Add(observation);
+        await SaveChangesAsync();
+    }
 }

@@ -8,6 +8,16 @@
 <div>
     <h2> Public Timeline </h2>
 
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <h3> What did you spot today? </h3>
+        <form method="post" enctype="multipart/form-data">
+        <input type="text" name="Text">
+        <input type ="file" name="Picture" accept="image/*">
+        <input type ="submit" value="Share">
+        </form>
+    }
+
     @if (Model.Observations.Any())
     {
         <ul id="messagelist" class="observations">

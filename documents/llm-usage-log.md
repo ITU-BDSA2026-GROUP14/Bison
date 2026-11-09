@@ -24,3 +24,4 @@ Claude was used to guide assignment 1.a for Week 7. It explained how to specify 
 
 30-10-2026 Daniel Kyhl:
 Claude was used to diagnose the build errors after starting ASP.NET Core Identity on the feat-identity branch. It helped us see that BisonDBContext was missing the Identity using directive, that ApplicationUser and AppDbContext didn't exist, and that the Identity package versions didn't match .NET 8.
+
