@@ -19,7 +19,8 @@ public class PostRepository : IPostRepository
             obs.Text,
             obs.TimeStamp.ToString(timestampFormat),
             obs.Author.AuthorId,
-            obs.Author.Name
+            obs.Author.Name,
+            obs.Picture != null
             );
     }
 
