@@ -29,6 +29,11 @@ public class PublicModel : PageModel
 
     public async Task<ActionResult> OnPostAsync()
     {
+        if (User.Identity?.IsAuthenticated != true) return Challenge();
+        if (Picture != null && (!Picture.ContentType.StartsWith("image/") || Picture.Length > 5 * 1024 * 1024))
+        {
+            return RedirectToPage("/Public", new { page = 1 });
+        }
 
         if (string.IsNullOrWhiteSpace(Text)) return RedirectToPage("/Public", new { page = 1 });
 

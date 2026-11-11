@@ -23,6 +23,10 @@
                         @ob.Text
                         <small>&mdash; @ob.PubDate</small>
                     </p>
+                    @if (ob.HasPicture)
+            {
+                    <img class="observation-picture" src="/ob/@(ob.Id)?handler=Picture" alt="Picture of the observation">
+            }
                 </li>
             }
         </ul>

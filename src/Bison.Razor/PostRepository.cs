@@ -8,12 +8,7 @@ public class PostRepository : IPostRepository
     public PostRepository(BisonDBContext context)
     {
         _context = context;
-        _context.GetObservation(observationId);
-        if (observationId || PictureDTO is null) return null;
-        else return new PictureDTO(
-            picture.Data,
-            picture.ContentType
-        );
+       
     }
 
     public async Task<ObservationDTO?> GetObservation(int observationId)
@@ -84,6 +79,15 @@ public class PostRepository : IPostRepository
         .ToList();
     }
 
+    public async Task<PictureDTO?> GetPicture(int observationId)
+    {
+        var obs = await _context.GetObservation(observationId);
+        if (obs?.Picture is null) return null;
+        return new PictureDTO(
+            obs.Picture,
+            obs.PictureContentType!);
+        
+    }
     public async Task<List<ProposalDTO>> GetProposals(int page)
     {
         var proposals = await _context.GetProposals(page);

@@ -15,6 +15,10 @@
                 @Model.Observation.Text
                 <small>&mdash; @Model.Observation.PubDate</small>
             </p>
+            @if (Model.Observation.HasPicture)
+        {
+            <img class="observation-picture" src="/ob/@(Model.Observation.Id)?handler=Picture" alt="Picture of the observation">
+        }
         </li>
     </ul>
 
