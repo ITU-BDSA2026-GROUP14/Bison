@@ -1,4 +1,5 @@
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+
+namespace Bison.Core.DTOs;
 
 public record PostDTO(
     int Id,

@@ -9,8 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NuGet.Frameworks;
 using Bison.Razor;
-using Bison.Razor.Models;
+using Bison.Core;
+using Bison.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+
 
 public class BisonFactory : WebApplicationFactory<Program>
 {

@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{08DBFDD7-6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Razor.Tests", "test\Bison.Razor.Tests\Bison.Razor.Tests.csproj", "{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Core", "src\Bison.Core\Bison.Core.csproj", "{9A050A32-F457-402C-BE3F-90971B45D6A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Infrastructure", "src\Bison.Infrastructure\Bison.Infrastructure.csproj", "{59750AE4-19E2-4D45-8863-2BEBE2C3BC29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +29,14 @@ Global
 		{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A050A32-F457-402C-BE3F-90971B45D6A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A050A32-F457-402C-BE3F-90971B45D6A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A050A32-F457-402C-BE3F-90971B45D6A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A050A32-F457-402C-BE3F-90971B45D6A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{59750AE4-19E2-4D45-8863-2BEBE2C3BC29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59750AE4-19E2-4D45-8863-2BEBE2C3BC29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59750AE4-19E2-4D45-8863-2BEBE2C3BC29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59750AE4-19E2-4D45-8863-2BEBE2C3BC29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,5 +44,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{324CB770-F7B0-46DD-AB8E-53940E1D8486} = {86085A72-0006-439C-B4ED-86F0F501E53A}
 		{98E5D21E-6BB8-4744-93E4-9E7E1C3973D2} = {08DBFDD7-60D5-437E-96D2-898B75966478}
+		{9A050A32-F457-402C-BE3F-90971B45D6A7} = {86085A72-0006-439C-B4ED-86F0F501E53A}
+		{59750AE4-19E2-4D45-8863-2BEBE2C3BC29} = {86085A72-0006-439C-B4ED-86F0F501E53A}
 	EndGlobalSection
 EndGlobal
