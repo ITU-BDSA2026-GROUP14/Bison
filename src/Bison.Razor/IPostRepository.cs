@@ -12,5 +12,7 @@ public interface IPostRepository
     Task<AuthorDTO?> GetAuthor(int authorId);
     Task<TaxonDTO?> GetTaxon(string taxonId);
 
+    Task<PictureDTO?> GetPicture(int observationId);   
+
     Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType);
 }

@@ -46,3 +46,7 @@ public record TaxonDTO(
     string? ParentTaxonId
 );
 
+public record PictureDTO(
+    byte[] Data,
+    string ContentType
+);

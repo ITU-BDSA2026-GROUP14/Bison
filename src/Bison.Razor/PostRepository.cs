@@ -8,6 +8,12 @@ public class PostRepository : IPostRepository
     public PostRepository(BisonDBContext context)
     {
         _context = context;
+        _context.GetObservation(observationId);
+        if (observationId || PictureDTO is null) return null;
+        else return new PictureDTO(
+            picture.Data,
+            picture.ContentType
+        );
     }
 
     public async Task<ObservationDTO?> GetObservation(int observationId)
@@ -32,7 +38,8 @@ public class PostRepository : IPostRepository
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
             o.Author.AuthorId,
-            o.Author.Name
+            o.Author.Name,
+            o.Picture != null
         ))
         .ToList();
     }
@@ -45,7 +52,8 @@ public class PostRepository : IPostRepository
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
             o.Author.AuthorId,
-            o.Author.Name
+            o.Author.Name,
+            o.Picture != null  
         ))
         .ToList();
     }
@@ -130,4 +138,5 @@ public class PostRepository : IPostRepository
     {
         await _context.CreateObservation(authorEmail, text, picture, pictureContentType);
     }
+
 }
