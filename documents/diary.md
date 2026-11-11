@@ -21,14 +21,14 @@ Today we attended our second review meetings. These are the notes:
 
 "### Review Meeting
     - Lav et workflow der automatisk labeller issues på GitHub
-    - Vi skal bare vise Eduardo at vi godt kan finde ud af det
+        - Vi skal bare vise Eduardo at vi godt kan finde ud af det
     - Skriv i rapport at vi tager code reviews in person → Vigtigt hvis vi ikke har diskussioner på vores pull requests
     - Ingen tests der bruger in-memory SQLite → Brug in-memory database til test. Eduardo vil gerne have vi bruger in-memory databaser, i stedet for at have en fil som vi sletter igen.
     - Vi har ikke nok tests → Lav flere tests
-    - Flere unit tests til repository og service metoder
-    - Godt at vi har tests til Razor pages
-    - Vi mangler integration tests og end-to-end tests
-    - Sørg for at have minimum én af hver slags test. Lav det der giver mening
+        - Flere unit tests til repository og service metoder
+        - Godt at vi har tests til Razor pages
+        - Vi mangler integration tests og end-to-end tests
+        - Sørg for at have minimum én af hver slags test. Lav det der giver mening
     - Vi mangler et workflow til Dafny
     - Kan vi logge ind med Github på vores side? Ja siger teamet.
     - Sørg for at man kan poste observations, comments og proposals på hjemmesiden
