@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Razor.Tests", "test\B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Core", "src\Bison.Core\Bison.Core.csproj", "{9A050A32-F457-402C-BE3F-90971B45D6A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Infrastructure", "test\Bison.Infrastructure\Bison.Infrastructure.csproj", "{736BF503-2239-42E4-9D8F-AE5B70250A2F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Infrastructure", "src\Bison.Infrastructure\Bison.Infrastructure.csproj", "{736BF503-2239-42E4-9D8F-AE5B70250A2F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bison.Infrastructure.Tests", "test\Bison.Infrastructure.Tests\Bison.Infrastructure.Tests.csproj", "{6A663C02-169D-45CD-A390-750BFE3D79BD}"
 EndProject

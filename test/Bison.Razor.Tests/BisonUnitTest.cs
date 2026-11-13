@@ -12,6 +12,9 @@ using Bison.Razor;
 using Bison.Core;
 using Bison.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Bison.Core.Models;
+using Bison.Core.DTOs;
+using Bison.Infrastructure.Data;
 
 
 public class BisonFactory : WebApplicationFactory<Program>

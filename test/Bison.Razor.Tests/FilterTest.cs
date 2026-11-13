@@ -1,4 +1,8 @@
-using Bison.Razor.Models;
+using Bison.Razor;
+using Bison.Infrastructure;
+using Bison.Core.Filtering;
+using Bison.Core.Models;
+using Bison.Infrastructure.Data;
 
 public class FilterTest
 {
@@ -16,7 +20,7 @@ public class FilterTest
         var observations = new[] { heron, someHeron, pelican };
 
         // Act
-        var result = Bison.Razor.Filtering.__default.FilterObservations(hejrer, observations);
+       var result = Bison.Core.Filtering.__default.FilterObservations(hejrer, observations);
 
         // Assert
         Assert.Equal(2, result.Length);

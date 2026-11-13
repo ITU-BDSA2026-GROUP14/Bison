@@ -25,9 +25,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Bison.Razor\Bison.Razor.Initial.csproj" />
+    <ProjectReference Include="..\..\src\Bison.Core\Bison.Core.csproj" />
+    <ProjectReference Include="..\..\src\Bison.Infrastructure\Bison.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../../src/Bison.Razor/data/schema.sql" Link="schema.sql" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../src/Bison.Core/Data/schema.sql" Link="schema.sql" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>  
   </Project>
