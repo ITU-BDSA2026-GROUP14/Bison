@@ -11,9 +11,10 @@
     @if (User.Identity?.IsAuthenticated == true)
     {
         <h3> What did you spot today? </h3>
+        @if (TempData["ErrorMessage"] is string error) { <p> @error </p>}
         <form method="post" enctype="multipart/form-data">
         <input type="text" name="Text">
-        <input type ="file" name="Picture" accept="image/*">
+        <input type ="file" name="Picture" accept="image/jpeg,image/png,image/gif,image/webp">
         <input type ="submit" value="Share">
         </form>
     }
