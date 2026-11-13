@@ -15,7 +15,7 @@ public class PublicModel : PageModel
 
     [BindProperty] public IFormFile? Picture { get; set; }
 
-    private readonly IPostRepository _service;
+    private readonly IPostService _service;
     public List<ObservationDTO> Observations { get; set; } = null!;
 
     public PublicModel(IPostService service)

@@ -39,7 +39,7 @@ public class ObModel : PageModel
 
     public async Task<ActionResult> OnGetPictureAsync(int id)
     {
-       var picture = await _service.GetPicture(id);
+       var picture = await _service.GetImage(id);
        if (picture is null) return NotFound();
        return File(picture.Data, picture.ContentType);
     }

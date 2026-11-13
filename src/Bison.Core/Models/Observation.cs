@@ -7,8 +7,8 @@ namespace Bison.Core.Models
         public List<Proposal> Proposals { get; set; } = new();
         public Taxon getTaxon() => Taxon!;
 
-        public byte[]? Picture { get; set; }
+        public int? ImageId { get; set; }
 
-        public string? PictureContentType { get; set; }
+        public Image? Image { get; set; }
     }
 }

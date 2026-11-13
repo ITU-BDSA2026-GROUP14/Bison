@@ -1,6 +1,7 @@
 using Bison.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Bison.Core.DTOs;
+using Bison.Core.Models;   
 
 namespace Bison.Infrastructure.Repositories;
 
@@ -31,7 +32,7 @@ public class PostRepository : IPostRepository
             obs.TimeStamp.ToString(timestampFormat),
             obs.Author.AuthorId,
             obs.Author.Name,
-            obs.Picture != null
+            obs.ImageId
             );
     }
 
@@ -51,7 +52,7 @@ public class PostRepository : IPostRepository
             o.TimeStamp.ToString(timestampFormat),
             o.Author.AuthorId,
             o.Author.Name,
-            o.Picture != null
+            o.ImageId
         ))
         .ToList();
     }
@@ -73,7 +74,7 @@ public class PostRepository : IPostRepository
             o.TimeStamp.ToString(timestampFormat),
             o.Author.AuthorId,
             o.Author.Name,
-            o.Picture != null  
+            o.ImageId
         ))
         .ToList();
     }
@@ -120,15 +121,6 @@ public class PostRepository : IPostRepository
         .ToList();
     }
 
-    public async Task<PictureDTO?> GetPicture(int observationId)
-    {
-        var obs = await _context.GetObservation(observationId);
-        if (obs?.Picture is null) return null;
-        return new PictureDTO(
-            obs.Picture,
-            obs.PictureContentType!);
-        
-    }
     public async Task<List<ProposalDTO>> GetProposals(int page)
     {
         var proposals = await _context.Proposals
@@ -204,7 +196,33 @@ public class PostRepository : IPostRepository
 
     public async Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType)
     {
-        await _context.CreateObservation(authorEmail, text, picture, pictureContentType);
+        var author = await _context.Authors.FirstOrDefaultAsync(a => a.Email == authorEmail);
+        if (author is null)
+        {
+            author = new Author {Name = authorEmail, Email = authorEmail};
+            _context.Authors.Add(author);
+        }
+        var observation = new Observation
+        {
+            Text = text,
+            TimeStamp = DateTime.UtcNow,
+            Author = author
+        };
+        if (picture != null)
+        {
+            observation.Image = new Image {Data = picture, ContentType = pictureContentType!};
+        }
+        _context.Observations.Add(observation);
+        await _context.SaveChangesAsync();
     }
 
+        public async Task<ImageDTO?> GetImage(int imageId)
+    {
+        var image = await _context.Images.FindAsync(imageId);
+        if (image is null) return null;
+        return new ImageDTO(image.ImageId, image.Data, image.ContentType);
+    }
 }
+    
+    
+
