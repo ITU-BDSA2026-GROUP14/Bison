@@ -205,7 +205,7 @@ public class PostRepository : IPostRepository
         var observation = new Observation
         {
             Text = text,
-            TimeStamp = DateTime.UtcNow,
+            TimeStamp = DateTime.Now,
             Author = author
         };
         if (picture != null)
