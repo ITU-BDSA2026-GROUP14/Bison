@@ -32,8 +32,8 @@ public class PostService : IPostService
         if (string.IsNullOrWhiteSpace(text))
             throw new ArgumentException("A comment must have text", nameof(text));
 
-        var authorId = await GetOrCreateAuthorId(authorEmail);
-        return await _repository.CreateComment(authorId, observationId, text.Trim());
+        var userId= await GetOrCreateAuthorId(authorEmail);
+        return await _repository.CreateComment(userId, observationId, text.Trim());
     }
 
     // Creates a proposal for which taxon an observation shows. The explanation text is optional.
@@ -42,12 +42,12 @@ public class PostService : IPostService
         if (string.IsNullOrWhiteSpace(taxonId))
             throw new ArgumentException("A proposal must have a taxon", nameof(taxonId));
 
-        var authorId = await GetOrCreateAuthorId(authorEmail);
-        return await _repository.CreateProposal(authorId, observationId, taxonId, text?.Trim() ?? "");
+        var userId= await GetOrCreateAuthorId(authorEmail);
+        return await _repository.CreateProposal(userId, observationId, taxonId, text?.Trim() ?? "");
     }
 
     // Finds the Author with this email, or creates one the first time the user posts something
-    private async Task<int> GetOrCreateAuthorId(string email)
+    private async Task<string> GetOrCreateAuthorId(string email)
     {
         var author = await _repository.GetAuthorByEmail(email);
         return author?.Id ?? await _repository.CreateAuthor(email, email);

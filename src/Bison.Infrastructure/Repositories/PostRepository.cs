@@ -241,10 +241,10 @@ public class PostRepository : IPostRepository
     }
 
     // Creates a new Comment on an Observation and returns its id
-    public async Task<int> CreateComment(int authorId, int observationId, string text)
+    public async Task<int> CreateComment(string userId, int observationId, string text)
     {
-        var author = await _context.Authors.FindAsync(authorId)
-            ?? throw new ArgumentException($"No author with id {authorId}", nameof(authorId));
+        var author = await _context.Authors.FindAsync(userId)
+            ?? throw new ArgumentException($"No author with id {userId}", nameof(userId));
         var observation = await _context.Observations.FirstOrDefaultAsync(o => o.PostId == observationId)
             ?? throw new ArgumentException($"No observation with id {observationId}", nameof(observationId));
 
@@ -261,10 +261,10 @@ public class PostRepository : IPostRepository
     }
 
     // Creates a new Proposal (a suggested Taxon) on an Observation and returns its id
-    public async Task<int> CreateProposal(int authorId, int observationId, string taxonId, string text)
+    public async Task<int> CreateProposal(string userId, int observationId, string taxonId, string text)
     {
-        var author = await _context.Authors.FindAsync(authorId)
-            ?? throw new ArgumentException($"No author with id {authorId}", nameof(authorId));
+        var author = await _context.Authors.FindAsync(userId)
+            ?? throw new ArgumentException($"No author with id {userId}", nameof(userId));
         var observation = await _context.Observations.FirstOrDefaultAsync(o => o.PostId == observationId)
             ?? throw new ArgumentException($"No observation with id {observationId}", nameof(observationId));
         var taxon = await _context.Taxons.FirstOrDefaultAsync(t => t.dwc_TaxonID == taxonId)
@@ -289,16 +289,16 @@ public class PostRepository : IPostRepository
         var author = await _context.Authors.FirstOrDefaultAsync(a => a.Email == email);
         if (author is null) return null;
 
-        return new AuthorDTO(author.AuthorId, author.Name, author.Email);
+        return new AuthorDTO(author.Id, author.UserName, author.Email);
     }
 
     // Creates a new Author and returns its id
-    public async Task<int> CreateAuthor(string name, string email)
+    public async Task<string> CreateAuthor(string userName, string email)
     {
-        var author = new Author { Name = name, Email = email };
+        var author = new Author { UserName = userName, Email = email };
         _context.Authors.Add(author);
         await _context.SaveChangesAsync();
-        return author.AuthorId;
+        return author.Id;
     }
 }
 
