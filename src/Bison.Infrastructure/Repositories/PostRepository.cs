@@ -194,44 +194,27 @@ public class PostRepository : IPostRepository
         );
     }
 
-    public async Task<AuthorDTO?> GetAuthorByEmail(string email)
+    public async Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType)
     {
-        var author = await _context.Authors.FirstOrDefaultAsync(a => a.Email == email);
-        if (author is null) return null;
-        return new AuthorDTO(
-            author.AuthorId,
-            author.Name,
-            author.Email
-        );
-    }
-    public async Task<int> CreateAuthor(string name, string email)
-    {
-        var author = new Author { Name = name, Email = email };
-        _context.Authors.Add(author);
-        await _context.SaveChangesAsync();
-        return author.AuthorId;
-    }
-    public async Task<int> CreateImage(byte[] data, string contentType)
-    {
-        var image = new Image { Data = data, ContentType = contentType };
-        _context.Images.Add(image);
-        await _context.SaveChangesAsync();
-        return image.ImageId;
-    }
-    public async Task CreateObservation(int authorId, string text, int? imageId)
-    {
-        var author = await _context.Authors.FindAsync(authorId);
+        var author = await _context.Authors.FirstOrDefaultAsync(a => a.Email == authorEmail);
+        if (author is null)
+        {
+            author = new Author {Name = authorEmail, Email = authorEmail};
+            _context.Authors.Add(author);
+        }
         var observation = new Observation
         {
             Text = text,
-            TimeStamp = DateTime.Now,
-            Author = author!,
-            ImageId = imageId
+            TimeStamp = DateTime.UtcNow,
+            Author = author
         };
+        if (picture != null)
+        {
+            observation.Image = new Image {Data = picture, ContentType = pictureContentType!};
+        }
         _context.Observations.Add(observation);
         await _context.SaveChangesAsync();
     }
-    
 
         public async Task<ImageDTO?> GetImage(int imageId)
     {

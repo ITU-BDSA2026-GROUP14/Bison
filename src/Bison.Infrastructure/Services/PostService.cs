@@ -22,18 +22,7 @@ public class PostService : IPostService
     public Task<AuthorDTO?> GetAuthor(int authorId) => _repository.GetAuthor(authorId);
     public Task<TaxonDTO?> GetTaxon(string taxonId) => _repository.GetTaxon(taxonId);
     public Task<ImageDTO?> GetImage(int imageId) => _repository.GetImage(imageId);
-   
-    public async Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType)
-    {
-        var author = await _repository.GetAuthorByEmail(authorEmail);
-        var authorId = author?.Id ?? await _repository.CreateAuthor(authorEmail, authorEmail);
-
-        int? imageId = null;
-        if (picture != null)
-        {
-            imageId = await _repository.CreateImage(picture, pictureContentType!);
-        }
-        await _repository.CreateObservation(authorId, text, imageId);
-    }
+    public Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType) =>
+    _repository.CreateObservation(authorEmail, text, picture, pictureContentType);
     
 }
