@@ -26,6 +26,10 @@
                     @if (ob.ImageId is not null)
             {
                     <img class="observation-picture" src="/ob/@(ob.ImageId)?handler=Picture" alt="Picture of the observation">
+                    @if (ob.License is not null)
+                        {
+                            <small> License: <a href="@Licenses.CreativeCommons[ob.License]">@ob.License</a></small>
+                        }
             }
                 </li>
             }

@@ -19,5 +19,5 @@ public interface IPostRepository
 
     Task<ImageDTO?> GetImage(int imageId);   
 
-    Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType);
+    Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType, string? license);
 }

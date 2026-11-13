@@ -14,7 +14,8 @@ public record ObservationDTO(
     string PubDate,
     int AuthorId,
     string AuthorName,
-    int? ImageId
+    int? ImageId,
+    string? License
 ) : PostDTO(Id, Text, PubDate, AuthorId, AuthorName);
 
 

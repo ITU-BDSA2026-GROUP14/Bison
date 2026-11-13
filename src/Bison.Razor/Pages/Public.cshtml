@@ -15,6 +15,13 @@
         <form method="post" enctype="multipart/form-data">
         <input type="text" name="Text">
         <input type ="file" name="Picture" accept="image/jpeg,image/png,image/gif,image/webp">
+        <select name="License">
+            <option value="">Choose a license for your picture </option>
+            @foreach (var license in Licenses.CreativeCommons.Keys)
+                    {
+                        <option value = "@license">@license</option>
+                    }
+                </select>
         <input type ="submit" value="Share">
         </form>
     }
@@ -35,7 +42,11 @@
                     @if (obs.ImageId is not null)
             {
                     <img class="observation-picture" src="/ob/@(obs.ImageId)?handler=Picture" alt="Picture of the observation">
-            }
+                    @if (obs.License is not null)
+                        {
+                            <small> License: <a href="@Licenses.CreativeCommons[obs.License]">@obs.License</a></small>
+                        }
+                    }
                 </li>
             }
         </ul>
