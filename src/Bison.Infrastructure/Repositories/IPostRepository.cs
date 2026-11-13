@@ -16,4 +16,8 @@ public interface IPostRepository
     Task<List<ProposalDTO>> GetProposalsForObservation(int observationId, int page);
     Task<AuthorDTO?> GetAuthor(string id);
     Task<TaxonDTO?> GetTaxon(string taxonId);
+
+    Task<ImageDTO?> GetImage(int imageId);   
+
+    Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType);
 }

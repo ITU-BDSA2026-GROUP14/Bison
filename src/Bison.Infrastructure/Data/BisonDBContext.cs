@@ -13,5 +13,7 @@ public class BisonDBContext : IdentityDbContext<Author>
     public DbSet<Author> Authors { get; set; }
     public DbSet<Taxon> Taxons { get; set; }
 
+    public DbSet<Image> Images { get; set; }
+
     public BisonDBContext(DbContextOptions<BisonDBContext> options) : base(options) { }
 }

@@ -1,6 +1,7 @@
 using Bison.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Bison.Core.DTOs;
+using Bison.Core.Models;   
 
 namespace Bison.Infrastructure.Repositories;
 
@@ -13,6 +14,7 @@ public class PostRepository : IPostRepository
     public PostRepository(BisonDBContext context)
     {
         _context = context;
+       
     }
 
     // Retrieve an Observation from its id
@@ -29,8 +31,9 @@ public class PostRepository : IPostRepository
             obs.Text,
             obs.TimeStamp.ToString(timestampFormat),
             obs.Author.Id,
-            obs.Author.UserName
-        );
+            obs.Author.UserName,
+            obs.ImageId
+            );
     }
 
     // Retrieves all Observations from the database
@@ -48,7 +51,8 @@ public class PostRepository : IPostRepository
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
             o.Author.Id,
-            o.Author.UserName
+            o.Author.UserName,
+            o.ImageId
         ))
         .ToList();
     }
@@ -69,7 +73,8 @@ public class PostRepository : IPostRepository
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
             o.Author.Id,
-            o.Author.UserName
+            o.Author.UserName,
+            o.ImageId
         ))
         .ToList();
     }
@@ -116,7 +121,6 @@ public class PostRepository : IPostRepository
         .ToList();
     }
 
-    // Retrieves all Proposals from the database
     public async Task<List<ProposalDTO>> GetProposals(int page)
     {
         var proposals = await _context.Proposals
@@ -189,4 +193,36 @@ public class PostRepository : IPostRepository
             taxon.Parent?.dwc_TaxonID
         );
     }
+
+    public async Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType)
+    {
+        var author = await _context.Authors.FirstOrDefaultAsync(a => a.Email == authorEmail);
+        if (author is null)
+        {
+            author = new Author {Name = authorEmail, Email = authorEmail};
+            _context.Authors.Add(author);
+        }
+        var observation = new Observation
+        {
+            Text = text,
+            TimeStamp = DateTime.Now,
+            Author = author
+        };
+        if (picture != null)
+        {
+            observation.Image = new Image {Data = picture, ContentType = pictureContentType!};
+        }
+        _context.Observations.Add(observation);
+        await _context.SaveChangesAsync();
+    }
+
+        public async Task<ImageDTO?> GetImage(int imageId)
+    {
+        var image = await _context.Images.FindAsync(imageId);
+        if (image is null) return null;
+        return new ImageDTO(image.ImageId, image.Data, image.ContentType);
+    }
 }
+    
+    
+

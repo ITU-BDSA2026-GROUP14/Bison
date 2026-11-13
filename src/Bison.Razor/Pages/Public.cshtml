@@ -8,6 +8,17 @@
 <div>
     <h2> Public Timeline </h2>
 
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <h3> What did you spot today? </h3>
+        @if (TempData["ErrorMessage"] is string error) { <p> @error </p>}
+        <form method="post" enctype="multipart/form-data">
+        <input type="text" name="Text">
+        <input type ="file" name="Picture" accept="image/jpeg,image/png,image/gif,image/webp">
+        <input type ="submit" value="Share">
+        </form>
+    }
+
     @if (Model.Observations.Any())
     {
         <ul id="messagelist" class="observations">
@@ -21,6 +32,10 @@
                         @obs.Text
                         <small>&mdash; @obs.PubDate</small>
                     </p>
+                    @if (obs.ImageId is not null)
+            {
+                    <img class="observation-picture" src="/ob/@(obs.ImageId)?handler=Picture" alt="Picture of the observation">
+            }
                 </li>
             }
         </ul>

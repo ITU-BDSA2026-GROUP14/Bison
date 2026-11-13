@@ -21,4 +21,8 @@ public class PostService : IPostService
     public Task<List<ProposalDTO>> GetProposalsForObservation(int observationId, int page) => _repository.GetProposalsForObservation(observationId, page);
     public Task<AuthorDTO?> GetAuthor(string id) => _repository.GetAuthor(id);
     public Task<TaxonDTO?> GetTaxon(string taxonId) => _repository.GetTaxon(taxonId);
+    public Task<ImageDTO?> GetImage(int imageId) => _repository.GetImage(imageId);
+    public Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType) =>
+    _repository.CreateObservation(authorEmail, text, picture, pictureContentType);
+    
 }

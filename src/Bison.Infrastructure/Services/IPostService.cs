@@ -13,5 +13,7 @@ public interface IPostService
     Task<List<ProposalDTO>> GetProposals(int page);
     Task<List<ProposalDTO>> GetProposalsForObservation(int observationId, int page);
     Task<AuthorDTO?> GetAuthor(string id);
+    Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType);
     Task<TaxonDTO?> GetTaxon(string taxonId);
+    Task<ImageDTO?> GetImage(int imageId);
 }
