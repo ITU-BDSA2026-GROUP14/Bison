@@ -27,3 +27,6 @@ Claude was used to diagnose the build errors after starting ASP.NET Core Identit
 
 11-11-2026 Hannibal Marcellus Munk:
 Claude was used to assess whether the project follows the onion architecture after the Week 11 refactor, and to teach us what the onion architecture is. It helped us see which dependencies already point the right way and where the interfaces, services and tests still deviate from the pattern.
+
+13-11-2026 Hannibal Marcellus Munk:
+Claude was used to explain how to fix the CS8602 warning in _LoginPartial.cshtml, and how to run and log in to the app locally with GitHub OAuth.

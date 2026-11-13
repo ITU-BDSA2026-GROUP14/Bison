@@ -17,10 +17,10 @@ public class UserTimelineModel : PageModel
         _service = service;
     }
 
-    public async Task<ActionResult> OnGet(int authorId, [FromQuery] int page = 1)
+    public async Task<ActionResult> OnGet(string userId, [FromQuery] int page = 1)
     {
-         CurrentPage = page;
-        Observations = await _service.GetObservationsByAuthor(authorId, page);
+        CurrentPage = page;
+        Observations = await _service.GetObservationsByAuthor(userId, page);
         return Page();
     }
 }
