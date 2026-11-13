@@ -16,4 +16,7 @@ public interface IPostService
     Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType);
     Task<TaxonDTO?> GetTaxon(string taxonId);
     Task<ImageDTO?> GetImage(int imageId);
+    Task<List<TaxonDTO>> GetTaxa();
+    Task<int> CreateComment(string authorEmail, int observationId, string text);
+    Task<int> CreateProposal(string authorEmail, int observationId, string taxonId, string? text);
 }

@@ -223,6 +223,83 @@ public class PostRepository : IPostRepository
         if (image is null) return null;
         return new ImageDTO(image.ImageId, image.Data, image.ContentType);
     }
+
+    // Retrieves all Taxa, sorted by name, e.g. for choosing one in a proposal
+    public async Task<List<TaxonDTO>> GetTaxa()
+    {
+        var taxa = await _context.Taxons
+        .Include(t => t.Parent)
+        .OrderBy(t => t.VernacularName)
+        .ToListAsync();
+
+        return taxa.Select(t => new TaxonDTO(
+            t.dwc_TaxonID,
+            t.VernacularName,
+            t.Parent?.dwc_TaxonID
+        ))
+        .ToList();
+    }
+
+    // Creates a new Comment on an Observation and returns its id
+    public async Task<int> CreateComment(string userId, int observationId, string text)
+    {
+        var author = await _context.Authors.FindAsync(userId)
+            ?? throw new ArgumentException($"No author with id {userId}", nameof(userId));
+        var observation = await _context.Observations.FirstOrDefaultAsync(o => o.PostId == observationId)
+            ?? throw new ArgumentException($"No observation with id {observationId}", nameof(observationId));
+
+        var comment = new Comment
+        {
+            Text = text,
+            TimeStamp = DateTime.Now,
+            Author = author,
+            Observation = observation
+        };
+        _context.Comments.Add(comment);
+        await _context.SaveChangesAsync();
+        return comment.PostId;
+    }
+
+    // Creates a new Proposal (a suggested Taxon) on an Observation and returns its id
+    public async Task<int> CreateProposal(string userId, int observationId, string taxonId, string text)
+    {
+        var author = await _context.Authors.FindAsync(userId)
+            ?? throw new ArgumentException($"No author with id {userId}", nameof(userId));
+        var observation = await _context.Observations.FirstOrDefaultAsync(o => o.PostId == observationId)
+            ?? throw new ArgumentException($"No observation with id {observationId}", nameof(observationId));
+        var taxon = await _context.Taxons.FirstOrDefaultAsync(t => t.dwc_TaxonID == taxonId)
+            ?? throw new ArgumentException($"No taxon with id {taxonId}", nameof(taxonId));
+
+        var proposal = new Proposal
+        {
+            Text = text,
+            TimeStamp = DateTime.Now,
+            Author = author,
+            Observation = observation,
+            Taxon = taxon
+        };
+        _context.Proposals.Add(proposal);
+        await _context.SaveChangesAsync();
+        return proposal.PostId;
+    }
+
+    // Retrieves an Author from their email, or null if none exists
+    public async Task<AuthorDTO?> GetAuthorByEmail(string email)
+    {
+        var author = await _context.Authors.FirstOrDefaultAsync(a => a.Email == email);
+        if (author is null) return null;
+
+        return new AuthorDTO(author.Id, author.UserName, author.Email);
+    }
+
+    // Creates a new Author and returns its id
+    public async Task<string> CreateAuthor(string userName, string email)
+    {
+        var author = new Author { UserName = userName, Email = email };
+        _context.Authors.Add(author);
+        await _context.SaveChangesAsync();
+        return author.Id;
+    }
 }
 
 

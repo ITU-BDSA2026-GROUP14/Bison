@@ -8,7 +8,7 @@
 }
 
 <div>
-    <h2> @routeName's Observations page @Model.CurrentPage</h2>
+    <h2> @(Model.Author.UserName ?? "Unknown User")'s Observations page @Model.CurrentPage</h2>
 
     @if (Model.Observations.Any())
     {
@@ -21,7 +21,7 @@
                             <a href="/@ob.UserId">@ob.UserName</a>
                         </strong>
                         @ob.Text
-                        <small>&mdash; @ob.PubDate</small>
+                        <small>&mdash; @ob.PubDate &middot; <a href="/ob/@ob.Id">Comments &amp; proposals</a></small>
                     </p>
                     @if (ob.ImageId is not null)
             {
@@ -42,8 +42,6 @@
             <a href="?page=@(Model.CurrentPage - 1)">&laquo; Previous</a>
         }
 
-        // TODO:
-        // 32 is just a set number, make it reffence pageSize
         @if (Model.Observations.Count == 32)
         {
             <a href="?page=@(Model.CurrentPage + 1)">Next &raquo;</a>

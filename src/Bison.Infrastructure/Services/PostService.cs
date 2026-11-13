@@ -21,8 +21,35 @@ public class PostService : IPostService
     public Task<List<ProposalDTO>> GetProposalsForObservation(int observationId, int page) => _repository.GetProposalsForObservation(observationId, page);
     public Task<AuthorDTO?> GetAuthor(string id) => _repository.GetAuthor(id);
     public Task<TaxonDTO?> GetTaxon(string taxonId) => _repository.GetTaxon(taxonId);
+    public Task<List<TaxonDTO>> GetTaxa() => _repository.GetTaxa();
     public Task<ImageDTO?> GetImage(int imageId) => _repository.GetImage(imageId);
     public Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType) =>
     _repository.CreateObservation(authorEmail, text, picture, pictureContentType);
     
+    // Creates a comment on an observation for the logged-in user
+    public async Task<int> CreateComment(string authorEmail, int observationId, string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            throw new ArgumentException("A comment must have text", nameof(text));
+
+        var userId= await GetOrCreateAuthorId(authorEmail);
+        return await _repository.CreateComment(userId, observationId, text.Trim());
+    }
+
+    // Creates a proposal for which taxon an observation shows. The explanation text is optional.
+    public async Task<int> CreateProposal(string authorEmail, int observationId, string taxonId, string? text)
+    {
+        if (string.IsNullOrWhiteSpace(taxonId))
+            throw new ArgumentException("A proposal must have a taxon", nameof(taxonId));
+
+        var userId= await GetOrCreateAuthorId(authorEmail);
+        return await _repository.CreateProposal(userId, observationId, taxonId, text?.Trim() ?? "");
+    }
+
+    // Finds the Author with this email, or creates one the first time the user posts something
+    private async Task<string> GetOrCreateAuthorId(string email)
+    {
+        var author = await _repository.GetAuthorByEmail(email);
+        return author?.Id ?? await _repository.CreateAuthor(email, email);
+    }
 }

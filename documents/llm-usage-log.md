@@ -30,3 +30,6 @@ Claude was used to assess whether the project follows the onion architecture aft
 
 13-11-2026 Hannibal Marcellus Munk:
 Claude was used to explain how to fix the CS8602 warning in _LoginPartial.cshtml, and how to run and log in to the app locally with GitHub OAuth.
+
+13-11-2026 Simon Skouboe:
+Claude was used to diagnose a "SQLite Error 19: FOREIGN KEY constraint failed" when posting a new observation. It helped us see that the local bison.db was created by EnsureCreated with the old schema (Posts.AuthorId as an integer referencing the Authors table), which no longer matches the Identity-based Author model.
