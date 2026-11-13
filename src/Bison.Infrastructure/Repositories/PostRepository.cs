@@ -1,7 +1,7 @@
 using Bison.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Bison.Core.DTOs;
-using Bison.Core.Models;   
+using Bison.Core.Models;
 
 namespace Bison.Infrastructure.Repositories;
 
@@ -14,7 +14,7 @@ public class PostRepository : IPostRepository
     public PostRepository(BisonDBContext context)
     {
         _context = context;
-       
+
     }
 
     // Retrieve an Observation from its id
@@ -199,7 +199,8 @@ public class PostRepository : IPostRepository
         var author = await _context.Authors.FirstOrDefaultAsync(a => a.Email == authorEmail);
         if (author is null)
         {
-            author = new Author {Name = authorEmail, Email = authorEmail};
+            // TODO: Why is UserName = authorEmail ?
+            author = new Author { UserName = authorEmail, Email = authorEmail };
             _context.Authors.Add(author);
         }
         var observation = new Observation
@@ -210,19 +211,19 @@ public class PostRepository : IPostRepository
         };
         if (picture != null)
         {
-            observation.Image = new Image {Data = picture, ContentType = pictureContentType!};
+            observation.Image = new Image { Data = picture, ContentType = pictureContentType! };
         }
         _context.Observations.Add(observation);
         await _context.SaveChangesAsync();
     }
 
-        public async Task<ImageDTO?> GetImage(int imageId)
+    public async Task<ImageDTO?> GetImage(int imageId)
     {
         var image = await _context.Images.FindAsync(imageId);
         if (image is null) return null;
         return new ImageDTO(image.ImageId, image.Data, image.ContentType);
     }
 }
-    
-    
+
+
 
