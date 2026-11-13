@@ -1,7 +1,7 @@
 using Bison.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Bison.Core.DTOs;
-using Bison.Core.Models;   
+using Bison.Core.Models;
 
 namespace Bison.Infrastructure.Repositories;
 
@@ -14,7 +14,7 @@ public class PostRepository : IPostRepository
     public PostRepository(BisonDBContext context)
     {
         _context = context;
-       
+
     }
 
     // Retrieve an Observation from its id
@@ -30,8 +30,8 @@ public class PostRepository : IPostRepository
             obs.PostId,
             obs.Text,
             obs.TimeStamp.ToString(timestampFormat),
-            obs.Author.AuthorId,
-            obs.Author.Name,
+            obs.Author.Id,
+            obs.Author.UserName,
             obs.ImageId
             );
     }
@@ -50,30 +50,30 @@ public class PostRepository : IPostRepository
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.AuthorId,
-            o.Author.Name,
+            o.Author.Id,
+            o.Author.UserName,
             o.ImageId
         ))
         .ToList();
     }
 
-    // Retrieves all Observations from a specific Author by AuthorId
-    public async Task<List<ObservationDTO>> GetObservationsByAuthor(int authorId, int page)
+    // Retrieves all Observations from a specific Author by Id
+    public async Task<List<ObservationDTO>> GetObservationsByAuthor(string id, int page)
     {
         var obs = await _context.Observations
         .Include(o => o.Author)
         .OrderByDescending(o => o.TimeStamp)
-        .Where(o => o.Author.AuthorId == authorId)
+        .Where(o => o.Author.Id == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
-        
+
         return obs.Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.AuthorId,
-            o.Author.Name,
+            o.Author.Id,
+            o.Author.UserName,
             o.ImageId
         ))
         .ToList();
@@ -89,24 +89,24 @@ public class PostRepository : IPostRepository
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
-        
+
         return comments.Select(c => new CommentDTO(
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.AuthorId,
-            c.Author.Name
+            c.Author.Id,
+            c.Author.UserName
         ))
         .ToList();
     }
 
     // Retrieves all Comments by a specific Author
-    public async Task<List<CommentDTO>> GetCommentsByAuthor(int authorId, int page)
+    public async Task<List<CommentDTO>> GetCommentsByAuthor(string id, int page)
     {
         var comments = await _context.Comments
         .Include(o => o.Author)
         .OrderByDescending(c => c.TimeStamp)
-        .Where(c => c.Author.AuthorId == authorId)
+        .Where(c => c.Author.Id == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -115,8 +115,8 @@ public class PostRepository : IPostRepository
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.AuthorId,
-            c.Author.Name
+            c.Author.Id,
+            c.Author.UserName
         ))
         .ToList();
     }
@@ -135,8 +135,8 @@ public class PostRepository : IPostRepository
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.AuthorId,
-            p.Author.Name,
+            p.Author.Id,
+            p.Author.UserName,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();
@@ -158,24 +158,24 @@ public class PostRepository : IPostRepository
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.AuthorId,
-            p.Author.Name,
+            p.Author.Id,
+            p.Author.UserName,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();
     }
 
     // Retrieves an Author from its id
-    public async Task<AuthorDTO?> GetAuthor(int authorId)
+    public async Task<AuthorDTO?> GetAuthor(string id)
     {
         var author = await _context.Authors
-        .FirstOrDefaultAsync(a => a.AuthorId == authorId);
+        .FirstOrDefaultAsync(a => a.Id == id);
 
         if (author is null) return null;
 
         return new AuthorDTO(
-            author.AuthorId,
-            author.Name,
+            author.Id,
+            author.UserName,
             author.Email
         );
     }
@@ -199,7 +199,8 @@ public class PostRepository : IPostRepository
         var author = await _context.Authors.FirstOrDefaultAsync(a => a.Email == authorEmail);
         if (author is null)
         {
-            author = new Author {Name = authorEmail, Email = authorEmail};
+            // TODO: Why is UserName = authorEmail ?
+            author = new Author { UserName = authorEmail, Email = authorEmail };
             _context.Authors.Add(author);
         }
         var observation = new Observation
@@ -210,13 +211,13 @@ public class PostRepository : IPostRepository
         };
         if (picture != null)
         {
-            observation.Image = new Image {Data = picture, ContentType = pictureContentType!};
+            observation.Image = new Image { Data = picture, ContentType = pictureContentType! };
         }
         _context.Observations.Add(observation);
         await _context.SaveChangesAsync();
     }
 
-        public async Task<ImageDTO?> GetImage(int imageId)
+    public async Task<ImageDTO?> GetImage(int imageId)
     {
         var image = await _context.Images.FindAsync(imageId);
         if (image is null) return null;
@@ -300,6 +301,6 @@ public class PostRepository : IPostRepository
         return author.AuthorId;
     }
 }
-    
-    
+
+
 

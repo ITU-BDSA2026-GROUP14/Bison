@@ -28,6 +28,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../../src/Bison.Razor/data/schema.sql" Link="schema.sql" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../src/Bison.Core/Data/schema.sql" Link="schema.sql" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>  
   </Project>

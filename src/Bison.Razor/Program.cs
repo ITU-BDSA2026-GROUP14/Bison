@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 var dbPath = Environment.GetEnvironmentVariable("BISONDBPATH") ?? Path.Combine(Path.GetTempPath(), "bison.db");
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options =>  
+builder.Services.AddDefaultIdentity<Author>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
     options.Password.RequiredLength = 6;
@@ -21,7 +21,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 })
 .AddEntityFrameworkStores<BisonDBContext>();
 
-builder.Services.AddAuthentication().AddGitHub(options => {
+builder.Services.AddAuthentication().AddGitHub(options =>
+{
     options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"]!;
     options.ClientSecret =
     builder.Configuration["Authentication:GitHub:ClientSecret"]!;

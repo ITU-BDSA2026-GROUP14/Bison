@@ -5,40 +5,40 @@ public record PostDTO(
     int Id,
     string Text,
     string PubDate,
-    int AuthorId,
-    string AuthorName
+    string UserId,
+    string? UserName
 );
 public record ObservationDTO(
     int Id,
     string Text,
     string PubDate,
-    int AuthorId,
-    string AuthorName,
-    int? ImageId
-) : PostDTO(Id, Text, PubDate, AuthorId, AuthorName);
+    string UserId,
+    string? UserName,
+    int? ImageId 
+) : PostDTO(Id, Text, PubDate, UserId, UserName);
 
 
 public record CommentDTO(
     int Id,
     string PubDate,
     string Text,
-    int AuthorId,
-    string AuthorName
-) : PostDTO(Id, Text, PubDate, AuthorId, AuthorName);
+    string UserId,
+    string? UserName
+) : PostDTO(Id, Text, PubDate, UserId, UserName);
 
 public record ProposalDTO(
     int Id,
     string Text,
     string PubDate,
-    int AuthorId,
-    string AuthorName,
+    string UserId,
+    string? UserName,
     string? TaxonId
-) : PostDTO(Id, Text, PubDate, AuthorId, AuthorName);
+) : PostDTO(Id, Text, PubDate, UserId, UserName);
 
 public record AuthorDTO(
-    int Id,
-    string Name,
-    string Email
+    string Id,
+    string? UserName,
+    string? Email
 );
 
 public record TaxonDTO(

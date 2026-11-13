@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace Bison.Infrastructure.Data;
 
-public class BisonDBContext :  IdentityDbContext<ApplicationUser>
+public class BisonDBContext : IdentityDbContext<Author>
 {
     public DbSet<Post> Posts { get; set; }
     public DbSet<Observation> Observations { get; set; }
