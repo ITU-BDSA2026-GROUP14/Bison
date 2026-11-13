@@ -28,8 +28,8 @@ public class PostRepository : IPostRepository
             obs.PostId,
             obs.Text,
             obs.TimeStamp.ToString(timestampFormat),
-            obs.Author.AuthorId,
-            obs.Author.Name
+            obs.Author.Id,
+            obs.Author.UserName
         );
     }
 
@@ -47,29 +47,29 @@ public class PostRepository : IPostRepository
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.AuthorId,
-            o.Author.Name
+            o.Author.Id,
+            o.Author.UserName
         ))
         .ToList();
     }
 
-    // Retrieves all Observations from a specific Author by AuthorId
-    public async Task<List<ObservationDTO>> GetObservationsByAuthor(int authorId, int page)
+    // Retrieves all Observations from a specific Author by Id
+    public async Task<List<ObservationDTO>> GetObservationsByAuthor(string id, int page)
     {
         var obs = await _context.Observations
         .Include(o => o.Author)
         .OrderByDescending(o => o.TimeStamp)
-        .Where(o => o.Author.AuthorId == authorId)
+        .Where(o => o.Author.Id == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
-        
+
         return obs.Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.AuthorId,
-            o.Author.Name
+            o.Author.Id,
+            o.Author.UserName
         ))
         .ToList();
     }
@@ -84,24 +84,24 @@ public class PostRepository : IPostRepository
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
-        
+
         return comments.Select(c => new CommentDTO(
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.AuthorId,
-            c.Author.Name
+            c.Author.Id,
+            c.Author.UserName
         ))
         .ToList();
     }
 
     // Retrieves all Comments by a specific Author
-    public async Task<List<CommentDTO>> GetCommentsByAuthor(int authorId, int page)
+    public async Task<List<CommentDTO>> GetCommentsByAuthor(string id, int page)
     {
         var comments = await _context.Comments
         .Include(o => o.Author)
         .OrderByDescending(c => c.TimeStamp)
-        .Where(c => c.Author.AuthorId == authorId)
+        .Where(c => c.Author.Id == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -110,8 +110,8 @@ public class PostRepository : IPostRepository
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.AuthorId,
-            c.Author.Name
+            c.Author.Id,
+            c.Author.UserName
         ))
         .ToList();
     }
@@ -131,8 +131,8 @@ public class PostRepository : IPostRepository
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.AuthorId,
-            p.Author.Name,
+            p.Author.Id,
+            p.Author.UserName,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();
@@ -154,24 +154,24 @@ public class PostRepository : IPostRepository
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.AuthorId,
-            p.Author.Name,
+            p.Author.Id,
+            p.Author.UserName,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();
     }
 
     // Retrieves an Author from its id
-    public async Task<AuthorDTO?> GetAuthor(int authorId)
+    public async Task<AuthorDTO?> GetAuthor(string id)
     {
         var author = await _context.Authors
-        .FirstOrDefaultAsync(a => a.AuthorId == authorId);
+        .FirstOrDefaultAsync(a => a.Id == id);
 
         if (author is null) return null;
 
         return new AuthorDTO(
-            author.AuthorId,
-            author.Name,
+            author.Id,
+            author.UserName,
             author.Email
         );
     }

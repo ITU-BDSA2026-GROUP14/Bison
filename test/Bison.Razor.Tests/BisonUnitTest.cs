@@ -12,6 +12,8 @@ using Bison.Razor;
 using Bison.Core;
 using Bison.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Bison.Infrastructure.Data;
+using Bison.Core.Models;
 
 
 public class BisonFactory : WebApplicationFactory<Program>
@@ -34,9 +36,9 @@ public class BisonFactory : WebApplicationFactory<Program>
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0);
             var taxon = new Taxon { TaxonId = 1, dwc_TaxonID = "test-taxon", VernacularName = "Hejre" };
 
-            var petra = new Author { AuthorId = 1, Name = "Petra", Email = "petra@gmail.com" };
-            var anton = new Author { AuthorId = 2, Name = "Anton", Email = "anton@gmail.com" };
-            var sigurd = new Author { AuthorId = 3, Name = "Sigurd", Email = "sigurd@gmail.com" };
+            var petra = new Author { Id = "1", UserName = "Petra", Email = "petra@gmail.com" };
+            var anton = new Author { Id = "2", UserName = "Anton", Email = "anton@gmail.com" };
+            var sigurd = new Author { Id = "3", UserName = "Sigurd", Email = "sigurd@gmail.com" };
 
             var heron = new Observation { PostId = 1, Author = petra, Taxon = taxon, Text = "A heron", TimeStamp = epoch };
             var bear = new Observation { PostId = 2, Author = anton, Taxon = taxon, Text = "A bear", TimeStamp = epoch };
