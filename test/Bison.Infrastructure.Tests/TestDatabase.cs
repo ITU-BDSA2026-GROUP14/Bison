@@ -34,8 +34,8 @@ public abstract class TestDatabase : IDisposable
         var fiskehejre = new Taxon { TaxonId = 2, dwc_TaxonID = "test-fiskehejre", VernacularName = "Fiskehejre", Parent = hejrer };
         var pelikaner = new Taxon { TaxonId = 3, dwc_TaxonID = "test-pelikaner", VernacularName = "Pelikaner" };
 
-        var petra = new Author { AuthorId = 1, Name = "Petra", Email = "petra@gmail.com" };
-        var anton = new Author { AuthorId = 2, Name = "Anton", Email = "anton@gmail.com" };
+        var petra = new Author { Id = "1", UserName = "Petra", Email = "petra@gmail.com" };
+        var anton = new Author { Id = "2", UserName = "Anton", Email = "anton@gmail.com" };
 
         var heron   = new Observation { PostId = 1, Author = petra, Taxon = fiskehejre, Text = "A heron",   TimeStamp = epoch };
         var bear    = new Observation { PostId = 2, Author = anton, Taxon = hejrer,     Text = "A bear",    TimeStamp = epoch };
