@@ -45,10 +45,10 @@ public class RepositoryUnitTest : TestDatabase
     }
 
     [Theory]
-    [InlineData(1, 1, "A heron")]
-    [InlineData(2, 2, "A bear")]
-    [InlineData(2, 3, "A pelican")]
-    public async Task GetObservationsByAuthorTest(int authorId, int expectedPostId, string expectedText)
+    [InlineData("1", 1, "A heron")]
+    [InlineData("2", 2, "A bear")]
+    [InlineData("2", 3, "A pelican")]
+    public async Task GetObservationsByAuthorTest(string authorId, int expectedPostId, string expectedText)
     {
         // arrange
         var repository = new PostRepository(Context);
@@ -78,9 +78,9 @@ public class RepositoryUnitTest : TestDatabase
     }
 
     [Theory]
-    [InlineData(1, 5, "YOOOOOO SHUT YOUR BITCH ASS UP")]
-    [InlineData(2, 4, "Great spot!")]
-    public async Task GetCommentsByAuthorTest(int authorId, int expectedPostId, string expectedText)
+    [InlineData("1", 5, "YOOOOOO SHUT YOUR BITCH ASS UP")]
+    [InlineData("2", 4, "Great spot!")]
+    public async Task GetCommentsByAuthorTest(string authorId, int expectedPostId, string expectedText)
     {
         // arrange
         var repository = new PostRepository(Context);
@@ -126,9 +126,9 @@ public class RepositoryUnitTest : TestDatabase
     }
 
     [Theory]
-    [InlineData(1, "Petra")]
-    [InlineData(2, "Anton")]
-    public async Task GetAuthorTest(int authorId, string expectedName)
+    [InlineData("1", "Petra")]
+    [InlineData("2", "Anton")]
+    public async Task GetAuthorTest(string authorId, string expectedName)
     {
         // arrange
         var repository = new PostRepository(Context);
@@ -138,7 +138,7 @@ public class RepositoryUnitTest : TestDatabase
 
         // assert
         Assert.NotNull(actual);
-        Assert.Equal(expectedName, actual.Name);
+        Assert.Equal(expectedName, actual.UserName);
     }
 
     [Theory]
