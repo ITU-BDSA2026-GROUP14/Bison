@@ -50,6 +50,9 @@ namespace Bison.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("BLOB");
 
+                    b.Property<string>("License")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("ImageId");
 
                     b.ToTable("Images");

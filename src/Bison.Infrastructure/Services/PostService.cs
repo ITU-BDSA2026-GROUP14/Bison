@@ -23,8 +23,8 @@ public class PostService : IPostService
     public Task<TaxonDTO?> GetTaxon(string taxonId) => _repository.GetTaxon(taxonId);
     public Task<List<TaxonDTO>> GetTaxa() => _repository.GetTaxa();
     public Task<ImageDTO?> GetImage(int imageId) => _repository.GetImage(imageId);
-    public Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType) =>
-    _repository.CreateObservation(authorEmail, text, picture, pictureContentType);
+    public Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType, string? license) =>
+    _repository.CreateObservation(authorEmail, text, picture, pictureContentType, license);
     
     // Creates a comment on an observation for the logged-in user
     public async Task<int> CreateComment(string authorEmail, int observationId, string text)

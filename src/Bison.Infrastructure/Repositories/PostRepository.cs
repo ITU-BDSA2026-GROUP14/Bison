@@ -32,36 +32,34 @@ public class PostRepository : IPostRepository
             obs.TimeStamp.ToString(timestampFormat),
             obs.Author.Id,
             obs.Author.UserName,
-            obs.ImageId
+            obs.ImageId,
+            obs.Image != null ? obs.Image.License : null
             );
     }
 
     // Retrieves all Observations from the database
     public async Task<List<ObservationDTO>> GetObservations(int page)
     {
-        var obs = await _context.Observations
-        .Include(o => o.Author)
+         return await _context.Observations
         .OrderByDescending(o => o.TimeStamp)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
-        .ToListAsync();
-
-        return obs.Select(o => new ObservationDTO(
+        .Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
             o.Author.Id,
             o.Author.UserName,
-            o.ImageId
+            o.ImageId,
+            o.Image != null ? o.Image.License : null
         ))
-        .ToList();
+        .ToListAsync();
     }
 
     // Retrieves all Observations from a specific Author by Id
     public async Task<List<ObservationDTO>> GetObservationsByAuthor(string id, int page)
     {
-        var obs = await _context.Observations
-        .Include(o => o.Author)
+        return await _context.Observations
         .OrderByDescending(o => o.TimeStamp)
         .Where(o => o.Author.Id == id)
         .Skip((page - 1) * pageSize)
@@ -75,8 +73,9 @@ public class PostRepository : IPostRepository
             o.Author.Id,
             o.Author.UserName,
             o.ImageId
+            o.Image != null ? o.Image.License : null
         ))
-        .ToList();
+        .ToListAsync();
     }
 
     // Retrieves all Comments for a specific Observation
@@ -194,7 +193,7 @@ public class PostRepository : IPostRepository
         );
     }
 
-    public async Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType)
+    public async Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType, string? license)
     {
         var author = await _context.Authors.FirstOrDefaultAsync(a => a.Email == authorEmail);
         if (author is null)
@@ -211,7 +210,7 @@ public class PostRepository : IPostRepository
         };
         if (picture != null)
         {
-            observation.Image = new Image { Data = picture, ContentType = pictureContentType! };
+            observation.Image = new Image {Data = picture, ContentType = pictureContentType!, License = license};
         }
         _context.Observations.Add(observation);
         await _context.SaveChangesAsync();
