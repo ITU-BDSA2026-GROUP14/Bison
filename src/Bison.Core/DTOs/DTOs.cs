@@ -12,11 +12,11 @@ public record ObservationDTO(
     int Id,
     string Text,
     string PubDate,
-    int AuthorId,
-    string AuthorName,
+    string UserId,
+    string? UserName,
     int? ImageId,
     string? License
-) : PostDTO(Id, Text, PubDate, AuthorId, AuthorName);
+) : PostDTO(Id, Text, PubDate, UserId, UserName);
 
 
 public record CommentDTO(
