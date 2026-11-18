@@ -24,3 +24,12 @@ Claude was used to guide assignment 1.a for Week 7. It explained how to specify 
 
 30-10-2026 Daniel Kyhl:
 Claude was used to diagnose the build errors after starting ASP.NET Core Identity on the feat-identity branch. It helped us see that BisonDBContext was missing the Identity using directive, that ApplicationUser and AppDbContext didn't exist, and that the Identity package versions didn't match .NET 8.
+
+11-11-2026 Hannibal Marcellus Munk:
+Claude was used to assess whether the project follows the onion architecture after the Week 11 refactor, and to teach us what the onion architecture is. It helped us see which dependencies already point the right way and where the interfaces, services and tests still deviate from the pattern.
+
+13-11-2026 Hannibal Marcellus Munk:
+Claude was used to explain how to fix the CS8602 warning in _LoginPartial.cshtml, and how to run and log in to the app locally with GitHub OAuth.
+
+13-11-2026 Simon Skouboe:
+Claude was used to diagnose a "SQLite Error 19: FOREIGN KEY constraint failed" when posting a new observation. It helped us see that the local bison.db was created by EnsureCreated with the old schema (Posts.AuthorId as an integer referencing the Authors table), which no longer matches the Identity-based Author model.
