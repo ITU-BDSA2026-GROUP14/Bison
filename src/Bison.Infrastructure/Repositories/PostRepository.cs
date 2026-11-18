@@ -72,7 +72,7 @@ public class PostRepository : IPostRepository
             o.TimeStamp.ToString(timestampFormat),
             o.Author.Id,
             o.Author.UserName,
-            o.ImageId
+            o.ImageId,
             o.Image != null ? o.Image.License : null
         ))
         .ToListAsync();
