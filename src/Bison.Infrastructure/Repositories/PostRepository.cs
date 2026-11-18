@@ -64,9 +64,7 @@ public class PostRepository : IPostRepository
         .Where(o => o.Author.Id == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
-        .ToListAsync();
-
-        return obs.Select(o => new ObservationDTO(
+        .Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
