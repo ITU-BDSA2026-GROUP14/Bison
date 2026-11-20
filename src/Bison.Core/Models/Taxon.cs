@@ -5,6 +5,7 @@ namespace Bison.Core.Models
         public int TaxonId { get; set; }
         public string dwc_TaxonID { get; set; } = "";
         public string? VernacularName { get; set; }
+        public string? ScienName { get; set; }
         public Taxon? Parent { get; set; }
         public List<Taxon> Children { get; set; } = new();
         public bool isSubTaxon(Taxon ancestor)
