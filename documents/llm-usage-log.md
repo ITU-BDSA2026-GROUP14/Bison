@@ -42,3 +42,6 @@ Claude was used to research bird sound sources (Xeno-canto, Macaulay Library, GB
 
 20-11-2026 Hannibal Marcellus Munk:
 Claude was used to diagnose why GitHub Desktop could not fetch the Bison repo ("mmap failed: Operation canceled"). It helped us identify the likely causes: the repo lives in an iCloud-synced Desktop folder, the disk is nearly full, and there are leftover tmp_pack files in .git.
+
+20-11-2026 Simon Skouboe:
+Claude was used to explain how to design the "Forget me" feature and whether its logic belongs in PostService or PostRepository. It helped us understand the split: the service decides what forgetting means, the repository changes the data (soft delete and detaching observations), and the page model signs the user out.

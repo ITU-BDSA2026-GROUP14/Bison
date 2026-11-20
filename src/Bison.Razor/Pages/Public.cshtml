@@ -34,7 +34,14 @@
                 <li>
                     <p>
                         <strong>
-                            <a href="/@obs.UserId">@obs.UserName</a>
+                            @if (obs.UserId is null)
+                            {
+                                <span>deleted user</span>
+                            }
+                            else
+                            {
+                                <a href="/@obs.UserId">@obs.UserName</a>
+                            }
                         </strong>
                         @obs.Text
                         <small>&mdash; @obs.PubDate &middot; <a href="/ob/@obs.Id">Comments &amp; proposals</a></small>

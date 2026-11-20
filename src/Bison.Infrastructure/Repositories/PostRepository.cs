@@ -30,8 +30,8 @@ public class PostRepository : IPostRepository
             obs.PostId,
             obs.Text,
             obs.TimeStamp.ToString(timestampFormat),
-            obs.Author.Id,
-            obs.Author.UserName,
+            obs.AuthorId,
+            obs.Author?.UserName,
             obs.ImageId,
             obs.Image != null ? obs.Image.License : null
             );
@@ -48,8 +48,8 @@ public class PostRepository : IPostRepository
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.Id,
-            o.Author.UserName,
+            o.AuthorId,
+            o.Author != null ? o.Author.UserName : null,
             o.ImageId,
             o.Image != null ? o.Image.License : null
         ))
@@ -61,15 +61,15 @@ public class PostRepository : IPostRepository
     {
         return await _context.Observations
         .OrderByDescending(o => o.TimeStamp)
-        .Where(o => o.Author.Id == id)
+        .Where(o => o.AuthorId == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.Id,
-            o.Author.UserName,
+            o.AuthorId,
+            o.Author != null ? o.Author.UserName : null,
             o.ImageId,
             o.Image != null ? o.Image.License : null
         ))
@@ -91,8 +91,8 @@ public class PostRepository : IPostRepository
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.Id,
-            c.Author.UserName
+            c.Author?.Id,
+            c.Author?.UserName
         ))
         .ToList();
     }
@@ -103,7 +103,7 @@ public class PostRepository : IPostRepository
         var comments = await _context.Comments
         .Include(o => o.Author)
         .OrderByDescending(c => c.TimeStamp)
-        .Where(c => c.Author.Id == id)
+        .Where(c => c.AuthorId == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -112,8 +112,8 @@ public class PostRepository : IPostRepository
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.Id,
-            c.Author.UserName
+            c.Author?.Id,
+            c.Author?.UserName
         ))
         .ToList();
     }
@@ -132,8 +132,8 @@ public class PostRepository : IPostRepository
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.Id,
-            p.Author.UserName,
+            p.Author?.Id,
+            p.Author?.UserName,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();
@@ -155,8 +155,8 @@ public class PostRepository : IPostRepository
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.Id,
-            p.Author.UserName,
+            p.Author?.Id,
+            p.Author?.UserName,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();

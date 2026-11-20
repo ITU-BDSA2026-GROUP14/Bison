@@ -516,7 +516,7 @@ public static class DbInitializer
             posts.AddRange(observations);
             posts.AddRange(comments);
             posts.AddRange(proposals);
-            foreach (var post in posts) post.Author.Posts.Add(post);
+            foreach (var post in posts) post.Author!.Posts.Add(post);
             foreach (var c in comments) c.Observation.Comments.Add(c);
             foreach (var p in proposals) p.Observation.Proposals.Add(p);
 

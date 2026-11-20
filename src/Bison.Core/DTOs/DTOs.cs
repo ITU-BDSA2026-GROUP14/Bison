@@ -5,14 +5,14 @@ public record PostDTO(
     int Id,
     string Text,
     string PubDate,
-    string UserId,
+    string? UserId,
     string? UserName
 );
 public record ObservationDTO(
     int Id,
     string Text,
     string PubDate,
-    string UserId,
+    string? UserId,
     string? UserName,
     int? ImageId,
     string? License
@@ -23,7 +23,7 @@ public record CommentDTO(
     int Id,
     string PubDate,
     string Text,
-    string UserId,
+    string? UserId,
     string? UserName
 ) : PostDTO(Id, Text, PubDate, UserId, UserName);
 
@@ -31,7 +31,7 @@ public record ProposalDTO(
     int Id,
     string Text,
     string PubDate,
-    string UserId,
+    string? UserId,
     string? UserName,
     string? TaxonId
 ) : PostDTO(Id, Text, PubDate, UserId, UserName);
