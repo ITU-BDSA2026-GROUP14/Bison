@@ -87,4 +87,8 @@ public class ObModel : PageModel
         if (picture is null) return NotFound();
         return File(picture.Data, picture.ContentType);
     }
+    public async Task<ActionResult> OnGetSoundAsync(int id)
+    {
+        
+    }
 }
