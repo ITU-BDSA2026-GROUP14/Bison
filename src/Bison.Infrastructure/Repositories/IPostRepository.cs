@@ -26,6 +26,4 @@ public interface IPostRepository
     Task<List<ObservationDTO>> GetAllObservationsByAuthor(string id);
     Task<List<CommentDTO>> GetAllCommentsByAuthor(string id);
     Task<List<ProposalDTO>> GetAllProposalsByAuthor(string id);
-
-    Task<PersonalDataDTO> GetPersonalData(string userId);
 }

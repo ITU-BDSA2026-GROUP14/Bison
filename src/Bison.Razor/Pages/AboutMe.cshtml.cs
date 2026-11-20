@@ -16,7 +16,7 @@ public class AboutMeModel : PageModel
 
     public Author Me {get; set; } = null!;
     public IList<UserLoginInfo> Logins { get; set; } = new List<UserLoginInfo>();
-    public PersonalDataDTO PersonalData { get; set; } = null!;
+    public PersonalDataDTO Posts { get; set; } = null!;
 
     public AboutMeModel(UserManager<Author> userManager, IPostService postService)
     {

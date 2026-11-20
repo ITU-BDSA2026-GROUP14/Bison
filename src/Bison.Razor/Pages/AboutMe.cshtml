@@ -35,20 +35,20 @@
     <h3>My observations (@Model.Posts.Observations.Count)</h3>
     @if (Model.Posts.Observations.Any())
     {
-        <ul class="observations"></ul>
+        <ul class="observations">
         @foreach (var obs in Model.Posts.Observations)
         {
             <li>
                 <p>
-                    <a href="/ob/@obs.Id">@obs.Text</a>"
-                    <small>&mdash; @obs.PubData</small>
+                    <a href="/ob/@obs.Id">@obs.Text</a>
+                    <small>&mdash; @obs.PubDate</small>
                 </p>
                 @if (obs.ImageId is not null)
                 {
                     <img class="observation-picture" src="/ob/@(obs.ImageId)?handler=Picture" alt="Picture of the observation">
                     @if (obs.License is not null)
                     {
-                        <small>License: <a href="@obs.Licenses.CreativeCommons[obs.License]">@obs.License</a></small>
+                        <small>License: <a href="@Licenses.CreativeCommons[obs.License]">@obs.License</a></small>
                     }
                 }
             </li>
