@@ -34,6 +34,8 @@ Claude was used to explain how to fix the CS8602 warning in _LoginPartial.cshtml
 13-11-2026 Simon Skouboe:
 Claude was used to diagnose a "SQLite Error 19: FOREIGN KEY constraint failed" when posting a new observation. It helped us see that the local bison.db was created by EnsureCreated with the old schema (Posts.AuthorId as an integer referencing the Authors table), which no longer matches the Identity-based Author model.
 
+20-11-2026 Daniel Kyhl:
+Claude was used to guide the implementation of the Pictures, Licenses and "about me" (GDPR) features: uploading pictures and storing them in their own Image table, choosing and showing a Creative Commons license for each picture, and an About me page that lists a user's account data and all their observations, comments and proposals. It also helped us fix build and merge errors after the onion refactor and work through the review feedback on the Pictures PR.
 20-11-2026 Simon Skouboe:
 Claude was used to diagnose a "SQLite Error 1: no such column: i.License" when opening the public timeline. It helped us see that the local bison.db had been created by EnsureCreated before the AddImageLicense migration, so its Images table had no License column, and that removing the old database lets the app recreate it with the current schema.
 
