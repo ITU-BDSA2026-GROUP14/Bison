@@ -297,6 +297,54 @@ public class PostRepository : IPostRepository
         await _context.SaveChangesAsync();
         return author.Id;
     }
+
+    public async Task<List<ObservationDTO>> GetAllObservationsByAuthor(string id)
+    {
+        return await _context.Observations
+        .OrderByDescending(o => o.TimeStamp)
+        .Where(o => o.Author.Id == id)
+        .Select(o => new ObservationDTO(
+            o.PostId,
+            o.Text,
+            o.TimeStamp.ToString(timestampFormat),
+            o.Author.Id,
+            o.Author.UserName,
+            o.ImageId,
+            o.Image != null ? o.Image.License : null
+        ))  
+        .ToListAsync();
+    }
+
+    public async Task<List<CommentDTO>> GetAllCommentsByAuthor(string id)
+    {
+        return await _context.Comments
+        .OrderByDescending(c => c.TimeStamp)
+        .Where(c => c.Author.Id == id)
+        .Select(c => new CommentDTO(
+            c.PostId,
+            c.TimeStamp.ToString(timestampFormat),
+            c.Text,
+            c.Author.Id,
+            c.Author.UserName
+        ))
+        .ToListAsync();
+    }
+
+    public async Task<List<ProposalDTO>> GetAllProposalsByAuthor(string id)
+    {
+        return await _context.Proposals
+        .OrderByDescending(p => p.TimeStamp)
+        .Where(p => p.Author.Id == id)
+        .Select(p => new ProposalDTO(
+            p.PostId,
+            p.Text,
+            p.TimeStamp.ToString(timestampFormat),
+            p.Author.Id,
+            p.Author.UserName,
+            p.Taxon.dwc_TaxonID
+        ))
+        .ToListAsync();
+    }
 }
 
 

@@ -53,3 +53,9 @@ public record ImageDTO(
     byte[] Data,
     string ContentType
 );
+
+public record UserDataDTO(
+    List<ObservationDTO> Observations,
+    List<CommentDTO> Comments,
+    List<ProposalDTO> Proposals
+);
