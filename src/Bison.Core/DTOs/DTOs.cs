@@ -1,4 +1,6 @@
 
+using System.Collections.Specialized;
+
 namespace Bison.Core.DTOs;
 
 public record PostDTO(
@@ -52,4 +54,10 @@ public record ImageDTO(
     int ImageId,
     byte[] Data,
     string ContentType
+);
+
+public record SoundDTO(
+    string ScienName,
+    string Url,
+    string FileUrl
 );
