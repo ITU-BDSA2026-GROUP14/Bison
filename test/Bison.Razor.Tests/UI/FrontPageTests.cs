@@ -1,24 +1,35 @@
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Microsoft.Playwright;
-using Microsoft.Playwright.;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.Playwright.Xunit;
+using Xunit;
 
-namespace PlaywrightTests;
+namespace Bison.Razor.Tests;
 
-[TestClass]
+// documentation on how 
+[CollectionDefinition("UI")]
+public class UICollection : ICollectionFixture<BisonFixture> { }
+
+
+[Collection("UI")]
+[Trait("Category", "UI")]
 public class FrontPageTests : PageTest
 {
-    [TestMethod]
-    public async Task HasTitle()
-    {
-        await Page.GotoAsync("https://playwright.dev");
+    private readonly BisonFixture _app;
 
-        // Expect a title "to contain" a substring.
-        await Expect(Page).ToHaveTitleAsync(new Regex("Playwright"));
+    public FrontPageTests(BisonFixture app) {
+        _app = app;
     }
 
-    [TestMethod]
+    [Fact]
+    public async Task HasTitle()
+    {
+        await Page.GotoAsync(_app.BaseUrl);
+
+        // Expect a title "to contain" a substring.
+        await Expect(Page).ToHaveTitleAsync(new Regex("Bison"));
+    }
+
+    [Fact]
     public async Task GetStartedLink()
     {
         await Page.GotoAsync("https://playwright.dev");
@@ -28,5 +39,15 @@ public class FrontPageTests : PageTest
 
         // Expects page to have a heading with the name of Installation.
         await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Installation" })).ToBeVisibleAsync();
-    } 
+    }
+
+    [Fact]
+    public async Task LogIn() {
+
+        await Page.GotoAsync(app.BaseUrl);
+
+        await Page.GetByRole(AriaRole.Link, new() {Name = "register"})
+
+        await 
+    }
 }
