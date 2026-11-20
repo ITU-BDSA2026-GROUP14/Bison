@@ -16,7 +16,7 @@ public class AboutMeModel : PageModel
 
     public Author Me {get; set; } = null!;
     public IList<UserLoginInfo> Logins { get; set; } = new List<UserLoginInfo>();
-    public PersonalDataDTO Posts { get; set; } = null!;
+    public UserDataDTO Posts { get; set; } = null!;
 
     public AboutMeModel(UserManager<Author> userManager, IPostService postService)
     {
@@ -31,7 +31,7 @@ public class AboutMeModel : PageModel
 
         Me = user;
         Logins = await _userManager.GetLoginsAsync(user);
-        Posts = await _postService.GetPersonalData(user.Id);
+        Posts = await _postService.GetUserData(user.Id);
         return Page();
     }
 

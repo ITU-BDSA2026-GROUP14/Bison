@@ -54,7 +54,7 @@ public record ImageDTO(
     string ContentType
 );
 
-public record PersonalDataDTO(
+public record UserDataDTO(
     List<ObservationDTO> Observations,
     List<CommentDTO> Comments,
     List<ProposalDTO> Proposals

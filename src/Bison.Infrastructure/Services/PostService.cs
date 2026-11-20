@@ -46,12 +46,12 @@ public class PostService : IPostService
         return await _repository.CreateProposal(userId, observationId, taxonId, text?.Trim() ?? "");
     }
 
-    public async Task<PersonalDataDTO> GetPersonalData(string userId)
+    public async Task<UserDataDTO> GetUserData(string userId)
     {
         var observations = await _repository.GetAllObservationsByAuthor(userId);
         var comments = await _repository.GetAllCommentsByAuthor(userId);
         var proposals = await _repository.GetAllProposalsByAuthor(userId);
-        return new PersonalDataDTO(observations, comments, proposals);
+        return new UserDataDTO(observations, comments, proposals);
     }
 
     // Finds the Author with this email, or creates one the first time the user posts something
