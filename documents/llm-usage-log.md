@@ -36,3 +36,9 @@ Claude was used to diagnose a "SQLite Error 19: FOREIGN KEY constraint failed" w
 
 20-11-2026 Simon Skouboe:
 Claude was used to diagnose a "SQLite Error 1: no such column: i.License" when opening the public timeline. It helped us see that the local bison.db had been created by EnsureCreated before the AddImageLicense migration, so its Images table had no License column, and that removing the old database lets the app recreate it with the current schema.
+
+20-11-2026 Hannibal Marcellus Munk:
+Claude was used to research bird sound sources (Xeno-canto, Macaulay Library, GBIF) for a "hear the taxon" feature and to check how well they would cover our Pelecaniformes taxa. It then set the scientific names for the 22 species and subspecies in DbInitializer.cs.
+
+20-11-2026 Hannibal Marcellus Munk:
+Claude was used to diagnose why GitHub Desktop could not fetch the Bison repo ("mmap failed: Operation canceled"). It helped us identify the likely causes: the repo lives in an iCloud-synced Desktop folder, the disk is nearly full, and there are leftover tmp_pack files in .git.
