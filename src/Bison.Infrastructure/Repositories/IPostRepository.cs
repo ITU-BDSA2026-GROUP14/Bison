@@ -26,4 +26,8 @@ public interface IPostRepository
     Task<List<ObservationDTO>> GetAllObservationsByAuthor(string id);
     Task<List<CommentDTO>> GetAllCommentsByAuthor(string id);
     Task<List<ProposalDTO>> GetAllProposalsByAuthor(string id);
+    Task DeleteCommentsByAuthor(string userId);
+    Task DeleteProposalsByAuthor(string userId);
+    Task DeleteObservationsByAuthor(string userId);
+    Task DetachObservationsFromAuthor(string userId);
 }

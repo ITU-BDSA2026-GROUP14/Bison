@@ -88,4 +88,25 @@
     {
         <p>You haven't made any proposals yet.</p>
     }   
+
+    @if (!Model.AskForget)
+    {
+        <form method="get">
+            <button type="submit" name="askForget" value="true"
+                style="background-color: #d32f2f; color: white;">Forget me!
+            </button>
+        </form>
+    }
+    else
+    {
+        <p>Do you want to keep your observations online? They will show "deleted user" instead of your name.
+        Your comments and proposals will be deleted either way.</p>
+        <form method="post" asp-page-handler="Forget">
+            <button type="submit" name="keepObservations" value="true">Keep my observations online</button>
+            <button type="submit" name="keepObservations" value="false"
+                style="background-color: #d32f2f; color: white;">Delete them too
+            </button>
+        </form>
+        <a href="/AboutMe">Cancel</a>
+    }
 </div>

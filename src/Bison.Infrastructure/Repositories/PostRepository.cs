@@ -302,13 +302,13 @@ public class PostRepository : IPostRepository
     {
         return await _context.Observations
         .OrderByDescending(o => o.TimeStamp)
-        .Where(o => o.Author.Id == id)
+        .Where(o => o.AuthorId == id)
         .Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.Id,
-            o.Author.UserName,
+            o.AuthorId,
+            o.Author != null ? o.Author.UserName : null,
             o.ImageId,
             o.Image != null ? o.Image.License : null
         ))  
@@ -319,13 +319,13 @@ public class PostRepository : IPostRepository
     {
         return await _context.Comments
         .OrderByDescending(c => c.TimeStamp)
-        .Where(c => c.Author.Id == id)
+        .Where(c => c.AuthorId == id)
         .Select(c => new CommentDTO(
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.Id,
-            c.Author.UserName
+            c.AuthorId,
+            c.Author != null ? c.Author.UserName : null
         ))
         .ToListAsync();
     }
@@ -334,16 +334,71 @@ public class PostRepository : IPostRepository
     {
         return await _context.Proposals
         .OrderByDescending(p => p.TimeStamp)
-        .Where(p => p.Author.Id == id)
+        .Where(p => p.AuthorId == id)
         .Select(p => new ProposalDTO(
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.Id,
-            p.Author.UserName,
+            p.AuthorId,
+            p.Author != null ? p.Author.UserName : null,
             p.Taxon.dwc_TaxonID
         ))
         .ToListAsync();
+    }
+
+    public async Task DeleteCommentsByAuthor(string userId)
+    {
+        var comments = await _context.Comments
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var comment in comments)
+        {
+            comment.IsDeleted = true;
+            comment.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteProposalsByAuthor(string userId)
+    {
+        var proposals = await _context.Proposals
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var proposal in proposals)
+        {
+            proposal.IsDeleted = true;
+            proposal.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteObservationsByAuthor(string userId)
+    {
+        var observations = await _context.Observations
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var observation in observations)
+        {
+            observation.IsDeleted = true;
+            observation.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DetachObservationsFromAuthor(string userId)
+    {
+        var observations = await _context.Observations
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var observation in observations)
+        {
+            observation.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
     }
 }
 
