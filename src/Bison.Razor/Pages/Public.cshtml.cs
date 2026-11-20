@@ -36,9 +36,9 @@ public class PublicModel : PageModel
     public async Task<ActionResult> OnPostAsync()
     {
         if (User.Identity?.IsAuthenticated != true) return Challenge();
-        var allowedTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+        var allowedTypes = new[] {"image/jpeg", "image/png", "image/gif", "image/webp"};
         if (Picture != null && (!allowedTypes.Contains(Picture.ContentType) || Picture.Length > 5 * 1024 * 1024))
-
+        
 
         {
             TempData["ErrorMessage"] = "Invalid picture. Please upload a valid image file (JPEG, PNG, GIF, or WebP) under 5MB.";
@@ -49,37 +49,26 @@ public class PublicModel : PageModel
             TempData["ErrorMessage"] = "Choose a license for your picture";
             return RedirectToPage("/Public", new { page = 1 });
         }
-
+      
         if (string.IsNullOrWhiteSpace(Text))
-        {
-            TempData["ErrorMessage"] = "Write what you spotted";
-            return RedirectToPage("/Public", new { page = 1 });
-        }
+            {
+                TempData["ErrorMessage"] = "Write what you spotted";
+                return RedirectToPage("/Public", new { page = 1 });
+            }
 
-        if (Picture != null)
-        {
-            using var memoryStream = new MemoryStream();
-            await Picture.CopyToAsync(memoryStream);
-            var pictureBytes = memoryStream.ToArray();
-            var pictureContentType = Picture.ContentType;
-
-            await _service.CreateObservation(User.Identity!.Name!, Text, pictureBytes, pictureContentType, License);
-        }
-        else
-        {
-            await _service.CreateObservation(User.Identity!.Name!, Text, null, null, null);
-        }
-        return RedirectToPage("/Public", new { page = 1 });
-    }
-
-    public async Task<ActionResult> OnPostDeleteAsync(int id)
+    if (Picture != null)
     {
-        if (User.Identity?.IsAuthenticated != true) return Challenge();
+        using var memoryStream = new MemoryStream();
+        await Picture.CopyToAsync(memoryStream);
+        var pictureBytes = memoryStream.ToArray();
+        var pictureContentType = Picture.ContentType;
 
-        var deleted = await _service.DeleteObservation(id, User.Identity!.Name!);
-        if (!deleted)
-            TempData["ErrorMessage"] = "You can only delete your own observations.";
-
-        return RedirectToPage();
+        await _service.CreateObservation(User.Identity!.Name!, Text, pictureBytes, pictureContentType, License);
+    }
+    else
+    {
+        await _service.CreateObservation(User.Identity!.Name!, Text, null, null, null);
+    }
+    return RedirectToPage("/Public", new { page = 1 });
     }
 }

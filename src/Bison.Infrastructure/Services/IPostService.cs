@@ -20,6 +20,4 @@ public interface IPostService
     Task<List<TaxonDTO>> GetTaxa();
     Task<int> CreateComment(string authorEmail, int observationId, string text);
     Task<int> CreateProposal(string authorEmail, int observationId, string taxonId, string? text);
-
-    Task<bool> DeleteObservation(int observationId, string authorEmail);
 }
