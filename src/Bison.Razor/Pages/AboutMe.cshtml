@@ -1,0 +1,91 @@
+@page
+@model Bison.Razor.Initial.Pages.AboutMeModel
+@{
+    ViewData["Title"] = "About me";
+    Layout = "Shared/_Layout";
+}
+<div>
+    <h2>About Me</h2>
+    <p>This is all information Bison stores about you.</p>
+    
+    <h3>Account</h3>
+    <ul> 
+        <li>Username: @Model.Me.UserName</li>
+        <li>Email: @Model.Me.Email (@(Model.Me.EmailConfirmed ? "confirmed" : "not confirmed"))</li>
+        <li>Phone number: @(Model.Me.PhoneNumber ?? "none")</li>
+        <li>Two-factor login: @(Model.Me.TwoFactorEnabled ? "on" : "off")</li>
+        <li>Password: @(Model.Me.PasswordHash is null ? "none (you log in with GitHub)" : "stored as a secure hash")</li>
+        <li>User id: @Model.Me.Id</li>
+    </ul>
+
+    <h3> Linked logins</h3>
+    @if (Model.Logins.Any())
+    {
+        <ul>
+            @foreach (var login in Model.Logins)
+            {
+                <li>@login.ProviderDisplayName</li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>None</p>
+    }
+    <h3>My observations (@Model.Posts.Observations.Count)</h3>
+    @if (Model.Posts.Observations.Any())
+    {
+        <ul class="observations">
+        @foreach (var obs in Model.Posts.Observations)
+        {
+            <li>
+                <p>
+                    <a href="/ob/@obs.Id">@obs.Text</a> 
+                    <small>&mdash; @obs.PubDate</small>
+                </p>
+                @if (obs.ImageId is not null)
+                {
+                    <img class="observation-picture" src="/ob/@(obs.ImageId)?handler=Picture" alt="Picture of the observation">
+                    @if (obs.License is not null)
+                    {
+                        <small>License: <a href="@Licenses.CreativeCommons[obs.License]">@obs.License</a></small>
+                    }
+                }
+            </li>
+        }
+        </ul>
+    }
+    else
+    {
+        <p>You haven't made any observations yet.</p>
+    }
+
+    <h3>My comments (@Model.Posts.Comments.Count)</h3>
+    @if (Model.Posts.Comments.Any())
+    {
+        <ul class="observations">
+            @foreach(var comment in Model.Posts.Comments)
+            {
+                <li><p>@comment.Text <small>&mdash; @comment.PubDate</small></p></li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>You haven't written any comments yet.</p>
+    }
+    <h3>My proposals (@Model.Posts.Proposals.Count)</h3>
+    @if (Model.Posts.Proposals.Any())
+    {
+        <ul class="observations">
+            @foreach (var proposal in Model.Posts.Proposals)
+            {
+                <li><p>Taxon @proposal.TaxonId: @proposal.Text <small>&mdash; @proposal.PubDate</small></p></li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>You haven't made any proposals yet.</p>
+    }   
+</div>
