@@ -23,4 +23,9 @@ public interface IPostRepository
     Task<int> CreateProposal(string userId, int observationId, string taxonId, string text);
     Task<AuthorDTO?> GetAuthorByEmail(string email);
     Task<string> CreateAuthor(string userName, string email);
+    Task<List<ObservationDTO>> GetAllObservationsByAuthor(string id);
+    Task<List<CommentDTO>> GetAllCommentsByAuthor(string id);
+    Task<List<ProposalDTO>> GetAllProposalsByAuthor(string id);
+
+    Task<PersonalDataDTO> GetPersonalData(string userId);
 }

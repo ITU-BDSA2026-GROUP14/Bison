@@ -32,4 +32,60 @@
     {
         <p>None</p>
     }
+    <h3>My observations (@Model.Posts.Observations.Count)</h3>
+    @if (Model.Posts.Observations.Any())
+    {
+        <ul class="observations"></ul>
+        @foreach (var obs in Model.Posts.Observations)
+        {
+            <li>
+                <p>
+                    <a href="/ob/@obs.Id">@obs.Text</a>"
+                    <small>&mdash; @obs.PubData</small>
+                </p>
+                @if (obs.ImageId is not null)
+                {
+                    <img class="observation-picture" src="/ob/@(obs.ImageId)?handler=Picture" alt="Picture of the observation">
+                    @if (obs.License is not null)
+                    {
+                        <small>License: <a href="@obs.Licenses.CreativeCommons[obs.License]">@obs.License</a></small>
+                    }
+                }
+            </li>
+        }
+        </ul>
+    }
+    else
+    {
+        <p>You haven't made any observations yet.</p>
+    }
+
+    <h3>My comments (@Model.Posts.Comments.Count)</h3>
+    @if (Model.Posts.Comments.Any())
+    {
+        <ul class="observations">
+            @foreach(var comment in Model.Posts.Comments)
+            {
+                <li><p>@comment.Text <small>&mdash; @comment.PubDate</small></p></li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>You haven't written any comments yet.</p>
+    }
+    <h3>My proposals (@Model.Posts.Proposals.Count)</h3>
+    @if (Model.Posts.Proposals.Any())
+    {
+        <ul class="observations">
+            @foreach (var proposal in Model.Posts.Proposals)
+            {
+                <li><p>Taxon @proposal.TaxonId: @proposal.Text <small>&mdash; @proposal.PubDate</small></p></li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>You haven't made any proposals yet.</p>
+    }   
 </div>

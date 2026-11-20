@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Bison.Core.Models;
+using Bison.Core.DTOs;
+using Bison.Infrastructure.Services;
 
 namespace Bison.Razor.Initial.Pages;
 
@@ -10,13 +12,16 @@ namespace Bison.Razor.Initial.Pages;
 public class AboutMeModel : PageModel
 {
     private readonly UserManager<Author> _userManager;
+    private readonly IPostService _postService;
 
     public Author Me {get; set; } = null!;
     public IList<UserLoginInfo> Logins { get; set; } = new List<UserLoginInfo>();
+    public PersonalDataDTO PersonalData { get; set; } = null!;
 
-    public AboutMeModel(UserManager<Author> userManager)
+    public AboutMeModel(UserManager<Author> userManager, IPostService postService)
     {
         _userManager = userManager;
+        _postService = postService;
     }
 
     public async Task<IActionResult> OnGetAsync()
@@ -26,6 +31,7 @@ public class AboutMeModel : PageModel
 
         Me = user;
         Logins = await _userManager.GetLoginsAsync(user);
+        Posts = await _postService.GetPersonalData(user.Id);
         return Page();
     }
 
