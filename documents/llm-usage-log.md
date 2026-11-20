@@ -33,3 +33,9 @@ Claude was used to explain how to fix the CS8602 warning in _LoginPartial.cshtml
 
 13-11-2026 Simon Skouboe:
 Claude was used to diagnose a "SQLite Error 19: FOREIGN KEY constraint failed" when posting a new observation. It helped us see that the local bison.db was created by EnsureCreated with the old schema (Posts.AuthorId as an integer referencing the Authors table), which no longer matches the Identity-based Author model.
+
+20-11-2026 Hannibal Marcellus Munk:
+Claude was used to research bird sound sources (Xeno-canto, Macaulay Library, GBIF) for a "hear the taxon" feature and to check how well they would cover our Pelecaniformes taxa. It then set the scientific names for the 22 species and subspecies in DbInitializer.cs.
+
+20-11-2026 Hannibal Marcellus Munk:
+Claude was used to diagnose why GitHub Desktop could not fetch the Bison repo ("mmap failed: Operation canceled"). It helped us identify the likely causes: the repo lives in an iCloud-synced Desktop folder, the disk is nearly full, and there are leftover tmp_pack files in .git.
