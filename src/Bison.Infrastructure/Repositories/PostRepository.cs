@@ -40,20 +40,20 @@ public class PostRepository : IPostRepository
     // Retrieves all Observations from the database
     public async Task<List<ObservationDTO>> GetObservations(int page)
     {
-         return await _context.Observations
-        .OrderByDescending(o => o.TimeStamp)
-        .Skip((page - 1) * pageSize)
-        .Take(pageSize)
-        .Select(o => new ObservationDTO(
-            o.PostId,
-            o.Text,
-            o.TimeStamp.ToString(timestampFormat),
-            o.Author.Id,
-            o.Author.UserName,
-            o.ImageId,
-            o.Image != null ? o.Image.License : null
-        ))
-        .ToListAsync();
+        return await _context.Observations
+       .OrderByDescending(o => o.TimeStamp)
+       .Skip((page - 1) * pageSize)
+       .Take(pageSize)
+       .Select(o => new ObservationDTO(
+           o.PostId,
+           o.Text,
+           o.TimeStamp.ToString(timestampFormat),
+           o.Author.Id,
+           o.Author.UserName,
+           o.ImageId,
+           o.Image != null ? o.Image.License : null
+       ))
+       .ToListAsync();
     }
 
     // Retrieves all Observations from a specific Author by Id
@@ -208,7 +208,7 @@ public class PostRepository : IPostRepository
         };
         if (picture != null)
         {
-            observation.Image = new Image {Data = picture, ContentType = pictureContentType!, License = license};
+            observation.Image = new Image { Data = picture, ContentType = pictureContentType!, License = license };
         }
         _context.Observations.Add(observation);
         await _context.SaveChangesAsync();
@@ -311,7 +311,7 @@ public class PostRepository : IPostRepository
             o.Author.UserName,
             o.ImageId,
             o.Image != null ? o.Image.License : null
-        ))  
+        ))
         .ToListAsync();
     }
 
@@ -344,6 +344,26 @@ public class PostRepository : IPostRepository
             p.Taxon.dwc_TaxonID
         ))
         .ToListAsync();
+    }
+
+    public async Task<bool> DeleteObservation(int observationId, string authorEmail)
+    {
+        var observation = await _context.Observations
+            .Include(o => o.Author)
+            .Include(o => o.Image)
+            .Include(o => o.Comments)
+            .Include(o => o.Proposals)
+            .FirstOrDefaultAsync(o => o.PostId == observationId);
+
+        if (observation is null || observation.Author.Email != authorEmail)
+            return false;
+
+        if (observation.Image is not null)
+            _context.Images.Remove(observation.Image);
+
+        _context.Observations.Remove(observation);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }
 
