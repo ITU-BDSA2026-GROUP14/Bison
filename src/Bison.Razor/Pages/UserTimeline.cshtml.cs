@@ -26,4 +26,15 @@ public class UserTimelineModel : PageModel
         Observations = await _service.GetObservationsByAuthor(userId, page);
         return Page();
     }
+
+    public async Task<ActionResult> OnPostDeleteAsync(int id)
+    {
+        if (User.Identity?.IsAuthenticated != true) return Challenge();
+
+        var deleted = await _service.DeleteObservation(id, User.Identity!.Name!);
+        if (!deleted)
+            TempData["ErrorMessage"] = "You can only delete your own observations.";
+
+        return RedirectToPage();
+    }
 }
