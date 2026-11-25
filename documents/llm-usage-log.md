@@ -42,3 +42,6 @@ Claude was used to research bird sound sources (Xeno-canto, Macaulay Library, GB
 
 20-11-2026 Hannibal Marcellus Munk:
 Claude was used to diagnose why GitHub Desktop could not fetch the Bison repo ("mmap failed: Operation canceled"). It helped us identify the likely causes: the repo lives in an iCloud-synced Desktop folder, the disk is nearly full, and there are leftover tmp_pack files in .git.
+
+25-11-2026 Hannibal:
+Copilot was used to diagnose why the Xeno-canto API returned an HTML "Something went wrong!" page instead of JSON. It identified the response as an Anubis anti-bot proof-of-work challenge served by the reverse proxy in front of xeno-canto.org, which .NET's HttpClient cannot solve, and recommended contacting Xeno-canto or using an approved API access method.

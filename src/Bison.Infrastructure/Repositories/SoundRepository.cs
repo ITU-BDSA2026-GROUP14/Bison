@@ -7,12 +7,21 @@ namespace Bison.Infrastructure.Repositories;
 
 public class SoundRepository(HttpClient http, IConfiguration config) : ISoundRepository
 {
-    public async Task<SoundDTO> GetTaxonSound(string scienName)
+    public async Task<SoundDTO?> GetTaxonSound(string scienName)
     {
         var apiKey = config["XenoCanto:ApiKey"];
         var url = $"https://xeno-canto.org/api/3/recordings?query=sp:\"{scienName}\"&key={apiKey}";
 
-        var json = await http.GetStringAsync(url);
+        using var response = await http.GetAsync(url);
+        var contentType = response.Content.Headers.ContentType?.MediaType;
+        var body = await response.Content.ReadAsStringAsync();
+
+        Console.WriteLine($"Xeno-canto status: {(int)response.StatusCode}");
+        Console.WriteLine($"Xeno-canto content type: {contentType}");
+        Console.WriteLine($"Xeno-canto body starts: {body[..Math.Min(body.Length, 200)]}");
+
+        response.EnsureSuccessStatusCode();
+        var json = body;
 
         using var doc = JsonDocument.Parse(json);
         var recordings = doc.RootElement.GetProperty("recordings");

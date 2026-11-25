@@ -87,8 +87,17 @@ public class ObModel : PageModel
         if (picture is null) return NotFound();
         return File(picture.Data, picture.ContentType);
     }
-    public async Task<ActionResult> OnGetSoundAsync(int id)
+    public async Task<IActionResult> OnGetSoundAsync(string taxonId)
     {
-        
+        var taxon = await _service.GetTaxon(taxonId);
+        if (taxon is null || string.IsNullOrWhiteSpace(taxon.TaxonScienName))
+        {
+            return NotFound();
+        }
+
+        var sound = await _service.GetTaxonSound(taxon.TaxonScienName);
+        if (sound is null) return NotFound();
+
+        return Redirect(sound.FileUrl);
     }
 }

@@ -4,5 +4,5 @@ namespace Bison.Infrastructure.Repositories;
 
 public interface ISoundRepository
 {
-    Task<SoundDTO> GetTaxonSound(string taxonId);
+    Task<SoundDTO?> GetTaxonSound(string taxonId);
 }

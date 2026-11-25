@@ -46,6 +46,7 @@ public record AuthorDTO(
 
 public record TaxonDTO(
     string TaxonId,
+    string? TaxonScienName,
     string? TaxonName,
     string? ParentTaxonId
 );

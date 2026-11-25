@@ -40,20 +40,20 @@ public class PostRepository : IPostRepository
     // Retrieves all Observations from the database
     public async Task<List<ObservationDTO>> GetObservations(int page)
     {
-         return await _context.Observations
-        .OrderByDescending(o => o.TimeStamp)
-        .Skip((page - 1) * pageSize)
-        .Take(pageSize)
-        .Select(o => new ObservationDTO(
-            o.PostId,
-            o.Text,
-            o.TimeStamp.ToString(timestampFormat),
-            o.Author.Id,
-            o.Author.UserName,
-            o.ImageId,
-            o.Image != null ? o.Image.License : null
-        ))
-        .ToListAsync();
+        return await _context.Observations
+       .OrderByDescending(o => o.TimeStamp)
+       .Skip((page - 1) * pageSize)
+       .Take(pageSize)
+       .Select(o => new ObservationDTO(
+           o.PostId,
+           o.Text,
+           o.TimeStamp.ToString(timestampFormat),
+           o.Author.Id,
+           o.Author.UserName,
+           o.ImageId,
+           o.Image != null ? o.Image.License : null
+       ))
+       .ToListAsync();
     }
 
     // Retrieves all Observations from a specific Author by Id
@@ -186,6 +186,7 @@ public class PostRepository : IPostRepository
         if (taxon is null) return null;
         return new TaxonDTO(
             taxon.dwc_TaxonID,
+            taxon.ScienName,
             taxon.VernacularName,
             taxon.Parent?.dwc_TaxonID
         );
@@ -208,7 +209,7 @@ public class PostRepository : IPostRepository
         };
         if (picture != null)
         {
-            observation.Image = new Image {Data = picture, ContentType = pictureContentType!, License = license};
+            observation.Image = new Image { Data = picture, ContentType = pictureContentType!, License = license };
         }
         _context.Observations.Add(observation);
         await _context.SaveChangesAsync();
@@ -231,6 +232,7 @@ public class PostRepository : IPostRepository
 
         return taxa.Select(t => new TaxonDTO(
             t.dwc_TaxonID,
+            t.ScienName,
             t.VernacularName,
             t.Parent?.dwc_TaxonID
         ))

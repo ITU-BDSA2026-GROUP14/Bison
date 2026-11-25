@@ -6,10 +6,12 @@ namespace Bison.Infrastructure.Services;
 public class PostService : IPostService
 {
     private readonly IPostRepository _repository;
+    private readonly ISoundRepository _soundRepository;
 
-    public PostService(IPostRepository repository)
+    public PostService(IPostRepository repository, ISoundRepository soundRepository)
     {
         _repository = repository;
+        _soundRepository = soundRepository;
     }
 
     public Task<ObservationDTO?> GetObservation(int observationId) => _repository.GetObservation(observationId);
@@ -25,14 +27,14 @@ public class PostService : IPostService
     public Task<ImageDTO?> GetImage(int imageId) => _repository.GetImage(imageId);
     public Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType, string? license) =>
     _repository.CreateObservation(authorEmail, text, picture, pictureContentType, license);
-    
+
     // Creates a comment on an observation for the logged-in user
     public async Task<int> CreateComment(string authorEmail, int observationId, string text)
     {
         if (string.IsNullOrWhiteSpace(text))
             throw new ArgumentException("A comment must have text", nameof(text));
 
-        var userId= await GetOrCreateAuthorId(authorEmail);
+        var userId = await GetOrCreateAuthorId(authorEmail);
         return await _repository.CreateComment(userId, observationId, text.Trim());
     }
 
@@ -42,7 +44,7 @@ public class PostService : IPostService
         if (string.IsNullOrWhiteSpace(taxonId))
             throw new ArgumentException("A proposal must have a taxon", nameof(taxonId));
 
-        var userId= await GetOrCreateAuthorId(authorEmail);
+        var userId = await GetOrCreateAuthorId(authorEmail);
         return await _repository.CreateProposal(userId, observationId, taxonId, text?.Trim() ?? "");
     }
 
@@ -51,5 +53,10 @@ public class PostService : IPostService
     {
         var author = await _repository.GetAuthorByEmail(email);
         return author?.Id ?? await _repository.CreateAuthor(email, email);
+    }
+
+    public async Task<SoundDTO?> GetTaxonSound(string scienName)
+    {
+        return await _soundRepository.GetTaxonSound(scienName);
     }
 }

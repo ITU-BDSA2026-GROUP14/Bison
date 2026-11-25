@@ -33,6 +33,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite($"Data Source={dbPath}"));
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddHttpClient<ISoundRepository, SoundRepository>();
 
 var app = builder.Build();
 
