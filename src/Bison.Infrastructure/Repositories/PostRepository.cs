@@ -41,19 +41,19 @@ public class PostRepository : IPostRepository
     public async Task<List<ObservationDTO>> GetObservations(int page)
     {
         return await _context.Observations
-       .OrderByDescending(o => o.TimeStamp)
-       .Skip((page - 1) * pageSize)
-       .Take(pageSize)
-       .Select(o => new ObservationDTO(
-           o.PostId,
-           o.Text,
-           o.TimeStamp.ToString(timestampFormat),
-           o.Author.Id,
-           o.Author.UserName,
-           o.ImageId,
-           o.Image != null ? o.Image.License : null
-       ))
-       .ToListAsync();
+        .OrderByDescending(o => o.TimeStamp)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(o => new ObservationDTO(
+            o.PostId,
+            o.Text,
+            o.TimeStamp.ToString(timestampFormat),
+            o.AuthorId,
+            o.Author != null ? o.Author.UserName : null,
+            o.ImageId,
+            o.Image != null ? o.Image.License : null
+        ))
+        .ToListAsync();
     }
 
     // Retrieves all Observations from a specific Author by Id
@@ -399,6 +399,8 @@ public class PostRepository : IPostRepository
             observation.AuthorId = null;
         }
         await _context.SaveChangesAsync();
+    }
+
     public async Task<bool> DeleteObservation(int observationId, string authorEmail)
     {
         var observation = await _context.Observations
@@ -408,7 +410,8 @@ public class PostRepository : IPostRepository
             .Include(o => o.Proposals)
             .FirstOrDefaultAsync(o => o.PostId == observationId);
 
-        if (observation is null || observation.Author.Email != authorEmail)
+        // Author is null for observations kept by a forgotten user
+        if (observation is null || observation.Author?.Email != authorEmail)
             return false;
 
         if (observation.Image is not null)
