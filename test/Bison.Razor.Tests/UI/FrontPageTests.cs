@@ -6,12 +6,12 @@ using Xunit;
 namespace Bison.Razor.Tests;
 
 // documentation on how 
-[CollectionDefinition("UI")]
+[CollectionDefinition("E2E")]
 public class UICollection : ICollectionFixture<BisonFixture> { }
 
 
-[Collection("UI")]
-[Trait("Category", "UI")]
+[Collection("E2E")]
+[Trait("Category", "E2E")]
 public class FrontPageTests : PageTest
 {
     private readonly BisonFixture _app;
@@ -44,12 +44,45 @@ public class FrontPageTests : PageTest
     }
 
     [Fact]
-    public async Task HasTitle()
+    public async Task FrontPage()
     {
         await Page.GotoAsync(_app.BaseUrl);
 
         // Expect a title "to contain" a substring.
         await Expect(Page).ToHaveTitleAsync(new Regex("Bison"));
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "register"})).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Login"})).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Public Observations"})).ToBeVisibleAsync();
+    }
+
+    [Theory]
+    [InlineData("Petra")]
+    [InlineData("Anton")]
+    public async Task PublicObservationsUsersTest(string name) {
+        await Page.GotoAsync(_app.BaseUrl);
+        await Expect(Page.Locator("#messagelist")).ToContainTextAsync(name);
+    }
+
+    [Theory]
+    [InlineData("A heron")]
+    [InlineData("A bear")]
+    [InlineData("A pelican")]
+    public async Task PublicObservationsTest(string ObservationText) {
+        await Page.GotoAsync(_app.BaseUrl);
+        await Expect(Page.Locator("#messagelist")).ToContainTextAsync(ObservationText);
+    }
+
+    [Fact]
+    public async Task PublicObservationsCommentsTest() {
+        await Page.GotoAsync(_app.BaseUrl);
+
+        await Page.Locator("#messagelist")
+                .GetByRole(AriaRole.Listitem)
+                .Filter(new() { HasText = "A heron" })
+                .GetByRole(AriaRole.Link, new() { Name = "Comments & proposals" })
+                .ClickAsync();
+
+        await Expect(Page.GetByText("Great spot!")).ToBeVisibleAsync();
     }
 
     [Fact]
@@ -65,7 +98,7 @@ public class FrontPageTests : PageTest
     }
 
     [Fact]
-    public async Task EnteringLogInPageTest()
+    public async Task RegisterButtonTest()
     {
         await Page.GotoAsync(_app.BaseUrl);
 
@@ -111,9 +144,52 @@ public class FrontPageTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { Name = "Log in" }).ClickAsync();
         
         await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Bison" })).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = " Logout [" + email + "]"})).ToBeVisibleAsync();
     }
 
+    //TODO: lets wait with this one untill we find a secure way to test it 
+    [Fact]
     public async Task CanUserLogInOAuthTest() {
+
+    }
+
+    [Fact]
+    public async Task CanUserLogOut() {
+        var email = $"test{Guid.NewGuid():N}@example.com";
+        const string password = "Test123!";
+
+        await RegisterTestAccount(email, password);
+        await LogInTestAccount(email, password);
+
+        await Page.GotoAsync(_app.BaseUrl);
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Logout [" + email + "]"}).ClickAsync();
+
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Log Out"})).ToBeVisibleAsync();
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Click here to Logout", Exact = true}).ClickAsync();
+
+        await Expect(Page.GetByText("You have successfully logged out of the application.")).ToBeVisibleAsync();
+
+        await Page.GetByRole(AriaRole.Link, new() { Name = "Public Observations"}).ClickAsync();
+        await Expect(Page.GetByRole(AriaRole.Heading, new() { Name = "Bison" })).ToBeVisibleAsync(); 
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "Public Observations"})).ToBeVisibleAsync();
+        await Expect(Page.GetByRole(AriaRole.Link, new() { Name = "My Observations"})).Not.ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task CanUserMakeObservation() {
+        var email = $"test{Guid.NewGuid():N}@example.com";
+        const string password = "Test123!";
+
+        await RegisterTestAccount(email, password);
+        await LogInTestAccount(email, password);
+
+        await Page.Locator("input[name='Text']").FillAsync("A heron by the lake");
+    }
+
+    [Fact]
+    public async Task CanUserMakeComment() {
         
     }
+
+
 }
