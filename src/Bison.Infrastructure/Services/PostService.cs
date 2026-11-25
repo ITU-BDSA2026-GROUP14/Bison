@@ -25,14 +25,17 @@ public class PostService : IPostService
     public Task<ImageDTO?> GetImage(int imageId) => _repository.GetImage(imageId);
     public Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType, string? license) =>
     _repository.CreateObservation(authorEmail, text, picture, pictureContentType, license);
-    
+
+    public Task<bool> DeleteObservation(int observationId, string authorEmail) =>
+    _repository.DeleteObservation(observationId, authorEmail);
+
     // Creates a comment on an observation for the logged-in user
     public async Task<int> CreateComment(string authorEmail, int observationId, string text)
     {
         if (string.IsNullOrWhiteSpace(text))
             throw new ArgumentException("A comment must have text", nameof(text));
 
-        var userId= await GetOrCreateAuthorId(authorEmail);
+        var userId = await GetOrCreateAuthorId(authorEmail);
         return await _repository.CreateComment(userId, observationId, text.Trim());
     }
 
@@ -42,7 +45,7 @@ public class PostService : IPostService
         if (string.IsNullOrWhiteSpace(taxonId))
             throw new ArgumentException("A proposal must have a taxon", nameof(taxonId));
 
-        var userId= await GetOrCreateAuthorId(authorEmail);
+        var userId = await GetOrCreateAuthorId(authorEmail);
         return await _repository.CreateProposal(userId, observationId, taxonId, text?.Trim() ?? "");
     }
 

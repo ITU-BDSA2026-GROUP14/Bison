@@ -10,20 +10,43 @@
 
     @if (User.Identity?.IsAuthenticated == true)
     {
-        <h3> What did you spot today? </h3>
-        @if (TempData["ErrorMessage"] is string error) { <p> @error </p>}
-        <form method="post" enctype="multipart/form-data">
-        <input type="text" name="Text">
-        <input type ="file" name="Picture" accept="image/jpeg,image/png,image/gif,image/webp">
-        <select name="License">
-            <option value="">Choose a license for your picture </option>
-            @foreach (var license in Licenses.CreativeCommons.Keys)
-                    {
-                        <option value = "@license">@license</option>
-                    }
-                </select>
-        <input type ="submit" value="Share">
-        </form>
+        @if (TempData["ErrorMessage"] is string error)
+        {
+            <p class="error"> @error </p>
+        }
+
+        <details class="create-post" @(TempData["ErrorMessage"] is not null ? "open" : "")>
+            <summary class="create-post-button">Create post</summary>
+
+            <div class="create-post-menu">
+                <h3> What did you spot today? </h3>
+                <form method="post" enctype="multipart/form-data">
+                    <textarea name="Text" rows="5" placeholder="Describe your observation..."></textarea>
+
+                    <input type="file" id="picture-input" name="Picture" accept="image/jpeg,image/png,image/gif,image/webp">
+
+                    <select name="License" id="license-select" hidden>
+                        <option value="">Choose a license for your picture</option>
+                        @foreach (var license in Licenses.CreativeCommons.Keys)
+                        {
+                            <option value="@license">@license</option>
+                        }
+                    </select>
+
+                    <input type="submit" value="Post">
+                </form>
+            </div>
+        </details>
+
+        <script>
+                const picture = document.getElementById("picture-input");
+                const license = document.getElementById("license-select");
+                picture.addEventListener("change", () => {
+                    const hasPicture = picture.files.length > 0;
+                    license.hidden = !hasPicture;
+                    if (!hasPicture) license.value = "";
+                });
+        </script>
     }
 
     @if (Model.Observations.Any())
@@ -47,9 +70,9 @@
                         <small>&mdash; @obs.PubDate &middot; <a href="/ob/@obs.Id">Comments &amp; proposals</a></small>
                     </p>
                     @if (obs.ImageId is not null)
-            {
-                    <img class="observation-picture" src="/ob/@(obs.ImageId)?handler=Picture" alt="Picture of the observation">
-                    @if (obs.License is not null)
+                    {
+                        <img class="observation-picture" src="/ob/@(obs.ImageId)?handler=Picture" alt="Picture of the observation">
+                        @if (obs.License is not null)
                         {
                             <small> License: <a href="@Licenses.CreativeCommons[obs.License]">@obs.License</a></small>
                         }

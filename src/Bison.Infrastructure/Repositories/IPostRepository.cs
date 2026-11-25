@@ -16,7 +16,7 @@ public interface IPostRepository
     Task<List<ProposalDTO>> GetProposalsForObservation(int observationId, int page);
     Task<AuthorDTO?> GetAuthor(string id);
     Task<TaxonDTO?> GetTaxon(string taxonId);
-    Task<ImageDTO?> GetImage(int imageId);   
+    Task<ImageDTO?> GetImage(int imageId);
     Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType, string? license);
     Task<List<TaxonDTO>> GetTaxa();
     Task<int> CreateComment(string userId, int observationId, string text);
@@ -30,4 +30,6 @@ public interface IPostRepository
     Task DeleteProposalsByAuthor(string userId);
     Task DeleteObservationsByAuthor(string userId);
     Task DetachObservationsFromAuthor(string userId);
+
+    Task<bool> DeleteObservation(int observationId, string authorEmail);
 }
