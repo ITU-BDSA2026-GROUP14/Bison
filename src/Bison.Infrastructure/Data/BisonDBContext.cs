@@ -16,4 +16,10 @@ public class BisonDBContext : IdentityDbContext<Author>
     public DbSet<Image> Images { get; set; }
 
     public BisonDBContext(DbContextOptions<BisonDBContext> options) : base(options) { }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        builder.Entity<Post>().HasQueryFilter(p => !p.IsDeleted);
+    }
 }

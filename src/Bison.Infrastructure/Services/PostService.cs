@@ -63,4 +63,15 @@ public class PostService : IPostService
         var author = await _repository.GetAuthorByEmail(email);
         return author?.Id ?? await _repository.CreateAuthor(email, email);
     }
+
+    public async Task ForgetAuthor(string userId, bool keepObservations)
+    {
+        await _repository.DeleteCommentsByAuthor(userId);
+        await _repository.DeleteProposalsByAuthor(userId);
+
+        if (keepObservations)
+            await _repository.DetachObservationsFromAuthor(userId);
+        else
+            await _repository.DeleteObservationsByAuthor(userId);
+    }
 }

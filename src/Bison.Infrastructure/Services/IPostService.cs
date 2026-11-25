@@ -21,6 +21,7 @@ public interface IPostService
     Task<int> CreateComment(string authorEmail, int observationId, string text);
     Task<int> CreateProposal(string authorEmail, int observationId, string taxonId, string? text);
     Task<UserDataDTO> GetUserData(string userId);
+    Task ForgetAuthor(string userId, bool keepObservations);
 
     Task<bool> DeleteObservation(int observationId, string authorEmail);
 }

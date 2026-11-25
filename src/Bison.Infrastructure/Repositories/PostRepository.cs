@@ -30,8 +30,8 @@ public class PostRepository : IPostRepository
             obs.PostId,
             obs.Text,
             obs.TimeStamp.ToString(timestampFormat),
-            obs.Author.Id,
-            obs.Author.UserName,
+            obs.AuthorId,
+            obs.Author?.UserName,
             obs.ImageId,
             obs.Image != null ? obs.Image.License : null
             );
@@ -41,19 +41,19 @@ public class PostRepository : IPostRepository
     public async Task<List<ObservationDTO>> GetObservations(int page)
     {
         return await _context.Observations
-       .OrderByDescending(o => o.TimeStamp)
-       .Skip((page - 1) * pageSize)
-       .Take(pageSize)
-       .Select(o => new ObservationDTO(
-           o.PostId,
-           o.Text,
-           o.TimeStamp.ToString(timestampFormat),
-           o.Author.Id,
-           o.Author.UserName,
-           o.ImageId,
-           o.Image != null ? o.Image.License : null
-       ))
-       .ToListAsync();
+        .OrderByDescending(o => o.TimeStamp)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Select(o => new ObservationDTO(
+            o.PostId,
+            o.Text,
+            o.TimeStamp.ToString(timestampFormat),
+            o.AuthorId,
+            o.Author != null ? o.Author.UserName : null,
+            o.ImageId,
+            o.Image != null ? o.Image.License : null
+        ))
+        .ToListAsync();
     }
 
     // Retrieves all Observations from a specific Author by Id
@@ -61,15 +61,15 @@ public class PostRepository : IPostRepository
     {
         return await _context.Observations
         .OrderByDescending(o => o.TimeStamp)
-        .Where(o => o.Author.Id == id)
+        .Where(o => o.AuthorId == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.Id,
-            o.Author.UserName,
+            o.AuthorId,
+            o.Author != null ? o.Author.UserName : null,
             o.ImageId,
             o.Image != null ? o.Image.License : null
         ))
@@ -91,8 +91,8 @@ public class PostRepository : IPostRepository
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.Id,
-            c.Author.UserName
+            c.Author?.Id,
+            c.Author?.UserName
         ))
         .ToList();
     }
@@ -103,7 +103,7 @@ public class PostRepository : IPostRepository
         var comments = await _context.Comments
         .Include(o => o.Author)
         .OrderByDescending(c => c.TimeStamp)
-        .Where(c => c.Author.Id == id)
+        .Where(c => c.AuthorId == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -112,8 +112,8 @@ public class PostRepository : IPostRepository
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.Id,
-            c.Author.UserName
+            c.Author?.Id,
+            c.Author?.UserName
         ))
         .ToList();
     }
@@ -132,8 +132,8 @@ public class PostRepository : IPostRepository
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.Id,
-            p.Author.UserName,
+            p.Author?.Id,
+            p.Author?.UserName,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();
@@ -155,8 +155,8 @@ public class PostRepository : IPostRepository
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.Id,
-            p.Author.UserName,
+            p.Author?.Id,
+            p.Author?.UserName,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();
@@ -302,13 +302,13 @@ public class PostRepository : IPostRepository
     {
         return await _context.Observations
         .OrderByDescending(o => o.TimeStamp)
-        .Where(o => o.Author.Id == id)
+        .Where(o => o.AuthorId == id)
         .Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.Id,
-            o.Author.UserName,
+            o.AuthorId,
+            o.Author != null ? o.Author.UserName : null,
             o.ImageId,
             o.Image != null ? o.Image.License : null
         ))
@@ -319,13 +319,13 @@ public class PostRepository : IPostRepository
     {
         return await _context.Comments
         .OrderByDescending(c => c.TimeStamp)
-        .Where(c => c.Author.Id == id)
+        .Where(c => c.AuthorId == id)
         .Select(c => new CommentDTO(
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.Id,
-            c.Author.UserName
+            c.AuthorId,
+            c.Author != null ? c.Author.UserName : null
         ))
         .ToListAsync();
     }
@@ -334,16 +334,71 @@ public class PostRepository : IPostRepository
     {
         return await _context.Proposals
         .OrderByDescending(p => p.TimeStamp)
-        .Where(p => p.Author.Id == id)
+        .Where(p => p.AuthorId == id)
         .Select(p => new ProposalDTO(
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.Id,
-            p.Author.UserName,
+            p.AuthorId,
+            p.Author != null ? p.Author.UserName : null,
             p.Taxon.dwc_TaxonID
         ))
         .ToListAsync();
+    }
+
+    public async Task DeleteCommentsByAuthor(string userId)
+    {
+        var comments = await _context.Comments
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var comment in comments)
+        {
+            comment.IsDeleted = true;
+            comment.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteProposalsByAuthor(string userId)
+    {
+        var proposals = await _context.Proposals
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var proposal in proposals)
+        {
+            proposal.IsDeleted = true;
+            proposal.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteObservationsByAuthor(string userId)
+    {
+        var observations = await _context.Observations
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var observation in observations)
+        {
+            observation.IsDeleted = true;
+            observation.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DetachObservationsFromAuthor(string userId)
+    {
+        var observations = await _context.Observations
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var observation in observations)
+        {
+            observation.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
     }
 
     public async Task<bool> DeleteObservation(int observationId, string authorEmail)
@@ -355,7 +410,8 @@ public class PostRepository : IPostRepository
             .Include(o => o.Proposals)
             .FirstOrDefaultAsync(o => o.PostId == observationId);
 
-        if (observation is null || observation.Author.Email != authorEmail)
+        // Author is null for observations kept by a forgotten user
+        if (observation is null || observation.Author?.Email != authorEmail)
             return false;
 
         if (observation.Image is not null)

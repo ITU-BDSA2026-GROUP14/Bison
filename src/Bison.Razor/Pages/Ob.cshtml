@@ -11,7 +11,16 @@
     <ul class="observations">
         <li>
             <p>
-                <strong><a href="/@Model.Observation!.UserId">@Model.Observation.UserName</a></strong>
+                <strong>
+                    @if (Model.Observation!.UserId is null)
+                    {
+                        <span>deleted user</span>
+                    }
+                    else
+                    {
+                        <a href="/@Model.Observation.UserId">@Model.Observation.UserName</a>
+                    }
+                </strong>
                 @Model.Observation.Text
                 <small>&mdash; @Model.Observation.PubDate</small>
             </p>
@@ -73,36 +82,74 @@
             <em>There are no proposals so far.</em>
         }
 
-        <h3>Comments</h3>
-        @if (User.Identity?.IsAuthenticated == true)
-        {
-            <div class="observationbox">
-                <h3>What do you want to say, @(User.Identity.Name)?</h3>
-                <form method="post" asp-page-handler="Comment" asp-route-id="@Model.Observation.Id">
-                    <input style="float: left" type="text" asp-for="CommentText">
-                    <input type="submit" value="Comment">
-                </form>
-                <span asp-validation-for="CommentText"></span>
-            </div>
-        }
+    @if (Model.Proposals.Any())
+    {
+        <ul class="observations">
+            @foreach (var proposal in Model.Proposals)
+            {
+                <li>
+                    <p>
+                        <strong>
+                            @if (proposal.UserId is null)
+                            {
+                                <span>deleted user</span>
+                            }
+                            else
+                            {
+                                <a href="/@proposal.UserId">@proposal.UserName</a>
+                            }
+                        </strong>
+                        @proposal.Text
+                        <small>&mdash; @proposal.PubDate</small>
+                    </p>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <em>There are no proposals so far.</em>
+    }
+
+    <h3>Comments</h3>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <div class="observationbox">
+            <h3>What do you want to say, @(User.Identity.Name)?</h3>
+            <form method="post" asp-page-handler="Comment" asp-route-id="@Model.Observation.Id">
+                <input style="float: left" type="text" asp-for="CommentText">
+                <input type="submit" value="Comment">
+            </form>
+            <span asp-validation-for="CommentText"></span>
+        </div>
+    }
     
-        @if (Model.Comments.Any())
-        {
-            <ul class="observations">
-                @foreach (var comment in Model.Comments)
-                {
-                    <li>
-                        <p>
-                            <strong><a href="/@comment.UserId">@comment.UserName</a></strong>
-                            @comment.Text
-                            <small>&mdash; @comment.PubDate</small>
-                        </p>
-                    </li>
-                }
-            </ul>
-        }
-        else
-        {
-            <em>There are no comments so far.</em>
-        }
-    </div>
+    @if (Model.Comments.Any())
+    {
+        <ul class="observations">
+            @foreach (var comment in Model.Comments)
+            {
+                <li>
+                    <p>
+                        <strong>
+                            @if (comment.UserId is null)
+                            {
+                                <span>deleted user</span>
+                            }
+                            else
+                            {
+                                <a href="/@comment.UserId">@comment.UserName</a>
+                            }
+                        </strong>
+                        @comment.Text
+                        <small>&mdash; @comment.PubDate</small>
+                    </p>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <em>There are no comments so far.</em>
+    }
+</div>
