@@ -10,20 +10,20 @@ public class SoundRepository(HttpClient http, IConfiguration config) : ISoundRep
     public async Task<SoundDTO?> GetTaxonSound(string scienName)
     {
         var apiKey = config["XenoCanto:ApiKey"];
-        var url = $"https://xeno-canto.org/api/3/recordings?query=sp:\"{scienName}\"&key={apiKey}";
+        var species = string.Join(' ' , scienName.Split(' ').Take(2));
+        var query = Uri.EscapeDataString($"sp:\"{species}\"");
+        var url = $"https://xeno-canto.org/api/3/recordings?query={query}&key={apiKey}";
 
         using var response = await http.GetAsync(url);
-        var contentType = response.Content.Headers.ContentType?.MediaType;
         var body = await response.Content.ReadAsStringAsync();
 
-        Console.WriteLine($"Xeno-canto status: {(int)response.StatusCode}");
-        Console.WriteLine($"Xeno-canto content type: {contentType}");
-        Console.WriteLine($"Xeno-canto body starts: {body[..Math.Min(body.Length, 200)]}");
+        if (!response.IsSuccessStatusCode || !body.TrimStart().StartsWith("{"))
+        {
+            return null;
+        }
 
-        response.EnsureSuccessStatusCode();
-        var json = body;
 
-        using var doc = JsonDocument.Parse(json);
+        using var doc = JsonDocument.Parse(body);
         var recordings = doc.RootElement.GetProperty("recordings");
 
         if (recordings.GetArrayLength() == 0)

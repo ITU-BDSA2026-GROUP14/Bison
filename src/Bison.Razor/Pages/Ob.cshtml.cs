@@ -64,6 +64,7 @@ public class ObModel : PageModel
         return RedirectToPage(new { id });
     }
 
+    public bool HasSound(string? taxonId) => !string.IsNullOrWhiteSpace(Taxa.FirstOrDefault(t => t.TaxonId == taxonId)?.TaxonScienName);
     // The name to show for a taxon id, e.g. in the list of proposals
     public string TaxonName(string? taxonId) =>
         Taxa.FirstOrDefault(t => t.TaxonId == taxonId)?.TaxonName ?? taxonId ?? "";

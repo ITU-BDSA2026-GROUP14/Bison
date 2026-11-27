@@ -33,7 +33,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddDbContext<BisonDBContext>(options => options.UseSqlite($"Data Source={dbPath}"));
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IPostService, PostService>();
-builder.Services.AddHttpClient<ISoundRepository, SoundRepository>();
+builder.Services.AddHttpClient<ISoundRepository, SoundRepository>(client =>
+{
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("Bison/1.0 (ITU student project)");
+});
 
 var app = builder.Build();
 
