@@ -55,3 +55,6 @@ Claude was used to review the repository changes since the Dafny taxon filter (a
 
 27-11-2026 Filip Jacobsen:
 Claude was used to diagnose a "cannot lock ref ORIG_HEAD ... Operation timed out" error when running git pull. It helped us see that the file was an iCloud placeholder (dataless) because the repo lives in the iCloud-synced Desktop folder, and that removing it lets git recreate it.
+
+27-11-2026 Filip Jacobsen:
+Claude was used to check the merged pagination against the taxon filter. It helped us see that the Previous/Next links dropped the chosen taxon, and helped us fix them to keep the filter.
