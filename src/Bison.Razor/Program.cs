@@ -37,6 +37,7 @@ builder.Services.AddHttpClient<ISoundRepository, SoundRepository>(client =>
 {
     client.DefaultRequestHeaders.UserAgent.ParseAdd("Bison/1.0 (ITU student project)");
 });
+builder.Services.AddScoped<IFilterService, FilterService>();
 
 var app = builder.Build();
 

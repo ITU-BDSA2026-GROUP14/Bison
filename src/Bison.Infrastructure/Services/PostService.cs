@@ -28,6 +28,9 @@ public class PostService : IPostService
     public Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType, string? license) =>
     _repository.CreateObservation(authorEmail, text, picture, pictureContentType, license);
 
+    public Task<bool> DeleteObservation(int observationId, string authorEmail) =>
+    _repository.DeleteObservation(observationId, authorEmail);
+
     // Creates a comment on an observation for the logged-in user
     public async Task<int> CreateComment(string authorEmail, int observationId, string text)
     {
@@ -48,6 +51,14 @@ public class PostService : IPostService
         return await _repository.CreateProposal(userId, observationId, taxonId, text?.Trim() ?? "");
     }
 
+    public async Task<UserDataDTO> GetUserData(string userId)
+    {
+        var observations = await _repository.GetAllObservationsByAuthor(userId);
+        var comments = await _repository.GetAllCommentsByAuthor(userId);
+        var proposals = await _repository.GetAllProposalsByAuthor(userId);
+        return new UserDataDTO(observations, comments, proposals);
+    }
+
     // Finds the Author with this email, or creates one the first time the user posts something
     private async Task<string> GetOrCreateAuthorId(string email)
     {
@@ -58,5 +69,14 @@ public class PostService : IPostService
     public async Task<SoundDTO?> GetTaxonSound(string scienName)
     {
         return await _soundRepository.GetTaxonSound(scienName);
+    public async Task ForgetAuthor(string userId, bool keepObservations)
+    {
+        await _repository.DeleteCommentsByAuthor(userId);
+        await _repository.DeleteProposalsByAuthor(userId);
+
+        if (keepObservations)
+            await _repository.DetachObservationsFromAuthor(userId);
+        else
+            await _repository.DeleteObservationsByAuthor(userId);
     }
 }
