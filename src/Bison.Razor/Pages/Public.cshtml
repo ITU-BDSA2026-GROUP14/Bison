@@ -8,6 +8,26 @@
 <div>
     <h2> Public Timeline </h2>
 
+    <form method="get" class="taxon-filter">
+        <label for="taxon-select">Filter by taxon</label>
+        <select name="taxon" id="taxon-select">
+            <option value="">All taxa</option>
+            @foreach (var taxon in Model.Taxa)
+            {
+                <option value="@taxon.TaxonId" selected="@(taxon.TaxonId == Model.SelectedTaxon)">@(taxon.TaxonName ?? taxon.ScientificName ?? taxon.TaxonId)</option>
+            }
+        </select>
+        <input type="submit" value="Filter">
+        @if (Model.SelectedTaxon is not null)
+        {
+            <a href="/">Clear filter</a>
+        }
+    </form>
+    @if (Model.SelectedTaxon is not null)
+    {
+        <p class="taxon-filter-info">Showing observations of the chosen taxon and its subtaxa.</p>
+    }
+
     @if (User.Identity?.IsAuthenticated == true)
     {
         @if (TempData["ErrorMessage"] is string error)
@@ -83,6 +103,13 @@
     }
     else
     {
-        <em>There are no observations so far.</em>
+        @if (Model.SelectedTaxon is not null)
+        {
+            <em>There are no observations of this taxon so far.</em>
+        }
+        else
+        {
+            <em>There are no observations so far.</em>
+        }
     }
 </div>

@@ -47,3 +47,6 @@ Claude was used to diagnose why GitHub Desktop could not fetch the Bison repo ("
 
 20-11-2026 Simon Skouboe:
 Claude was used to explain how to design the "Forget me" feature and whether its logic belongs in PostService or PostRepository. It helped us understand the split: the service decides what forgetting means, the repository changes the data (soft delete and detaching observations), and the page model signs the user out.
+
+27-11-2026 Filip Jacobsen:
+Claude was used to review the repository changes since the Dafny taxon filter (assignment 1.a/1.b) was first written and to guide us step by step through implementing the filter feature. It helped us see that the verified filter and generated C# already existed, and helped us add the filter service, the taxon selector on the public timeline and Dafny verification and compilation in the GitHub workflow.

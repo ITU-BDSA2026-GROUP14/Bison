@@ -56,6 +56,29 @@ public class PostRepository : IPostRepository
         .ToListAsync();
     }
 
+    // Retrieves all Observations (newest first) as entities with their Taxon and its Parent chain loaded,
+    // so the verified Dafny filter can call isSubTaxon on them. No paging: filtering has to happen first.
+    public async Task<List<Observation>> GetObservationsWithTaxa()
+    {
+        // Loading all taxa first lets EF Core link every Parent/Children navigation in memory,
+        // so we don't need a recursive Include for the taxon hierarchy.
+        await _context.Taxons.ToListAsync();
+
+        return await _context.Observations
+        .Include(o => o.Author)
+        .Include(o => o.Image)
+        .Include(o => o.Taxon)
+        .OrderByDescending(o => o.TimeStamp)
+        .ToListAsync();
+    }
+
+    // Retrieves a Taxon entity (with its Parent chain loaded) from its dwc_TaxonID
+    public async Task<Taxon?> GetTaxonEntity(string taxonId)
+    {
+        await _context.Taxons.ToListAsync();
+        return await _context.Taxons.FirstOrDefaultAsync(t => t.dwc_TaxonID == taxonId);
+    }
+
     // Retrieves all Observations from a specific Author by Id
     public async Task<List<ObservationDTO>> GetObservationsByAuthor(string id, int page)
     {
@@ -187,7 +210,8 @@ public class PostRepository : IPostRepository
         return new TaxonDTO(
             taxon.dwc_TaxonID,
             taxon.VernacularName,
-            taxon.Parent?.dwc_TaxonID
+            taxon.Parent?.dwc_TaxonID,
+            taxon.ScienName
         );
     }
 
@@ -226,13 +250,14 @@ public class PostRepository : IPostRepository
     {
         var taxa = await _context.Taxons
         .Include(t => t.Parent)
-        .OrderBy(t => t.VernacularName)
+        .OrderBy(t => t.VernacularName ?? t.ScienName)
         .ToListAsync();
 
         return taxa.Select(t => new TaxonDTO(
             t.dwc_TaxonID,
             t.VernacularName,
-            t.Parent?.dwc_TaxonID
+            t.Parent?.dwc_TaxonID,
+            t.ScienName
         ))
         .ToList();
     }

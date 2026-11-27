@@ -354,3 +354,15 @@ select,
   text-decoration: underline;
   padding: 0;
 }
+
+.taxon-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin: 1rem 0 0.5rem;
+}
+.taxon-filter-info {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+}

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Bison.Core.DTOs;
+using Bison.Core.Models;
 
 namespace Bison.Infrastructure.Repositories;
 
@@ -9,6 +10,8 @@ public interface IPostRepository
 
     Task<ObservationDTO?> GetObservation(int observationId);
     Task<List<ObservationDTO>> GetObservations(int page);
+    Task<List<Observation>> GetObservationsWithTaxa();
+    Task<Taxon?> GetTaxonEntity(string taxonId);
     Task<List<ObservationDTO>> GetObservationsByAuthor(string id, int page);
     Task<List<CommentDTO>> GetCommentsForObservation(int observationId, int page);
     Task<List<CommentDTO>> GetCommentsByAuthor(string id, int page);
