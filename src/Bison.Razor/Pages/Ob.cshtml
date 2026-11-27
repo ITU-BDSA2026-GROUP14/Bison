@@ -66,7 +66,16 @@
                 {
                     <li>
                         <p>
-                            <strong><a href="/@proposal.UserId">@proposal.UserName</a></strong>
+                            <strong>
+                                @if (proposal.UserId is null)
+                                {
+                                    <span>deleted user</span>
+                                }
+                                else
+                                {
+                                    <a href="/@proposal.UserId">@proposal.UserName</a>
+                                }
+                            </strong>
                             <b>@Model.TaxonName(@proposal.TaxonId)</b>
                             <small>&mdash; @proposal.PubDate</small>
                         </p>
@@ -88,35 +97,6 @@
         {
             <em>There are no proposals so far.</em>
         }
-
-    @if (Model.Proposals.Any())
-    {
-        <ul class="observations">
-            @foreach (var proposal in Model.Proposals)
-            {
-                <li>
-                    <p>
-                        <strong>
-                            @if (proposal.UserId is null)
-                            {
-                                <span>deleted user</span>
-                            }
-                            else
-                            {
-                                <a href="/@proposal.UserId">@proposal.UserName</a>
-                            }
-                        </strong>
-                        @proposal.Text
-                        <small>&mdash; @proposal.PubDate</small>
-                    </p>
-                </li>
-            }
-        </ul>
-    }
-    else
-    {
-        <em>There are no proposals so far.</em>
-    }
 
     <h3>Comments</h3>
     @if (User.Identity?.IsAuthenticated == true)
