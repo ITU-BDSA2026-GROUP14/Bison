@@ -69,6 +69,7 @@ public class PostService : IPostService
     public async Task<SoundDTO?> GetTaxonSound(string scienName)
     {
         return await _soundRepository.GetTaxonSound(scienName);
+    }
     public async Task ForgetAuthor(string userId, bool keepObservations)
     {
         await _repository.DeleteCommentsByAuthor(userId);
