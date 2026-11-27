@@ -50,3 +50,6 @@ Claude was used to explain how to design the "Forget me" feature and whether its
 
 27-11-2026 Filip Jacobsen:
 Claude was used to review the repository changes since the Dafny taxon filter (assignment 1.a/1.b) was first written and to guide us step by step through implementing the filter feature. It helped us see that the verified filter and generated C# already existed, and helped us add the filter service, the taxon selector on the public timeline and Dafny verification and compilation in the GitHub workflow.
+
+27-11-2026 Filip Jacobsen:
+Claude was used to diagnose a "cannot lock ref ORIG_HEAD ... Operation timed out" error when running git pull. It helped us see that the file was an iCloud placeholder (dataless) because the repo lives in the iCloud-synced Desktop folder, and that removing it lets git recreate it.
