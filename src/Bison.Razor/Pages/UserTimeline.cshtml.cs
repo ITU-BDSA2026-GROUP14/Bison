@@ -20,6 +20,7 @@ public class UserTimelineModel : PageModel
 
     public async Task<ActionResult> OnGet(string userId, [FromQuery] int page = 1)
     {
+        if (page < 1) page = 1;
         CurrentPage = page;
         Author = await _service.GetAuthor(userId);
         if (Author is null) return NotFound();   // optional, for an unknown user ID

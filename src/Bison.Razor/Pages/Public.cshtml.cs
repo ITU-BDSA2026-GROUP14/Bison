@@ -28,6 +28,7 @@ public class PublicModel : PageModel
 
     public async Task<ActionResult> OnGet([FromQuery] int page = 1)
     {
+        if (page < 1) page = 1;
         CurrentPage = page;
         Observations = await _service.GetObservations(page);
         return Page();
