@@ -195,9 +195,12 @@ public class FrontPageTests : PageTest
         await RegisterTestAccount(email, password);
         await LogInTestAccount(email, password);
 
-        var observationInput = Page.Locator("input[name='Text']");
-        await observationInput.FillAsync("A heron by the lake");
-        await observationInput.PressAsync("Enter");
+        await Page.GotoAsync(_app.BaseUrl);
+        await Page.GetByText("Create post", new() { Exact = true }).ClickAsync();
+
+        var observationInput = Page.Locator("textarea[name='Text']");
+        await observationInput.FillAsync(observationText);
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Post" }).ClickAsync();
 
         var postedObservation = Page.GetByRole(AriaRole.Listitem).Filter(new() { HasText = observationText });
         await Expect(postedObservation).ToBeVisibleAsync();
@@ -236,6 +239,7 @@ public class FrontPageTests : PageTest
 
     [Fact]
     public async Task CanUserMakeProposal()
+    // TODO: This test is not working. Proposals can't be posted without selecting a species. Must select a species.
     {
         var email = $"test{Guid.NewGuid():N}@example.com";
         const string password = "Test123!";
@@ -255,8 +259,16 @@ public class FrontPageTests : PageTest
         await proposalInput.FillAsync(proposalText);
         await proposalInput.PressAsync("Enter");
 
-        
+        var postedComment = Page.GetByRole(AriaRole.Listitem).Filter(new() { HasText = proposalText });
+        await Expect(postedComment).ToBeVisibleAsync();
+
+        await Page.ReloadAsync();
+        await Expect(postedComment).ToBeVisibleAsync();
     }
+
+    // TODO: Implement test to make sure user can't post a proposal without first selecting a species.
+    // TODO: Implement test to confirm audio player appears for species where audio is available
+    // TODO: Implement test to confirm audio player doesn't appear for species that represent a group of subspecies, or species that are quiet
 
 
 }
