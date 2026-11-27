@@ -113,15 +113,19 @@
         }
     }
     
+    @* Keep the chosen taxon in the paging links, otherwise Next/Previous would drop the filter *@
+    @{
+        var taxonQuery = Model.SelectedTaxon is null ? "" : "&taxon=" + Uri.EscapeDataString(Model.SelectedTaxon);
+    }
     <div class="pagination">
         @if (Model.CurrentPage > 1)
         {
-            <a href="?page=@(Model.CurrentPage - 1)">&laquo; Previous</a>
+            <a href="?page=@(Model.CurrentPage - 1)@taxonQuery">&laquo; Previous</a>
         }
 
-        @if (Model.Observations.Count == 32)
+        @if (Model.Observations.Count == Bison.Infrastructure.Repositories.IPostRepository.PageSize)
         {
-            <a href="?page=@(Model.CurrentPage + 1)">Next &raquo;</a>
+            <a href="?page=@(Model.CurrentPage + 1)@taxonQuery">Next &raquo;</a>
         }
     </div>
 </div>
