@@ -209,6 +209,7 @@ public class PostRepository : IPostRepository
         if (taxon is null) return null;
         return new TaxonDTO(
             taxon.dwc_TaxonID,
+            taxon.ScienName,
             taxon.VernacularName,
             taxon.Parent?.dwc_TaxonID,
             taxon.ScienName
@@ -255,6 +256,7 @@ public class PostRepository : IPostRepository
 
         return taxa.Select(t => new TaxonDTO(
             t.dwc_TaxonID,
+            t.ScienName,
             t.VernacularName,
             t.Parent?.dwc_TaxonID,
             t.ScienName

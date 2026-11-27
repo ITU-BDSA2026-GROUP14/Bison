@@ -73,6 +73,13 @@
                         <p style="margin-top: 0.25rem; font-size: 0.75rem;">
                             <i>@proposal.Text</i>
                         </p>
+                        @if (Model.HasSound(proposal.TaxonId))
+                        {
+                            <audio controls preload="none"
+                                   src="@Url.Page("/ob", "Sound", new {id = Model.Observation.Id, taxonId = proposal.TaxonId})">
+                                Your browser doesn't support audio playback.
+                            </audio>
+                        }
                     </li>
                 }
             </ul>

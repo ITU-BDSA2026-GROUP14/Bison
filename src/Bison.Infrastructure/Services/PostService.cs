@@ -6,10 +6,12 @@ namespace Bison.Infrastructure.Services;
 public class PostService : IPostService
 {
     private readonly IPostRepository _repository;
+    private readonly ISoundRepository _soundRepository;
 
-    public PostService(IPostRepository repository)
+    public PostService(IPostRepository repository, ISoundRepository soundRepository)
     {
         _repository = repository;
+        _soundRepository = soundRepository;
     }
 
     public Task<ObservationDTO?> GetObservation(int observationId) => _repository.GetObservation(observationId);
@@ -64,6 +66,9 @@ public class PostService : IPostService
         return author?.Id ?? await _repository.CreateAuthor(email, email);
     }
 
+    public async Task<SoundDTO?> GetTaxonSound(string scienName)
+    {
+        return await _soundRepository.GetTaxonSound(scienName);
     public async Task ForgetAuthor(string userId, bool keepObservations)
     {
         await _repository.DeleteCommentsByAuthor(userId);

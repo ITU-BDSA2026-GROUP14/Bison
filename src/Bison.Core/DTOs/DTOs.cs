@@ -1,4 +1,6 @@
 
+using System.Collections.Specialized;
+
 namespace Bison.Core.DTOs;
 
 public record PostDTO(
@@ -44,6 +46,7 @@ public record AuthorDTO(
 
 public record TaxonDTO(
     string TaxonId,
+    string? TaxonScienName,
     string? TaxonName,
     string? ParentTaxonId,
     string? ScientificName = null
@@ -55,6 +58,11 @@ public record ImageDTO(
     string ContentType
 );
 
+public record SoundDTO(
+    string ScienName,
+    string Url,
+    string FileUrl
+);
 public record UserDataDTO(
     List<ObservationDTO> Observations,
     List<CommentDTO> Comments,

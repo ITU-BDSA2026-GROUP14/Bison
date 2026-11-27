@@ -64,6 +64,7 @@ public class ObModel : PageModel
         return RedirectToPage(new { id });
     }
 
+    public bool HasSound(string? taxonId) => !string.IsNullOrWhiteSpace(Taxa.FirstOrDefault(t => t.TaxonId == taxonId)?.TaxonScienName);
     // The name to show for a taxon id, e.g. in the list of proposals
     public string TaxonName(string? taxonId) =>
         Taxa.FirstOrDefault(t => t.TaxonId == taxonId)?.TaxonName ?? taxonId ?? "";
@@ -86,5 +87,18 @@ public class ObModel : PageModel
         var picture = await _service.GetImage(id);
         if (picture is null) return NotFound();
         return File(picture.Data, picture.ContentType);
+    }
+    public async Task<IActionResult> OnGetSoundAsync(string taxonId)
+    {
+        var taxon = await _service.GetTaxon(taxonId);
+        if (taxon is null || string.IsNullOrWhiteSpace(taxon.TaxonScienName))
+        {
+            return NotFound();
+        }
+
+        var sound = await _service.GetTaxonSound(taxon.TaxonScienName);
+        if (sound is null) return NotFound();
+
+        return Redirect(sound.FileUrl);
     }
 }
