@@ -19,18 +19,37 @@ public class PublicModel : PageModel
     [BindProperty] public string? License { get; set; }
 
     private readonly IPostService _service;
+    private readonly IFilterService _filterService;
     public List<ObservationDTO> Observations { get; set; } = null!;
 
-    public PublicModel(IPostService service)
+    // All taxa, for choosing which taxon to filter the timeline by
+    public List<TaxonDTO> Taxa { get; set; } = new();
+
+    // The dwc_TaxonID of the taxon the timeline is filtered by, or null when not filtering
+    public string? SelectedTaxon { get; set; }
+
+    public PublicModel(IPostService service, IFilterService filterService)
     {
         _service = service;
+        _filterService = filterService;
     }
 
-    public async Task<ActionResult> OnGet([FromQuery] int page = 1)
+    public async Task<ActionResult> OnGet([FromQuery] int page = 1, [FromQuery] string? taxon = null)
     {
         if (page < 1) page = 1;
         CurrentPage = page;
-        Observations = await _service.GetObservations(page);
+        Taxa = await _service.GetTaxa();
+
+        if (string.IsNullOrWhiteSpace(taxon))
+        {
+            Observations = await _service.GetObservations(page);
+        }
+        else
+        {
+            // The taxon itself and all its subtaxa, filtered by the verified Dafny code
+            SelectedTaxon = taxon;
+            Observations = await _filterService.GetObservationsByTaxon(taxon, page);
+        }
         return Page();
     }
 

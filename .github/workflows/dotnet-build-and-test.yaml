@@ -19,6 +19,22 @@ jobs:
       uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 8.0.x
+
+    - name: Setup Dafny
+      uses: dafny-lang/setup-dafny-action@v1.9.1
+      with:
+        dafny-version: 4.11.0
+
+    # Fails the build if the filter specification cannot be proven.
+    - name: Verify Dafny code
+      working-directory: src/Bison.Core/Dafny
+      run: dafny verify Filter.dfy --allow-external-contracts
+
+    # Regenerates Filter.cs from Filter.dfy so the tests always run the verified code.
+    - name: Compile Dafny code to C#
+      working-directory: src/Bison.Core/Dafny
+      run: dafny translate cs Filter.dfy --allow-external-contracts
+
     - name: Restore dependencies
       run: dotnet restore Bison.sln
       

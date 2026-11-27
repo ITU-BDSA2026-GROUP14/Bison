@@ -45,7 +45,8 @@ public record AuthorDTO(
 public record TaxonDTO(
     string TaxonId,
     string? TaxonName,
-    string? ParentTaxonId
+    string? ParentTaxonId,
+    string? ScientificName = null
 );
 
 public record ImageDTO(
