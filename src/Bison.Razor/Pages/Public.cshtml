@@ -8,22 +8,65 @@
 <div>
     <h2> Public Timeline </h2>
 
+    <form method="get" class="taxon-filter">
+        <label for="taxon-select">Filter by taxon</label>
+        <select name="taxon" id="taxon-select">
+            <option value="">All taxa</option>
+            @foreach (var taxon in Model.Taxa)
+            {
+                <option value="@taxon.TaxonId" selected="@(taxon.TaxonId == Model.SelectedTaxon)">@(taxon.TaxonName ?? taxon.ScientificName ?? taxon.TaxonId)</option>
+            }
+        </select>
+        <input type="submit" value="Filter">
+        @if (Model.SelectedTaxon is not null)
+        {
+            <a href="/">Clear filter</a>
+        }
+    </form>
+    @if (Model.SelectedTaxon is not null)
+    {
+        <p class="taxon-filter-info">Showing observations of the chosen taxon and its subtaxa.</p>
+    }
+
     @if (User.Identity?.IsAuthenticated == true)
     {
-        <h3> What did you spot today? </h3>
-        @if (TempData["ErrorMessage"] is string error) { <p> @error </p>}
-        <form method="post" enctype="multipart/form-data">
-        <input type="text" name="Text">
-        <input type ="file" name="Picture" accept="image/jpeg,image/png,image/gif,image/webp">
-        <select name="License">
-            <option value="">Choose a license for your picture </option>
-            @foreach (var license in Licenses.CreativeCommons.Keys)
-                    {
-                        <option value = "@license">@license</option>
-                    }
-                </select>
-        <input type ="submit" value="Share">
-        </form>
+        @if (TempData["ErrorMessage"] is string error)
+        {
+            <p class="error"> @error </p>
+        }
+
+        <details class="create-post" @(TempData["ErrorMessage"] is not null ? "open" : "")>
+            <summary class="create-post-button">Create post</summary>
+
+            <div class="create-post-menu">
+                <h3> What did you spot today? </h3>
+                <form method="post" enctype="multipart/form-data">
+                    <textarea name="Text" rows="5" placeholder="Describe your observation..."></textarea>
+
+                    <input type="file" id="picture-input" name="Picture" accept="image/jpeg,image/png,image/gif,image/webp">
+
+                    <select name="License" id="license-select" hidden>
+                        <option value="">Choose a license for your picture</option>
+                        @foreach (var license in Licenses.CreativeCommons.Keys)
+                        {
+                            <option value="@license">@license</option>
+                        }
+                    </select>
+
+                    <input type="submit" value="Post">
+                </form>
+            </div>
+        </details>
+
+        <script>
+                const picture = document.getElementById("picture-input");
+                const license = document.getElementById("license-select");
+                picture.addEventListener("change", () => {
+                    const hasPicture = picture.files.length > 0;
+                    license.hidden = !hasPicture;
+                    if (!hasPicture) license.value = "";
+                });
+        </script>
     }
 
     @if (Model.Observations.Any())
@@ -34,15 +77,22 @@
                 <li>
                     <p>
                         <strong>
-                            <a href="/@obs.UserId">@obs.UserName</a>
+                            @if (obs.UserId is null)
+                            {
+                                <span>deleted user</span>
+                            }
+                            else
+                            {
+                                <a href="/@obs.UserId">@obs.UserName</a>
+                            }
                         </strong>
                         @obs.Text
                         <small>&mdash; @obs.PubDate &middot; <a href="/ob/@obs.Id">Comments &amp; proposals</a></small>
                     </p>
                     @if (obs.ImageId is not null)
-            {
-                    <img class="observation-picture" src="/ob/@(obs.ImageId)?handler=Picture" alt="Picture of the observation">
-                    @if (obs.License is not null)
+                    {
+                        <img class="observation-picture" src="/ob/@(obs.ImageId)?handler=Picture" alt="Picture of the observation">
+                        @if (obs.License is not null)
                         {
                             <small> License: <a href="@Licenses.CreativeCommons[obs.License]">@obs.License</a></small>
                         }
@@ -53,6 +103,25 @@
     }
     else
     {
-        <em>There are no observations so far.</em>
+        @if (Model.SelectedTaxon is not null)
+        {
+            <em>There are no observations of this taxon so far.</em>
+        }
+        else
+        {
+            <em>There are no observations so far.</em>
+        }
     }
+    
+    <div class="pagination">
+        @if (Model.CurrentPage > 1)
+        {
+            <a href="?page=@(Model.CurrentPage - 1)">&laquo; Previous</a>
+        }
+
+        @if (Model.Observations.Count == 32)
+        {
+            <a href="?page=@(Model.CurrentPage + 1)">Next &raquo;</a>
+        }
+    </div>
 </div>

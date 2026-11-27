@@ -8,7 +8,12 @@
 }
 
 <div>
-    <h2> @(Model.Author.UserName ?? "Unknown User")'s Observations page @Model.CurrentPage</h2>
+    <h2> @(Model.Author?.UserName ?? "Unknown User")'s Observations page @Model.CurrentPage</h2>
+
+    @if (TempData["ErrorMessage"] is string error)
+    {
+        <p class="error"> @error </p>
+    }
 
     @if (Model.Observations.Any())
     {
@@ -24,13 +29,20 @@
                         <small>&mdash; @ob.PubDate &middot; <a href="/ob/@ob.Id">Comments &amp; proposals</a></small>
                     </p>
                     @if (ob.ImageId is not null)
-            {
-                    <img class="observation-picture" src="/ob/@(ob.ImageId)?handler=Picture" alt="Picture of the observation">
-                    @if (ob.License is not null)
+                    {
+                        <img class="observation-picture" src="/ob/@(ob.ImageId)?handler=Picture" alt="Picture of the observation">
+                        @if (ob.License is not null)
                         {
                             <small> License: <a href="@Licenses.CreativeCommons[ob.License]">@ob.License</a></small>
                         }
-            }
+                    }
+                    @if (User.Identity?.IsAuthenticated == true && ob.UserName == User.Identity.Name)
+                    {
+                        <form method="post" asp-page-handler="Delete" asp-route-id="@ob.Id"
+                              onsubmit="return confirm('Delete this observation?');">
+                            <button type="submit" class="delete-button">Delete</button>
+                        </form>
+                    }
                 </li>
             }
         </ul>

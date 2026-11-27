@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Bison.Core.DTOs;
+using Bison.Core.Models;
 
 namespace Bison.Infrastructure.Repositories;
 
@@ -9,6 +10,8 @@ public interface IPostRepository
 
     Task<ObservationDTO?> GetObservation(int observationId);
     Task<List<ObservationDTO>> GetObservations(int page);
+    Task<List<Observation>> GetObservationsWithTaxa();
+    Task<Taxon?> GetTaxonEntity(string taxonId);
     Task<List<ObservationDTO>> GetObservationsByAuthor(string id, int page);
     Task<List<CommentDTO>> GetCommentsForObservation(int observationId, int page);
     Task<List<CommentDTO>> GetCommentsByAuthor(string id, int page);
@@ -16,11 +19,20 @@ public interface IPostRepository
     Task<List<ProposalDTO>> GetProposalsForObservation(int observationId, int page);
     Task<AuthorDTO?> GetAuthor(string id);
     Task<TaxonDTO?> GetTaxon(string taxonId);
-    Task<ImageDTO?> GetImage(int imageId);   
+    Task<ImageDTO?> GetImage(int imageId);
     Task CreateObservation(string authorEmail, string text, byte[]? picture, string? pictureContentType, string? license);
     Task<List<TaxonDTO>> GetTaxa();
     Task<int> CreateComment(string userId, int observationId, string text);
     Task<int> CreateProposal(string userId, int observationId, string taxonId, string text);
     Task<AuthorDTO?> GetAuthorByEmail(string email);
     Task<string> CreateAuthor(string userName, string email);
+    Task<List<ObservationDTO>> GetAllObservationsByAuthor(string id);
+    Task<List<CommentDTO>> GetAllCommentsByAuthor(string id);
+    Task<List<ProposalDTO>> GetAllProposalsByAuthor(string id);
+    Task DeleteCommentsByAuthor(string userId);
+    Task DeleteProposalsByAuthor(string userId);
+    Task DeleteObservationsByAuthor(string userId);
+    Task DetachObservationsFromAuthor(string userId);
+
+    Task<bool> DeleteObservation(int observationId, string authorEmail);
 }

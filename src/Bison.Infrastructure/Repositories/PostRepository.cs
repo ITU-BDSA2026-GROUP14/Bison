@@ -30,8 +30,8 @@ public class PostRepository : IPostRepository
             obs.PostId,
             obs.Text,
             obs.TimeStamp.ToString(timestampFormat),
-            obs.Author.Id,
-            obs.Author.UserName,
+            obs.AuthorId,
+            obs.Author?.UserName,
             obs.ImageId,
             obs.Image != null ? obs.Image.License : null
             );
@@ -40,7 +40,7 @@ public class PostRepository : IPostRepository
     // Retrieves all Observations from the database
     public async Task<List<ObservationDTO>> GetObservations(int page)
     {
-         return await _context.Observations
+        return await _context.Observations
         .OrderByDescending(o => o.TimeStamp)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
@@ -48,12 +48,35 @@ public class PostRepository : IPostRepository
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.Id,
-            o.Author.UserName,
+            o.AuthorId,
+            o.Author != null ? o.Author.UserName : null,
             o.ImageId,
             o.Image != null ? o.Image.License : null
         ))
         .ToListAsync();
+    }
+
+    // Retrieves all Observations (newest first) as entities with their Taxon and its Parent chain loaded,
+    // so the verified Dafny filter can call isSubTaxon on them. No paging: filtering has to happen first.
+    public async Task<List<Observation>> GetObservationsWithTaxa()
+    {
+        // Loading all taxa first lets EF Core link every Parent/Children navigation in memory,
+        // so we don't need a recursive Include for the taxon hierarchy.
+        await _context.Taxons.ToListAsync();
+
+        return await _context.Observations
+        .Include(o => o.Author)
+        .Include(o => o.Image)
+        .Include(o => o.Taxon)
+        .OrderByDescending(o => o.TimeStamp)
+        .ToListAsync();
+    }
+
+    // Retrieves a Taxon entity (with its Parent chain loaded) from its dwc_TaxonID
+    public async Task<Taxon?> GetTaxonEntity(string taxonId)
+    {
+        await _context.Taxons.ToListAsync();
+        return await _context.Taxons.FirstOrDefaultAsync(t => t.dwc_TaxonID == taxonId);
     }
 
     // Retrieves all Observations from a specific Author by Id
@@ -61,15 +84,15 @@ public class PostRepository : IPostRepository
     {
         return await _context.Observations
         .OrderByDescending(o => o.TimeStamp)
-        .Where(o => o.Author.Id == id)
+        .Where(o => o.AuthorId == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .Select(o => new ObservationDTO(
             o.PostId,
             o.Text,
             o.TimeStamp.ToString(timestampFormat),
-            o.Author.Id,
-            o.Author.UserName,
+            o.AuthorId,
+            o.Author != null ? o.Author.UserName : null,
             o.ImageId,
             o.Image != null ? o.Image.License : null
         ))
@@ -91,8 +114,8 @@ public class PostRepository : IPostRepository
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.Id,
-            c.Author.UserName
+            c.Author?.Id,
+            c.Author?.UserName
         ))
         .ToList();
     }
@@ -103,7 +126,7 @@ public class PostRepository : IPostRepository
         var comments = await _context.Comments
         .Include(o => o.Author)
         .OrderByDescending(c => c.TimeStamp)
-        .Where(c => c.Author.Id == id)
+        .Where(c => c.AuthorId == id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
@@ -112,8 +135,8 @@ public class PostRepository : IPostRepository
             c.PostId,
             c.TimeStamp.ToString(timestampFormat),
             c.Text,
-            c.Author.Id,
-            c.Author.UserName
+            c.Author?.Id,
+            c.Author?.UserName
         ))
         .ToList();
     }
@@ -132,8 +155,8 @@ public class PostRepository : IPostRepository
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.Id,
-            p.Author.UserName,
+            p.Author?.Id,
+            p.Author?.UserName,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();
@@ -155,8 +178,8 @@ public class PostRepository : IPostRepository
             p.PostId,
             p.Text,
             p.TimeStamp.ToString(timestampFormat),
-            p.Author.Id,
-            p.Author.UserName,
+            p.Author?.Id,
+            p.Author?.UserName,
             p.Taxon.dwc_TaxonID
         ))
         .ToList();
@@ -186,8 +209,10 @@ public class PostRepository : IPostRepository
         if (taxon is null) return null;
         return new TaxonDTO(
             taxon.dwc_TaxonID,
+            taxon.ScienName,
             taxon.VernacularName,
-            taxon.Parent?.dwc_TaxonID
+            taxon.Parent?.dwc_TaxonID,
+            taxon.ScienName
         );
     }
 
@@ -208,7 +233,7 @@ public class PostRepository : IPostRepository
         };
         if (picture != null)
         {
-            observation.Image = new Image {Data = picture, ContentType = pictureContentType!, License = license};
+            observation.Image = new Image { Data = picture, ContentType = pictureContentType!, License = license };
         }
         _context.Observations.Add(observation);
         await _context.SaveChangesAsync();
@@ -226,13 +251,15 @@ public class PostRepository : IPostRepository
     {
         var taxa = await _context.Taxons
         .Include(t => t.Parent)
-        .OrderBy(t => t.VernacularName)
+        .OrderBy(t => t.VernacularName ?? t.ScienName)
         .ToListAsync();
 
         return taxa.Select(t => new TaxonDTO(
             t.dwc_TaxonID,
+            t.ScienName,
             t.VernacularName,
-            t.Parent?.dwc_TaxonID
+            t.Parent?.dwc_TaxonID,
+            t.ScienName
         ))
         .ToList();
     }
@@ -296,6 +323,130 @@ public class PostRepository : IPostRepository
         _context.Authors.Add(author);
         await _context.SaveChangesAsync();
         return author.Id;
+    }
+
+    public async Task<List<ObservationDTO>> GetAllObservationsByAuthor(string id)
+    {
+        return await _context.Observations
+        .OrderByDescending(o => o.TimeStamp)
+        .Where(o => o.AuthorId == id)
+        .Select(o => new ObservationDTO(
+            o.PostId,
+            o.Text,
+            o.TimeStamp.ToString(timestampFormat),
+            o.AuthorId,
+            o.Author != null ? o.Author.UserName : null,
+            o.ImageId,
+            o.Image != null ? o.Image.License : null
+        ))
+        .ToListAsync();
+    }
+
+    public async Task<List<CommentDTO>> GetAllCommentsByAuthor(string id)
+    {
+        return await _context.Comments
+        .OrderByDescending(c => c.TimeStamp)
+        .Where(c => c.AuthorId == id)
+        .Select(c => new CommentDTO(
+            c.PostId,
+            c.TimeStamp.ToString(timestampFormat),
+            c.Text,
+            c.AuthorId,
+            c.Author != null ? c.Author.UserName : null
+        ))
+        .ToListAsync();
+    }
+
+    public async Task<List<ProposalDTO>> GetAllProposalsByAuthor(string id)
+    {
+        return await _context.Proposals
+        .OrderByDescending(p => p.TimeStamp)
+        .Where(p => p.AuthorId == id)
+        .Select(p => new ProposalDTO(
+            p.PostId,
+            p.Text,
+            p.TimeStamp.ToString(timestampFormat),
+            p.AuthorId,
+            p.Author != null ? p.Author.UserName : null,
+            p.Taxon.dwc_TaxonID
+        ))
+        .ToListAsync();
+    }
+
+    public async Task DeleteCommentsByAuthor(string userId)
+    {
+        var comments = await _context.Comments
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var comment in comments)
+        {
+            comment.IsDeleted = true;
+            comment.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteProposalsByAuthor(string userId)
+    {
+        var proposals = await _context.Proposals
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var proposal in proposals)
+        {
+            proposal.IsDeleted = true;
+            proposal.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteObservationsByAuthor(string userId)
+    {
+        var observations = await _context.Observations
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var observation in observations)
+        {
+            observation.IsDeleted = true;
+            observation.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DetachObservationsFromAuthor(string userId)
+    {
+        var observations = await _context.Observations
+            .Where(c => c.AuthorId == userId)
+            .ToListAsync();
+
+        foreach (var observation in observations)
+        {
+            observation.AuthorId = null;
+        }
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> DeleteObservation(int observationId, string authorEmail)
+    {
+        var observation = await _context.Observations
+            .Include(o => o.Author)
+            .Include(o => o.Image)
+            .Include(o => o.Comments)
+            .Include(o => o.Proposals)
+            .FirstOrDefaultAsync(o => o.PostId == observationId);
+
+        // Author is null for observations kept by a forgotten user
+        if (observation is null || observation.Author?.Email != authorEmail)
+            return false;
+
+        if (observation.Image is not null)
+            _context.Images.Remove(observation.Image);
+
+        _context.Observations.Remove(observation);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }
 

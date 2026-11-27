@@ -1,18 +1,20 @@
 
+using System.Collections.Specialized;
+
 namespace Bison.Core.DTOs;
 
 public record PostDTO(
     int Id,
     string Text,
     string PubDate,
-    string UserId,
+    string? UserId,
     string? UserName
 );
 public record ObservationDTO(
     int Id,
     string Text,
     string PubDate,
-    string UserId,
+    string? UserId,
     string? UserName,
     int? ImageId,
     string? License
@@ -23,7 +25,7 @@ public record CommentDTO(
     int Id,
     string PubDate,
     string Text,
-    string UserId,
+    string? UserId,
     string? UserName
 ) : PostDTO(Id, Text, PubDate, UserId, UserName);
 
@@ -31,7 +33,7 @@ public record ProposalDTO(
     int Id,
     string Text,
     string PubDate,
-    string UserId,
+    string? UserId,
     string? UserName,
     string? TaxonId
 ) : PostDTO(Id, Text, PubDate, UserId, UserName);
@@ -44,12 +46,25 @@ public record AuthorDTO(
 
 public record TaxonDTO(
     string TaxonId,
+    string? TaxonScienName,
     string? TaxonName,
-    string? ParentTaxonId
+    string? ParentTaxonId,
+    string? ScientificName = null
 );
 
 public record ImageDTO(
     int ImageId,
     byte[] Data,
     string ContentType
+);
+
+public record SoundDTO(
+    string ScienName,
+    string Url,
+    string FileUrl
+);
+public record UserDataDTO(
+    List<ObservationDTO> Observations,
+    List<CommentDTO> Comments,
+    List<ProposalDTO> Proposals
 );

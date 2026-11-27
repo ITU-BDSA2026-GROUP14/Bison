@@ -11,42 +11,83 @@
     <ul class="observations">
         <li>
             <p>
-                <strong><a href="/@Model.Observation!.UserId">@Model.Observation.UserName</a></strong>
+                <strong>
+                    @if (Model.Observation!.UserId is null)
+                    {
+                        <span>deleted user</span>
+                    }
+                    else
+                    {
+                        <a href="/@Model.Observation.UserId">@Model.Observation.UserName</a>
+                    }
+                </strong>
                 @Model.Observation.Text
                 <small>&mdash; @Model.Observation.PubDate</small>
             </p>
             @if (Model.Observation.ImageId is not null)
-        {
-            <img class="observation-picture" src="/ob/@(Model.Observation.ImageId)?handler=Picture" alt="Picture of the observation">
-            @if (Model.Observation.License is not null)
+            {
+                <img class="observation-picture" src="/ob/@(Model.Observation.ImageId)?handler=Picture"
+                     alt="Picture of the observation">
+                @if (Model.Observation.License is not null)
                 {
-                    <small> License: <a href="@Licenses.CreativeCommons[Model.Observation.License]">@Model.Observation.License</a></small>
+                    <small> License: <a
+                        href="@Licenses.CreativeCommons[Model.Observation.License]">@Model.Observation.License</a></small>
+                    }
                 }
-        }
-        </li>
-    </ul>
+            </li>
+        </ul>
 
-    <h3>Proposals</h3>
-    @if (User.Identity?.IsAuthenticated == true)
-    {
-        <div class="observationbox">
-            <h3>What do you think it is, @(User.Identity.Name)?</h3>
-            <form method="post" asp-page-handler="Proposal" asp-route-id="@Model.Observation.Id">
-                <p>
-                    <select asp-for="ProposalTaxonId">
-                        <option value="">Choose a species or group</option>
-                        @foreach (var taxon in Model.Taxa.Where(t => t.TaxonName != null))
+        <h3>Proposals</h3>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div class="observationbox">
+                <h3>What do you think it is, @(User.Identity.Name)?</h3>
+                <form method="post" asp-page-handler="Proposal" asp-route-id="@Model.Observation.Id">
+                    <p>
+                        <select asp-for="ProposalTaxonId">
+                            <option value="">Choose a species or group</option>
+                            @foreach (var taxon in Model.Taxa.Where(t => t.TaxonName != null))
+                            {
+                                <option value="@taxon.TaxonId">@taxon.TaxonName</option>
+                            }
+                        </select>
+                    </p>
+                    <input style="float: left" type="text" asp-for="ProposalText" placeholder="Why do you think so? (optional)">
+                    <input type="submit" value="Propose">
+                </form>
+                <span asp-validation-for="ProposalTaxonId"></span>
+            </div>
+        }
+
+        @if (Model.Proposals.Any())
+        {
+            <ul class="observations">
+                @foreach (var proposal in Model.Proposals)
+                {
+                    <li>
+                        <p>
+                            <strong><a href="/@proposal.UserId">@proposal.UserName</a></strong>
+                            <b>@Model.TaxonName(@proposal.TaxonId)</b>
+                            <small>&mdash; @proposal.PubDate</small>
+                        </p>
+                        <p style="margin-top: 0.25rem; font-size: 0.75rem;">
+                            <i>@proposal.Text</i>
+                        </p>
+                        @if (Model.HasSound(proposal.TaxonId))
                         {
-                            <option value="@taxon.TaxonId">@taxon.TaxonName</option>
+                            <audio controls preload="none"
+                                   src="@Url.Page("/ob", "Sound", new {id = Model.Observation.Id, taxonId = proposal.TaxonId})">
+                                Your browser doesn't support audio playback.
+                            </audio>
                         }
-                    </select>
-                </p>
-                <input style="float: left" type="text" asp-for="ProposalText" placeholder="Why do you think so? (optional)">
-                <input type="submit" value="Propose">
-            </form>
-            <span asp-validation-for="ProposalTaxonId"></span>
-        </div>
-    }
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <em>There are no proposals so far.</em>
+        }
 
     @if (Model.Proposals.Any())
     {
@@ -55,7 +96,16 @@
             {
                 <li>
                     <p>
-                        <strong><a href="/@proposal.UserId">@proposal.UserName</a></strong>
+                        <strong>
+                            @if (proposal.UserId is null)
+                            {
+                                <span>deleted user</span>
+                            }
+                            else
+                            {
+                                <a href="/@proposal.UserId">@proposal.UserName</a>
+                            }
+                        </strong>
                         @proposal.Text
                         <small>&mdash; @proposal.PubDate</small>
                     </p>
@@ -88,7 +138,16 @@
             {
                 <li>
                     <p>
-                        <strong><a href="/@comment.UserId">@comment.UserName</a></strong>
+                        <strong>
+                            @if (comment.UserId is null)
+                            {
+                                <span>deleted user</span>
+                            }
+                            else
+                            {
+                                <a href="/@comment.UserId">@comment.UserName</a>
+                            }
+                        </strong>
                         @comment.Text
                         <small>&mdash; @comment.PubDate</small>
                     </p>
